@@ -1,0 +1,162 @@
+[
+    {
+        "Id": 1,
+        "Name": "John Doe",
+        "Image": "assets/images/john_doe.jpg",
+        "Field": ["Web Development", "JavaScript"],
+        "Work_experience": 5.5,
+        "Summary": "Experienced web developer specializing in JavaScript frameworks and libraries."
+    },
+    {
+        "Id": 2,
+        "Name": "Jane Smith",
+        "Image": "assets/images/jane_smith.jpg",
+        "Field": ["Data Science", "Python"],
+        "Work_experience": 8.0,
+        "Summary": "Data scientist with extensive experience in Python and machine learning."
+    },
+    {
+        "Id": 3,
+        "Name": "Michael Johnson",
+        "Image": "assets/images/michael_johnson.jpg",
+        "Field": ["Mobile Development", "Flutter"],
+        "Work_experience": 4.2,
+        "Summary": "Mobile app developer with a focus on Flutter and cross-platform development."
+    },
+    {
+        "Id": 4,
+        "Name": "Emily Davis",
+        "Image": "assets/images/emily_davis.jpg",
+        "Field": ["Artificial Intelligence", "Machine Learning"],
+        "Work_experience": 6.7,
+        "Summary": "AI researcher and developer with a passion for machine learning and neural networks."
+    },
+    {
+        "Id": 5,
+        "Name": "David Wilson",
+        "Image": "assets/images/david_wilson.jpg",
+        "Field": ["Cyber Security", "Ethical Hacking"],
+        "Work_experience": 7.3,
+        "Summary": "Cyber security expert with a background in ethical hacking and network security."
+    },
+    {
+        "Id": 6,
+        "Name": "Sarah Brown",
+        "Image": "assets/images/sarah_brown.jpg",
+        "Field": ["Cloud Computing", "AWS"],
+        "Work_experience": 9.1,
+        "Summary": "Cloud architect specializing in AWS and cloud infrastructure management."
+    },
+    {
+        "Id": 7,
+        "Name": "James Taylor",
+        "Image": "assets/images/james_taylor.jpg",
+        "Field": ["Blockchain", "Cryptocurrency"],
+        "Work_experience": 5.0,
+        "Summary": "Blockchain developer with a deep understanding of cryptocurrency and decentralized applications."
+    },
+    {
+        "Id": 8,
+        "Name": "Jessica Anderson",
+        "Image": "assets/images/jessica_anderson.jpg",
+        "Field": ["Game Development", "Unity"],
+        "Work_experience": 3.8,
+        "Summary": "Game developer with expertise in Unity and game design."
+    },
+    {
+        "Id": 9,
+        "Name": "Matthew Thomas",
+        "Image": "assets/images/matthew_thomas.jpg",
+        "Field": ["Machine Learning", "TensorFlow"],
+        "Work_experience": 4.5,
+        "Summary": "Machine learning engineer specializing in TensorFlow and deep learning models."
+    },
+    {
+        "Id": 10,
+        "Name": "Olivia Martinez",
+        "Image": "assets/images/olivia_martinez.jpg",
+        "Field": ["Digital Marketing", "SEO"],
+        "Work_experience": 6.2,
+        "Summary": "Digital marketing strategist with a focus on SEO and online advertising."
+    },
+    {
+        "Id": 11,
+        "Name": "Daniel Lee",
+        "Image": "assets/images/daniel_lee.jpg",
+        "Field": ["UI/UX Design", "Adobe XD"],
+        "Work_experience": 5.7,
+        "Summary": "UI/UX designer with experience in Adobe XD and user-centered design."
+    },
+    {
+        "Id": 12,
+        "Name": "Sophia Harris",
+        "Image": "assets/images/sophia_harris.jpg",
+        "Field": ["DevOps", "Docker"],
+        "Work_experience": 8.4,
+        "Summary": "DevOps engineer with expertise in Docker, CI/CD pipelines, and automation."
+    },
+    {
+        "Id": 13,
+        "Name": "Alexander Clark",
+        "Image": "assets/images/alexander_clark.jpg",
+        "Field": ["Project Management", "Agile"],
+        "Work_experience": 10.0,
+        "Summary": "Project manager with a strong background in Agile methodologies and team leadership."
+    },
+    {
+        "Id": 14,
+        "Name": "Mia Lewis",
+        "Image": "assets/images/mia_lewis.jpg",
+        "Field": ["Software Testing", "Automation"],
+        "Work_experience": 7.5,
+        "Summary": "Software tester with a focus on automation and quality assurance."
+    },
+    {
+        "Id": 15,
+        "Name": "William Robinson",
+        "Image": "assets/images/william_robinson.jpg",
+        "Field": ["Big Data", "Hadoop"],
+        "Work_experience": 6.0,
+        "Summary": "Big data analyst with expertise in Hadoop and data processing."
+    },
+    {
+        "Id": 16,
+        "Name": "Ava Walker",
+        "Image": "assets/images/ava_walker.jpg",
+        "Field": ["Robotics", "ROS"],
+        "Work_experience": 5.3,
+        "Summary": "Robotics engineer with experience in ROS and robotic automation."
+    },
+    {
+        "Id": 17,
+        "Name": "Ethan Hall",
+        "Image": "assets/images/ethan_hall.jpg",
+        "Field": ["Internet of Things (IoT)", "Arduino"],
+        "Work_experience": 4.1,
+        "Summary": "IoT developer with a background in Arduino and smart device integration."
+    },
+    {
+        "Id": 18,
+        "Name": "Isabella Allen",
+        "Image": "assets/images/isabella_allen.jpg",
+        "Field": ["Quantum Computing", "Qiskit"],
+        "Work_experience": 3.5,
+        "Summary": "Quantum computing researcher with expertise in Qiskit and quantum algorithms."
+    },
+    {
+        "Id": 19,
+        "Name": "Jacob Young",
+        "Image": "assets/images/jacob_young.jpg",
+        "Field": ["Augmented Reality (AR)", "ARKit"],
+        "Work_experience": 6.8,
+        "Summary": "AR developer with experience in ARKit and augmented reality applications."
+    },
+    {
+        "Id": 20,
+        "Name": "Emma King",
+        "Image": "assets/images/emma_king.jpg",
+        "Field": ["Virtual Reality (VR)", "Unity"],
+        "Work_experience": 4.9,
+        "Summary": "VR developer specializing in Unity and virtual reality environments."
+    }
+]

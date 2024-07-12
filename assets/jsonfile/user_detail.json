@@ -1,0 +1,663 @@
+[
+    {
+        "Id": 1,
+        "BasicInfo": {
+            "Name": "User One",
+            "Summary": "Summary of User One",
+            "Gender": "Male",
+            "Dob": "1990-01-01",
+            "Marital Status": "Single"
+        },
+        "ProfileImage": {
+            "Is_network_url": true,
+            "image_path": "https://images.pexels.com/photos/16657410/pexels-photo-16657410/free-photo-of-scooters-parked-in-front-of-building-in-a-tropical-village.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+        },
+        "CoverImage": {
+            "Is_network_url": true,
+            "image_path": "https://example.com/user1/cover.jpg"
+        },
+        "WorkExperience": [
+            {
+                "Id": 1,
+                "Job_title": "Software Developer",
+                "Summary": "Worked on various projects.",
+                "Organization Name": "Company A",
+                "Start Date": "2015-01-01",
+                "End date": "2020-01-01"
+                }
+
+        ],
+        "Skills": [
+            { "Id": 1, "Title": "Flutter" },
+            { "Id": 2, "Title": "Dart" }
+        ],
+        "Hobbies": [
+            { "Id": 1, "Title": "Reading" },
+            { "Id": 2, "Title": "Traveling" }
+        ],
+        "Languages": [
+            { "Id": 1, "Title": "English" },
+            { "Id": 2, "Title": "Nepali" }
+        ],
+        "Status": "Active",
+        "Education": [
+            {
+                "Id": 1,
+                "level": "Bachelor",
+                "Summary": "BSc in Computer Science",
+                "Organization Name": "University A",
+                "Start Date": "2010-01-01",
+                "End date": "2014-01-01"
+            }
+        ],
+        "Accomplishments": [
+            {
+                "Id": 1,
+                "Title": "Accomplishment 1",
+                "Description": "Description of Accomplishment 1",
+                "Date": "2014-01-01"
+            }
+        ],
+        "ContactInfo": {
+            "Mobile No": "1234567890",
+            "Social Media": [
+                { "Id": 1, "Title": "Facebook", "Url": "https://facebook.com/user1", "Type": "facebook" },
+                { "Id": 2, "Title": "LinkedIn", "Url": "https://linkedin.com/in/user1", "Type": "linkedin" }
+            ]
+        }
+    },
+    {
+        "Id": 2,
+        "BasicInfo": {
+            "Name": "User Two",
+            "Summary": "Summary of User Two",
+            "Gender": "Female",
+            "Dob": "1991-02-02",
+            "Marital Status": "Married"
+        },
+        "ProfileImage": {
+            "Is_network_url": true,
+            "image_path": "https://example.com/user2/profile.jpg"
+        },
+        "CoverImage": {
+            "Is_network_url": true,
+            "image_path": "https://example.com/user2/cover.jpg"
+        },
+        "WorkExperience": [
+            {
+                "Id": 2,
+                "Job_title": "Project Manager",
+                "Summary": "Managed multiple projects.",
+                "Organization Name": "Company B",
+                "Start Date": "2016-02-01",
+                "End date": "2021-02-01"
+            }
+        ],
+        "Skills": [
+            { "Id": 1, "Title": "Management" },
+            { "Id": 2, "Title": "Leadership" }
+        ],
+        "Hobbies": [
+            { "Id": 1, "Title": "Cooking" },
+            { "Id": 2, "Title": "Hiking" }
+        ],
+        "Languages": [
+            { "Id": 1, "Title": "English" },
+            { "Id": 2, "Title": "Spanish" }
+        ],
+        "Status": "Active",
+        "Education": [
+            {
+                "Id": 1,
+                "level": "Master",
+                "Summary": "MBA",
+                "Organization Name": "University B",
+                "Start Date": "2011-02-01",
+                "End date": "2015-02-01"
+            }
+        ],
+        "Accomplishments": [
+            {
+                "Id": 2,
+                "Title": "Accomplishment 2",
+                "Description": "Description of Accomplishment 2",
+                "Date": "2015-02-01"
+            }
+        ],
+        "ContactInfo": {
+            "Mobile No": "0987654321",
+            "Social Media": [
+                { "Id": 1, "Title": "Twitter", "Url": "https://twitter.com/user2", "Type": "twitter" },
+                { "Id": 2, "Title": "Instagram", "Url": "https://instagram.com/user2", "Type": "instagram" }
+            ]
+        }
+    },
+    {
+        "Id": 3,
+        "BasicInfo": {
+            "Name": "User Three",
+            "Summary": "Summary of User Three",
+            "Gender": "Male",
+            "Dob": "1992-03-03",
+            "Marital Status": "Single"
+        },
+        "ProfileImage": {
+            "Is_network_url": true,
+            "image_path": "https://example.com/user3/profile.jpg"
+        },
+        "CoverImage": {
+            "Is_network_url": true,
+            "image_path": "https://example.com/user3/cover.jpg"
+        },
+        "WorkExperience": [
+            {
+                "Id": 3,
+                "Job_title": "Data Scientist",
+                "Summary": "Analyzed data trends.",
+                "Organization Name": "Company C",
+                "Start Date": "2017-03-01",
+                "End date": "2022-03-01"
+            }
+        ],
+        "Skills": [
+            { "Id": 1, "Title": "Python" },
+            { "Id": 2, "Title": "Machine Learning" }
+        ],
+        "Hobbies": [
+            { "Id": 1, "Title": "Gaming" },
+            { "Id": 2, "Title": "Photography" }
+        ],
+        "Languages": [
+            { "Id": 1, "Title": "English" },
+            { "Id": 2, "Title": "German" }
+        ],
+        "Status": "Active",
+        "Education": [
+            {
+                "Id": 1,
+                "level": "PhD",
+                "Summary": "PhD in Data Science",
+                "Organization Name": "University C",
+                "Start Date": "2012-03-01",
+                "End date": "2018-03-01"
+            }
+        ],
+        "Accomplishments": [
+            {
+                "Id": 3,
+                "Title": "Accomplishment 3",
+                "Description": "Description of Accomplishment 3",
+                "Date": "2018-03-01"
+            }
+        ],
+        "ContactInfo": {
+            "Mobile No": "1122334455",
+            "Social Media": [
+                { "Id": 1, "Title": "GitHub", "Url": "https://github.com/user3", "Type": "github" },
+                { "Id": 2, "Title": "LinkedIn", "Url": "https://linkedin.com/in/user3", "Type": "linkedin" }
+            ]
+        }
+    },
+    {
+        "Id": 4,
+        "BasicInfo": {
+            "Name": "User Four",
+            "Summary": "Summary of User Four",
+            "Gender": "Female",
+            "Dob": "1993-04-04",
+            "Marital Status": "Single"
+        },
+        "ProfileImage": {
+            "Is_network_url": true,
+            "image_path": "https://example.com/user4/profile.jpg"
+        },
+        "CoverImage": {
+            "Is_network_url": true,
+            "image_path": "https://example.com/user4/cover.jpg"
+        },
+        "WorkExperience": [
+            {
+                "Id": 4,
+                "Job_title": "UI/UX Designer",
+                "Summary": "Designed user interfaces.",
+                "Organization Name": "Company D",
+                "Start Date": "2018-04-01",
+                "End date": "2023-04-01"
+            }
+        ],
+        "Skills": [
+            { "Id": 1, "Title": "Sketch" },
+            { "Id": 2, "Title": "Adobe XD" }
+        ],
+        "Hobbies": [
+            { "Id": 1, "Title": "Drawing" },
+            { "Id": 2, "Title": "Traveling" }
+        ],
+        "Languages": [
+            { "Id": 1, "Title": "English" },
+            { "Id": 2, "Title": "French" }
+        ],
+        "Status": "Active",
+        "Education": [
+            {
+                "Id": 1,
+                "level": "Bachelor",
+                "Summary": "BDes in Design",
+                "Organization Name": "University D",
+                "Start Date": "2013-04-01",
+                "End date": "2017-04-01"
+            }
+        ],
+        "Accomplishments": [
+            {
+                "Id": 4,
+                "Title": "Accomplishment 4",
+                "Description": "Description of Accomplishment 4",
+                "Date": "2017-04-01"
+            }
+        ],
+        "ContactInfo": {
+            "Mobile No": "2233445566",
+            "Social Media": [
+                { "Id": 1, "Title": "Dribbble", "Url": "https://dribbble.com/user4", "Type": "dribbble" },
+                { "Id": 2, "Title": "Behance", "Url": "https://behance.net/user4", "Type": "behance" }
+            ]
+        }
+    },
+    {
+        "Id": 5,
+        "BasicInfo": {
+            "Name": "User Five",
+            "Summary": "Summary of User Five",
+            "Gender": "Male",
+            "Dob": "1994-05-05",
+            "Marital Status": "Single"
+        },
+        "ProfileImage": {
+            "Is_network_url": true,
+            "image_path": "https://example.com/user5/profile.jpg"
+        },
+        "CoverImage": {
+            "Is_network_url": true,
+            "image_path": "https://example.com/user5/cover.jpg"
+        },
+        "WorkExperience": [
+            {
+                "Id": 5,
+                "Job_title": "Marketing Manager",
+                "Summary": "Managed marketing campaigns.",
+                "Organization Name": "Company E",
+                "Start Date": "2019-05-01",
+                "End date": "2024-05-01"
+            }
+        ],
+        "Skills": [
+            { "Id": 1, "Title": "SEO" },
+            { "Id": 2, "Title": "Content Marketing" }
+        ],
+        "Hobbies": [
+            { "Id": 1, "Title": "Blogging" },
+            { "Id": 2, "Title": "Cooking" }
+        ],
+        "Languages": [
+            { "Id": 1, "Title": "English" },
+            { "Id": 2, "Title": "Chinese" }
+        ],
+        "Status": "Active",
+        "Education": [
+            {
+                "Id": 1,
+                "level": "Bachelor",
+                "Summary": "BBA in Marketing",
+                "Organization Name": "University E",
+                "Start Date": "2014-05-01",
+                "End date": "2018-05-01"
+            }
+        ],
+        "Accomplishments": [
+            {
+                "Id": 5,
+                "Title": "Accomplishment 5",
+                "Description": "Description of Accomplishment 5",
+                "Date": "2018-05-01"
+            }
+        ],
+        "ContactInfo": {
+            "Mobile No": "3344556677",
+            "Social Media": [
+                { "Id": 1, "Title": "Facebook", "Url": "https://facebook.com/user5", "Type": "facebook" },
+                { "Id": 2, "Title": "LinkedIn", "Url": "https://linkedin.com/in/user5", "Type": "linkedin" }
+            ]
+        }
+    },
+    {
+        "Id": 6,
+        "BasicInfo": {
+            "Name": "User Six",
+            "Summary": "Summary of User Six",
+            "Gender": "Female",
+            "Dob": "1995-06-06",
+            "Marital Status": "Married"
+        },
+        "ProfileImage": {
+            "Is_network_url": true,
+            "image_path": "https://example.com/user6/profile.jpg"
+        },
+        "CoverImage": {
+            "Is_network_url": true,
+            "image_path": "https://example.com/user6/cover.jpg"
+        },
+        "WorkExperience": [
+            {
+                "Id": 6,
+                "Job_title": "HR Manager",
+                "Summary": "Managed HR activities.",
+                "Organization Name": "Company F",
+                "Start Date": "2020-06-01",
+                "End date": "2025-06-01"
+            }
+        ],
+        "Skills": [
+            { "Id": 1, "Title": "Recruitment" },
+            { "Id": 2, "Title": "Employee Relations" }
+        ],
+        "Hobbies": [
+            { "Id": 1, "Title": "Painting" },
+            { "Id": 2, "Title": "Yoga" }
+        ],
+        "Languages": [
+            { "Id": 1, "Title": "English" },
+            { "Id": 2, "Title": "Japanese" }
+        ],
+        "Status": "Active",
+        "Education": [
+            {
+                "Id": 1,
+                "level": "Bachelor",
+                "Summary": "BBA in HR",
+                "Organization Name": "University F",
+                "Start Date": "2015-06-01",
+                "End date": "2019-06-01"
+            }
+        ],
+        "Accomplishments": [
+            {
+                "Id": 6,
+                "Title": "Accomplishment 6",
+                "Description": "Description of Accomplishment 6",
+                "Date": "2019-06-01"
+            }
+        ],
+        "ContactInfo": {
+            "Mobile No": "4455667788",
+            "Social Media": [
+                { "Id": 1, "Title": "Twitter", "Url": "https://twitter.com/user6", "Type": "twitter" },
+                { "Id": 2, "Title": "Instagram", "Url": "https://instagram.com/user6", "Type": "instagram" }
+            ]
+        }
+    },
+    {
+        "Id": 7,
+        "BasicInfo": {
+            "Name": "User Seven",
+            "Summary": "Summary of User Seven",
+            "Gender": "Male",
+            "Dob": "1996-07-07",
+            "Marital Status": "Single"
+        },
+        "ProfileImage": {
+            "Is_network_url": true,
+            "image_path": "https://example.com/user7/profile.jpg"
+        },
+        "CoverImage": {
+            "Is_network_url": true,
+            "image_path": "https://example.com/user7/cover.jpg"
+        },
+        "WorkExperience": [
+            {
+                "Id": 7,
+                "Job_title": "Finance Analyst",
+                "Summary": "Analyzed financial data.",
+                "Organization Name": "Company G",
+                "Start Date": "2021-07-01",
+                "End date": "2026-07-01"
+            }
+        ],
+        "Skills": [
+            { "Id": 1, "Title": "Excel" },
+            { "Id": 2, "Title": "Financial Modeling" }
+        ],
+        "Hobbies": [
+            { "Id": 1, "Title": "Investing" },
+            { "Id": 2, "Title": "Reading" }
+        ],
+        "Languages": [
+            { "Id": 1, "Title": "English" },
+            { "Id": 2, "Title": "Korean" }
+        ],
+        "Status": "Active",
+        "Education": [
+            {
+                "Id": 1,
+                "level": "Bachelor",
+                "Summary": "BBA in Finance",
+                "Organization Name": "University G",
+                "Start Date": "2016-07-01",
+                "End date": "2020-07-01"
+            }
+        ],
+        "Accomplishments": [
+            {
+                "Id": 7,
+                "Title": "Accomplishment 7",
+                "Description": "Description of Accomplishment 7",
+                "Date": "2020-07-01"
+            }
+        ],
+        "ContactInfo": {
+            "Mobile No": "5566778899",
+            "Social Media": [
+                { "Id": 1, "Title": "LinkedIn", "Url": "https://linkedin.com/in/user7", "Type": "linkedin" },
+                { "Id": 2, "Title": "Facebook", "Url": "https://facebook.com/user7", "Type": "facebook" }
+            ]
+        }
+    },
+    {
+        "Id": 8,
+        "BasicInfo": {
+            "Name": "User Eight",
+            "Summary": "Summary of User Eight",
+            "Gender": "Female",
+            "Dob": "1997-08-08",
+            "Marital Status": "Married"
+        },
+        "ProfileImage": {
+            "Is_network_url": true,
+            "image_path": "https://example.com/user8/profile.jpg"
+        },
+        "CoverImage": {
+            "Is_network_url": true,
+            "image_path": "https://example.com/user8/cover.jpg"
+        },
+        "WorkExperience": [
+            {
+                "Id": 8,
+                "Job_title": "Content Writer",
+                "Summary": "Created engaging content.",
+                "Organization Name": "Company H",
+                "Start Date": "2022-08-01",
+                "End date": "2027-08-01"
+            }
+        ],
+        "Skills": [
+            { "Id": 1, "Title": "Copywriting" },
+            { "Id": 2, "Title": "SEO" }
+        ],
+        "Hobbies": [
+            { "Id": 1, "Title": "Writing" },
+            { "Id": 2, "Title": "Reading" }
+        ],
+        "Languages": [
+            { "Id": 1, "Title": "English" },
+            { "Id": 2, "Title": "Spanish" }
+        ],
+        "Status": "Active",
+        "Education": [
+            {
+                "Id": 1,
+                "level": "Master",
+                "Summary": "MFA in Creative Writing",
+                "Organization Name": "University H",
+                "Start Date": "2017-08-01",
+                "End date": "2021-08-01"
+            }
+        ],
+        "Accomplishments": [
+            {
+                "Id": 8,
+                "Title": "Accomplishment 8",
+                "Description": "Description of Accomplishment 8",
+                "Date": "2021-08-01"
+            }
+        ],
+        "ContactInfo": {
+            "Mobile No": "6677889900",
+            "Social Media": [
+                { "Id": 1, "Title": "Medium", "Url": "https://medium.com/@user8", "Type": "medium" },
+                { "Id": 2, "Title": "LinkedIn", "Url": "https://linkedin.com/in/user8", "Type": "linkedin" }
+            ]
+        }
+    },
+    {
+        "Id": 9,
+        "BasicInfo": {
+            "Name": "User Nine",
+            "Summary": "Summary of User Nine",
+            "Gender": "Male",
+            "Dob": "1998-09-09",
+            "Marital Status": "Single"
+        },
+        "ProfileImage": {
+            "Is_network_url": true,
+            "image_path": "https://example.com/user9/profile.jpg"
+        },
+        "CoverImage": {
+            "Is_network_url": true,
+            "image_path": "https://example.com/user9/cover.jpg"
+        },
+        "WorkExperience": [
+            {
+                "Id": 9,
+                "Job_title": "Graphic Designer",
+                "Summary": "Designed visual content.",
+                "Organization Name": "Company I",
+                "Start Date": "2023-09-01",
+                "End date": "2028-09-01"
+            }
+        ],
+        "Skills": [
+            { "Id": 1, "Title": "Photoshop" },
+            { "Id": 2, "Title": "Illustrator" }
+        ],
+        "Hobbies": [
+            { "Id": 1, "Title": "Drawing" },
+            { "Id": 2, "Title": "Gaming" }
+        ],
+        "Languages": [
+            { "Id": 1, "Title": "English" },
+            { "Id": 2, "Title": "Italian" }
+        ],
+        "Status": "Active",
+        "Education": [
+            {
+                "Id": 1,
+                "level": "Bachelor",
+                "Summary": "BFA in Graphic Design",
+                "Organization Name": "University I",
+                "Start Date": "2018-09-01",
+                "End date": "2022-09-01"
+            }
+        ],
+        "Accomplishments": [
+            {
+                "Id": 9,
+                "Title": "Accomplishment 9",
+                "Description": "Description of Accomplishment 9",
+                "Date": "2022-09-01"
+            }
+        ],
+        "ContactInfo": {
+            "Mobile No": "7788990011",
+            "Social Media": [
+                { "Id": 1, "Title": "Instagram", "Url": "https://instagram.com/user9", "Type": "instagram" },
+                { "Id": 2, "Title": "Behance", "Url": "https://behance.net/user9", "Type": "behance" }
+            ]
+        }
+    },
+    {
+        "Id": 10,
+        "BasicInfo": {
+            "Name": "User Ten",
+            "Summary": "Summary of User Ten",
+            "Gender": "Female",
+            "Dob": "1999-10-10",
+            "Marital Status": "Married"
+        },
+        "ProfileImage": {
+            "Is_network_url": true,
+            "image_path": "https://example.com/user10/profile.jpg"
+        },
+        "CoverImage": {
+            "Is_network_url": true,
+            "image_path": "https://example.com/user10/cover.jpg"
+        },
+        "WorkExperience": [
+            {
+                "Id": 10,
+                "Job_title": "Product Manager",
+                "Summary": "Managed product lifecycle.",
+                "Organization Name": "Company J",
+                "Start Date": "2024-10-01",
+                "End date": "2029-10-01"
+            }
+        ],
+        "Skills": [
+            { "Id": 1, "Title": "Agile" },
+            { "Id": 2, "Title": "Scrum" }
+        ],
+        "Hobbies": [
+            { "Id": 1, "Title": "Cooking" },
+            { "Id": 2, "Title": "Cycling" }
+        ],
+        "Languages": [
+            { "Id": 1, "Title": "English" },
+            { "Id": 2, "Title": "Hindi" }
+        ],
+        "Status": "Active",
+        "Education": [
+            {
+                "Id": 1,
+                "level": "Master",
+                "Summary": "MBA",
+                "Organization Name": "University J",
+                "Start Date": "2019-10-01",
+                "End date": "2023-10-01"
+            }
+        ],
+        "Accomplishments": [
+            {
+                "Id": 10,
+                "Title": "Accomplishment 10",
+                "Description": "Description of Accomplishment 10",
+                "Date": "2023-10-01"
+            }
+        ],
+        "ContactInfo": {
+            "Mobile No": "8899001122",
+            "Social Media": [
+                { "Id": 1, "Title": "Twitter", "Url": "https://twitter.com/user10", "Type": "twitter" },
+                { "Id": 2, "Title": "LinkedIn", "Url": "https://linkedin.com/in/user10", "Type": "linkedin" }
+            ]
+        }
+    }
+]
