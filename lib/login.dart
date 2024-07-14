@@ -7,11 +7,15 @@ import 'package:socialapp/datastorage.dart';
 import 'package:socialapp/forgotpassword.dart';
 import 'package:socialapp/models/user.dart';
 import 'package:socialapp/models/user_detail.dart';
-import 'package:socialapp/profile.dart';
+import 'package:socialapp/signup.dart';
+import 'package:socialapp/view_profile.dart';
 
 class LoginPage extends StatefulWidget {
-  final Function()? ontap; //this toggles between sign up and login
-  const LoginPage({super.key, required this.ontap});
+  // final Function()? ontap; //this toggles between sign up and login
+  const LoginPage({
+    super.key,
+    //  required this.ontap
+  });
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -162,7 +166,7 @@ class _LoginPageState extends State<LoginPage> {
                             contentPadding:
                                 const EdgeInsets.symmetric(vertical: 25),
                             labelText: 'Password',
-                            prefixIcon: const Icon(Icons.password),
+                            prefixIcon: const Icon(Icons.lock),
                             suffixIcon: IconButton(
                                 onPressed: () {
                                   setState(() {
@@ -233,7 +237,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             const Text('Remember me'),
                             const SizedBox(
-                              width: 80,
+                              width: 60,
                             ),
                             GestureDetector(
                               onTap: () {
@@ -262,7 +266,14 @@ class _LoginPageState extends State<LoginPage> {
                               width: 4,
                             ),
                             GestureDetector(
-                              onTap: widget.ontap,
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const Signup(),
+                                    ));
+                              },
+                              // widget.ontap,
                               child: const Text(
                                 'Register now!',
                                 style: TextStyle(

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -6,7 +7,7 @@ class UserDetail {
   int? id;
   BasicInfo? basicInfo;
   ProfileImage? profileImage;
-  ProfileImage? coverImage;
+  CoverImage? coverImage;
   List<WorkExperience>? workExperience;
   List<Skills>? skills;
   List<Hobbies>? hobbies;
@@ -39,43 +40,44 @@ class UserDetail {
         ? ProfileImage.fromJson(json['ProfileImage'])
         : null;
     coverImage = json['CoverImage'] != null
-        ? ProfileImage.fromJson(json['CoverImage'])
+    
+        ? CoverImage.fromJson(json['CoverImage'])
         : null;
     if (json['WorkExperience'] != null) {
       workExperience = <WorkExperience>[];
-      json['WorkExperience'].forEach((v) {
-        workExperience!.add(WorkExperience.fromJson(v));
+      json['WorkExperience'].forEach((e) {
+        workExperience!.add(WorkExperience.fromJson(e));
       });
     }
     if (json['Skills'] != null) {
       skills = <Skills>[];
-      json['Skills'].forEach((v) {
-        skills!.add(Skills.fromJson(v));
+      json['Skills'].forEach((e) {
+        skills!.add(Skills.fromJson(e));
       });
     }
     if (json['Hobbies'] != null) {
       hobbies = <Hobbies>[];
-      json['Hobbies'].forEach((v) {
-        hobbies!.add(Hobbies.fromJson(v));
+      json['Hobbies'].forEach((e) {
+        hobbies!.add(Hobbies.fromJson(e));
       });
     }
     if (json['Languages'] != null) {
       languages = <Languages>[];
-      json['Languages'].forEach((v) {
-        languages!.add(Languages.fromJson(v));
+      json['Languages'].forEach((e) {
+        languages!.add(Languages.fromJson(e));
       });
     }
     status = json['Status'];
     if (json['Education'] != null) {
       education = <Education>[];
-      json['Education'].forEach((v) {
-        education!.add(Education.fromJson(v));
+      json['Education'].forEach((e) {
+        education!.add(Education.fromJson(e));
       });
     }
     if (json['Accomplishments'] != null) {
       accomplishments = <Accomplishments>[];
-      json['Accomplishments'].forEach((v) {
-        accomplishments!.add(Accomplishments.fromJson(v));
+      json['Accomplishments'].forEach((e) {
+        accomplishments!.add(Accomplishments.fromJson(e));
       });
     }
     contactInfo = json['ContactInfo'] != null
@@ -96,34 +98,30 @@ class UserDetail {
       data['CoverImage'] = coverImage!.toJson();
     }
     if (workExperience != null) {
-      data['WorkExperience'] =
-          workExperience!.map((v) => v.toJson()).toList();
+      data['WorkExperience'] = workExperience!.map((e) => e.toJson()).toList();
     }
     if (skills != null) {
-      data['Skills'] = skills!.map((v) => v.toJson()).toList();
+      data['Skills'] = skills!.map((e) => e.toJson()).toList();
     }
     if (hobbies != null) {
-      data['Hobbies'] = hobbies!.map((v) => v.toJson()).toList();
+      data['Hobbies'] = hobbies!.map((e) => e.toJson()).toList();
     }
     if (languages != null) {
-      data['Languages'] = languages!.map((v) => v.toJson()).toList();
+      data['Languages'] = languages!.map((e) => e.toJson()).toList();
     }
     data['Status'] = status;
     if (education != null) {
-      data['Education'] = education!.map((v) => v.toJson()).toList();
+      data['Education'] = education!.map((e) => e.toJson()).toList();
     }
     if (accomplishments != null) {
       data['Accomplishments'] =
-          accomplishments!.map((v) => v.toJson()).toList();
+          accomplishments!.map((e) => e.toJson()).toList();
     }
     if (contactInfo != null) {
       data['ContactInfo'] = contactInfo!.toJson();
     }
     return data;
   }
-  // ImageProvider getprofileimage() {
-  //   Uint8List bytes = base
-  // }
 }
 
 class BasicInfo {
@@ -172,6 +170,41 @@ class ProfileImage {
     data['image_path'] = imagePath;
     return data;
   }
+
+  ImageProvider getprofileimage() {
+    if (imagePath != null) {
+      Uint8List bytes = base64Decode(imagePath!);
+      return MemoryImage(bytes);
+    } else {
+      return const AssetImage('assets/images/test.jpg');
+    }
+  }
+}
+
+class CoverImage {
+  bool? isNetworkUrl;
+  String? imagepath;
+  CoverImage({this.imagepath, this.isNetworkUrl});
+
+  CoverImage.fromJson(Map<String, dynamic> json) {
+    isNetworkUrl = json['Is_network_url'];
+    imagepath = json['image_path'];
+  }
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['Is_network_url'] = isNetworkUrl;
+    data['image_path'] = imagepath;
+    return data;
+  }
+
+  // ImageProvider getcoverImage() {
+  //   if (imagepath != null) {
+  //     Uint8List bytes = base64Decode(imagepath!);
+  //     return MemoryImage(bytes);
+  //   } else {
+  //     return const AssetImage('assets/images/test.jpg');
+  //   }
+  // }
 }
 
 class WorkExperience {
@@ -334,8 +367,8 @@ class ContactInfo {
     mobileNo = json['Mobile No'];
     if (json['Social Media'] != null) {
       socialMedia = <SocialMedia>[];
-      json['Social Media'].forEach((v) {
-        socialMedia!.add(SocialMedia.fromJson(v));
+      json['Social Media'].forEach((e) {
+        socialMedia!.add(SocialMedia.fromJson(e));
       });
     }
   }
@@ -344,7 +377,7 @@ class ContactInfo {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['Mobile No'] = mobileNo;
     if (socialMedia != null) {
-      data['Social Media'] = socialMedia!.map((v) => v.toJson()).toList();
+      data['Social Media'] = socialMedia!.map((e) => e.toJson()).toList();
     }
     return data;
   }

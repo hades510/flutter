@@ -11,6 +11,8 @@ class User {
     password = map['Password'];
     name = map['Name'];
   }
+
+  get snapshot => null;
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['Id'] = id;

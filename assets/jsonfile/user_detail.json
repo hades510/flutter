@@ -10,11 +10,11 @@
         },
         "ProfileImage": {
             "Is_network_url": true,
-            "image_path": "https://images.pexels.com/photos/16657410/pexels-photo-16657410/free-photo-of-scooters-parked-in-front-of-building-in-a-tropical-village.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+            "image_path": "https://images.stockcake.com/public/8/d/7/8d7ad827-243c-4c0f-912e-aef97670a14f_large/workshop-safety-gear-stockcake.jpg"
         },
         "CoverImage": {
             "Is_network_url": true,
-            "image_path": "https://example.com/user1/cover.jpg"
+            "image_path": "https://images.stockcake.com/public/b/6/a/b6a1cd67-7266-4c23-a2c3-05e325cde1b5_large/safety-first-gear-stockcake.jpg"
         },
         "WorkExperience": [
             {
@@ -61,7 +61,7 @@
         "ContactInfo": {
             "Mobile No": "1234567890",
             "Social Media": [
-                { "Id": 1, "Title": "Facebook", "Url": "https://facebook.com/user1", "Type": "facebook" },
+                { "Id": 1, "Title": "Facebook", "Url": "https://stackoverflow.com/questions/65883844/flutter-url-launcher-is-not-launching-url-in-release-mode", "Type": "facebook" },
                 { "Id": 2, "Title": "LinkedIn", "Url": "https://linkedin.com/in/user1", "Type": "linkedin" }
             ]
         }
