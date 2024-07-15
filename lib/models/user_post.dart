@@ -1,10 +1,12 @@
+
+
 class UserPost {
   int? postId;
   int? userId;
   int? createdAt;
   String? title;
   String? description;
-  List<Image>? image;
+  List<Postedphoto>? image;
   List<PostLikedBy>? postLikedBy;
 
   UserPost(
@@ -22,10 +24,10 @@ class UserPost {
     createdAt = json['created_at'];
     title = json['title'];
     description = json['description'];
-    if (json['Image'] != null) {
-      image = <Image>[];
-      json['Image'].forEach((v) {
-        image!.add(Image.fromJson(v));
+    if (json['Postedphoto'] != null) {
+      image = <Postedphoto>[];
+      json['Postedphoto'].forEach((v) {
+        image!.add(Postedphoto.fromJson(v));
       });
     }
     if (json['Post_liked_by'] != null) {
@@ -44,7 +46,7 @@ class UserPost {
     data['title'] = title;
     data['description'] = description;
     if (image != null) {
-      data['Image'] = image!.map((v) => v.toJson()).toList();
+      data['Postedphoto'] = image!.map((v) => v.toJson()).toList();
     }
     if (postLikedBy != null) {
       data['Post_liked_by'] = postLikedBy!.map((v) => v.toJson()).toList();
@@ -53,13 +55,13 @@ class UserPost {
   }
 }
 
-class Image {
+class Postedphoto {
   int? id;
   String? url;
 
-  Image({this.id, this.url});
+  Postedphoto({this.id, this.url});
 
-  Image.fromJson(Map<String, dynamic> json) {
+  Postedphoto.fromJson(Map<String, dynamic> json) {
     id = json['Id'];
     url = json['Url'];
   }

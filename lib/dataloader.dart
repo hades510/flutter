@@ -58,7 +58,7 @@ class Dataloader {
 
   Future<List<UserFriendlist>> loadfriend() async {
     String friendjson =
-        await rootBundle.loadString('assets/jsonfile/useer_friendlist.json');
+        await rootBundle.loadString('assets/jsonfile/user_friendlist.json');
     List friendlist = json.decode(friendjson);
     return friendlist.map((e) => UserFriendlist.fromJson(e)).toList();
   }

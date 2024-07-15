@@ -43,6 +43,8 @@ dependencies:
   intl: ^0.19.0
   font_awesome_flutter: ^10.7.0
   syncfusion_flutter_pdfviewer: ^20.1.54
+  url_launcher: ^6.3.0
+  flutter_animate: ^4.5.0
 
 dev_dependencies:
   flutter_test:
@@ -91,9 +93,9 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   # fonts:
-  #   - family: Schyler
+  #   - family: Roboto
   #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: assets/fonts/RobotoSlab-VariableFont_wght.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

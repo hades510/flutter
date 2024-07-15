@@ -1,11 +1,13 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:socialapp/login.dart';
 
 class Signup extends StatefulWidget {
-  final Function()? onTap;
-  const Signup({super.key, required this.onTap});
+  // final Function()? onTap;
+  const Signup({
+    super.key,
+    //  required this.onTap
+  });
 
   @override
   State<Signup> createState() => _LoginPageState();
@@ -212,7 +214,14 @@ class _LoginPageState extends State<Signup> {
                           width: 4,
                         ),
                         GestureDetector(
-                          onTap: widget.onTap,
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const LoginPage(),
+                                ));
+                          },
+                          // widget.onTap,
                           child: const Text(
                             'Login now',
                             style: TextStyle(

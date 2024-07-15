@@ -5,10 +5,14 @@
         "created_at": 1627893600,
         "title": "First Post",
         "description": "This is my first post!",
-        "Image": [
+        "Postedphoto": [
             {
                 "Id": 1,
-                "Url": "https://example.com/image1.jpg"
+                "Url": "https://images.stockcake.com/public/a/8/e/a8eedc01-cfc1-40b6-bf2d-53a591333d35_large/safety-helmet-display-stockcake.jpg"
+            },
+            {
+                "Id": 1,
+                "Url": "https://images.stockcake.com/public/a/8/e/a8eedc01-cfc1-40b6-bf2d-53a591333d35_large/safety-helmet-display-stockcake.jpg"
             }
         ],
         "Post_liked_by": [
@@ -28,10 +32,10 @@
         "created_at": 1627979200,
         "title": "Good Morning",
         "description": "Have a great day everyone!",
-        "Image": [
+        "Postedphoto": [
             {
                 "Id": 2,
-                "Url": "https://example.com/image2.jpg"
+                "Url": "https://images.stockcake.com/public/a/8/e/a8eedc01-cfc1-40b6-bf2d-53a591333d35_large/safety-helmet-display-stockcake.jpg"
             }
         ],
         "Post_liked_by": [
@@ -51,10 +55,10 @@
         "created_at": 1628064800,
         "title": "Amazing Sunset",
         "description": "Look at this beautiful sunset!",
-        "Image": [
+        "Postedphoto": [
             {
                 "Id": 3,
-                "Url": "https://example.com/image3.jpg"
+                "Url": "https://images.stockcake.com/public/a/8/e/a8eedc01-cfc1-40b6-bf2d-53a591333d35_large/safety-helmet-display-stockcake.jpg"
             }
         ],
         "Post_liked_by": [
@@ -74,10 +78,10 @@
         "created_at": 1628150400,
         "title": "Delicious Food",
         "description": "Check out this delicious meal I had!",
-        "Image": [
+        "Postedphoto": [
             {
                 "Id": 4,
-                "Url": "https://example.com/image4.jpg"
+                "Url": "https://images.stockcake.com/public/a/8/e/a8eedc01-cfc1-40b6-bf2d-53a591333d35_large/safety-helmet-display-stockcake.jpg"
             }
         ],
         "Post_liked_by": [
@@ -97,10 +101,10 @@
         "created_at": 1628236000,
         "title": "New Job",
         "description": "I got a new job today!",
-        "Image": [
+        "Postedphoto": [
             {
                 "Id": 5,
-                "Url": "https://example.com/image5.jpg"
+                "Url": "https://images.stockcake.com/public/a/8/e/a8eedc01-cfc1-40b6-bf2d-53a591333d35_large/safety-helmet-display-stockcake.jpg"
             }
         ],
         "Post_liked_by": [
@@ -120,10 +124,10 @@
         "created_at": 1628321600,
         "title": "Vacation Time",
         "description": "Off to the beach for a week!",
-        "Image": [
+        "Postedphoto": [
             {
                 "Id": 6,
-                "Url": "https://example.com/image6.jpg"
+                "Url": "https://images.stockcake.com/public/a/8/e/a8eedc01-cfc1-40b6-bf2d-53a591333d35_large/safety-helmet-display-stockcake.jpg"
             }
         ],
         "Post_liked_by": [
@@ -143,10 +147,10 @@
         "created_at": 1628407200,
         "title": "Morning Run",
         "description": "Just finished a great run!",
-        "Image": [
+        "Postedphoto": [
             {
                 "Id": 7,
-                "Url": "https://example.com/image7.jpg"
+                "Url": "https://images.stockcake.com/public/a/8/e/a8eedc01-cfc1-40b6-bf2d-53a591333d35_large/safety-helmet-display-stockcake.jpg"
             }
         ],
         "Post_liked_by": [
@@ -166,10 +170,10 @@
         "created_at": 1628492800,
         "title": "Happy Birthday",
         "description": "It's my birthday today!",
-        "Image": [
+        "Postedphoto": [
             {
                 "Id": 8,
-                "Url": "https://example.com/image8.jpg"
+                "Url": "https://images.stockcake.com/public/a/8/e/a8eedc01-cfc1-40b6-bf2d-53a591333d35_large/safety-helmet-display-stockcake.jpg"
             }
         ],
         "Post_liked_by": [
@@ -189,10 +193,10 @@
         "created_at": 1628578400,
         "title": "Graduated!",
         "description": "I graduated from college today!",
-        "Image": [
+        "Postedphoto": [
             {
                 "Id": 9,
-                "Url": "https://example.com/image9.jpg"
+                "Url": "https://images.stockcake.com/public/a/8/e/a8eedc01-cfc1-40b6-bf2d-53a591333d35_large/safety-helmet-display-stockcake.jpg"
             }
         ],
         "Post_liked_by": [
@@ -212,10 +216,10 @@
         "created_at": 1628664000,
         "title": "Good Night",
         "description": "Good night everyone!",
-        "Image": [
+        "Postedphoto": [
             {
                 "Id": 10,
-                "Url": "https://example.com/image10.jpg"
+                "Url": "https://images.stockcake.com/public/a/8/e/a8eedc01-cfc1-40b6-bf2d-53a591333d35_large/safety-helmet-display-stockcake.jpg"
             }
         ],
         "Post_liked_by": [
