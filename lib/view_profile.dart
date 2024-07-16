@@ -191,8 +191,11 @@ class _ProfileState extends State<Profile> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Stack(
+            /// The above code is setting the `clipBehavior` property of an object to `Clip.none`. This
+            /// means that clipping behavior is disabled for the object, allowing it to be drawn outside
+            /// its bounds.
             clipBehavior: Clip
-                .none, //enables the overlapping effect to the profilepicture
+                .none, //enabled the overlapping effect to the profilepicture
             children: [
               SizedBox(
                 height: 200,
@@ -284,7 +287,7 @@ class _ProfileState extends State<Profile> {
                       ...userDetail
                           .workExperience! //here spread operator is used to insert all the elements to another collection
                           .map((work) => _buildWorkExperience(work))
-                          .toList(),
+                          ,
                     ],
                   ),
                 ),
@@ -318,7 +321,7 @@ class _ProfileState extends State<Profile> {
                       _buildSectionTitle('Education'),
                       ...userDetail.education!
                           .map((education) => _buildEducation(education))
-                          .toList(),
+                          ,
                     ],
                   ),
                 ),
@@ -329,7 +332,7 @@ class _ProfileState extends State<Profile> {
                     _buildSectionTitle('Accomplishments'),
                     ...userDetail.accomplishments!
                         .map((acc) => _buildAccomplishment(acc))
-                        .toList(),
+                        ,
                   ],
                 )),
                 const SizedBox(height: 16),
@@ -360,7 +363,7 @@ class _ProfileState extends State<Profile> {
                     _buildSectionTitle('Social Media'),
                     ...userDetail.contactInfo!.socialMedia!
                         .map((social) => _buildSocialMedia(social))
-                        .toList(),
+                        ,
                   ],
                 )),
               ],

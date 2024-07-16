@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:socialapp/home.dart';
 import 'package:socialapp/newsfeed.dart';
 
 class Splash extends StatefulWidget {
@@ -17,11 +18,11 @@ class _SplashState extends State<Splash> {
   void initState() {
     super.initState();
     Timer(
-        Duration(seconds: 2),
-        () => Navigator.push(
+       const Duration(seconds: 2),
+        () => Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => const Newsfeed(),
+              builder: (context) => const Home(),
             )));
   }
 

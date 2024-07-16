@@ -15,6 +15,7 @@ import 'package:socialapp/view_profile.dart';
 class Newsfeed extends StatefulWidget {
   // final UserPost post;
   // final UserDetail userDetail;
+
   // final User user;
   // final List<UserPost> userpost;
   const Newsfeed({
@@ -29,32 +30,32 @@ class Newsfeed extends StatefulWidget {
 class _HomeState extends State<Newsfeed> {
   @override
   Widget build(BuildContext context) {
-    User user = User();
-    UserDetail userDetail = UserDetail();
-    UserPost post = UserPost();
+    // User user = User();
+    // UserDetail userDetail = UserDetail();
+    // UserPost post = UserPost();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text('News Feed'),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginPage(),
-                    ));
-              },
-              child: const Icon(
-                Icons.login_outlined,
-                size: 50,
-              ),
-            ),
-          ],
-        ),
-      ),
+      // appBar: AppBar(
+      //   title: Row(
+      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //     children: [
+      //       const Text('News Feed'),
+      //       GestureDetector(
+      //         onTap: () {
+      //           Navigator.push(
+      //               context,
+      //               MaterialPageRoute(
+      //                 builder: (context) => const LoginPage(),
+      //               ));
+      //         },
+      //         child: const Icon(
+      //           Icons.login_outlined,
+      //           size: 50,
+      //         ),
+      //       ),
+      //     ],
+      //   ),
+      // ),
       body: FutureBuilder(
         future: _fetchuserpost(),
         builder: (context, snapshot) {
@@ -70,6 +71,7 @@ class _HomeState extends State<Newsfeed> {
             return Newscreen(
               post: snapshot.data!['posts'], //(fetched the data tin this key)
               user: snapshot.data!['users'],
+              userdetail: snapshot.data!['userdetails'],
               category: snapshot.data!['categories'],
               friend: snapshot.data!['friends'],
               courses: snapshot.data!['courses'],
@@ -83,7 +85,9 @@ class _HomeState extends State<Newsfeed> {
 
   Future _fetchuserpost() async {
     Dataloader dataloader = Dataloader();
+
     List<UserPost> posts = await dataloader.loadpost(); //loaded the data and
+    List<UserDetail> userdetail = await dataloader.loaduserdetail();
     List<User> user = await dataloader.loaduser();
     List<UserFriendlist> friendlist = await dataloader.loadfriend();
     List<Instructor> instructor = await dataloader.loadinstructor();
@@ -92,6 +96,7 @@ class _HomeState extends State<Newsfeed> {
 
     return {
       'users': user, //(passed the data to this keys)
+      'userdetails': userdetail,
       'posts': posts,
       'friends': friendlist,
       'instructors': instructor,

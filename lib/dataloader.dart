@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socialapp/models/course_categories.dart';
 import 'package:socialapp/models/courses.dart';
 import 'package:socialapp/models/courses_by_category.dart';
 import 'package:socialapp/models/instructor.dart';
@@ -37,12 +38,12 @@ class Dataloader {
     return UserDetail.fromJson(json);
   }
 
-  // Future<List<UserDetail>> loaddetail() async {
-  //   String userdetailjson =
-  //       await rootBundle.loadString('assets/jsonfile/user_detail.json');
-  //   List userdetail = json.decode(userdetailjson);
-  //   return userdetail.map((e) => UserDetail.fromJson(e)).toList();
-  // }
+  Future<List<UserDetail>> loaduserdetail() async {
+    String userdetailjson =
+        await rootBundle.loadString('assets/jsonfile/user_detail.json');
+    List userdetail = json.decode(userdetailjson);
+    return userdetail.map((e) => UserDetail.fromJson(e)).toList();
+  }
 
   Future<List<UserPost>> loadpost() async {
     String postjson =
@@ -82,5 +83,12 @@ class Dataloader {
         await rootBundle.loadString('assets/jsonfile/instructor.json');
     List instructorlist = json.decode(instructorjson);
     return instructorlist.map((e) => Instructor.fromJson(e)).toList();
+  }
+
+  Future<List<CCategory>> loadcoursecategory() async {
+    String coursecategoryjson =
+        await rootBundle.loadString('assets/jsonfile/course_categories.json');
+    List coursecategorylist = json.decode(coursecategoryjson);
+    return coursecategorylist.map((e) => CCategory.fromJson(e)).toList();
   }
 }

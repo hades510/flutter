@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socialapp/models/course_categories.dart';
 import 'package:socialapp/models/courses.dart';
 import 'package:socialapp/models/courses_by_category.dart';
 import 'package:socialapp/models/instructor.dart';
@@ -118,14 +119,14 @@ class DataStorage {
   }
 
 //courses by category
-  Future storecoursescategory(List<CoursesCategory> coursescategory) async {
+  Future storecoursesby(List<CoursesCategory> coursescategory) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String coursescategoryjson =
         jsonEncode(coursescategory.map((e) => e.toJson()).toList());
     await prefs.setString('coursescategory', coursescategoryjson);
   }
 
-  Future<List<CoursesCategory>> getcoursesCategory() async {
+  Future<List<CoursesCategory>> getcoursesby() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? coursescategory = prefs.getString('coursescategory');
     if (coursescategory != null) {
@@ -133,6 +134,24 @@ class DataStorage {
       return coursescategorylist
           .map((e) => CoursesCategory.fromJson(e))
           .toList();
+    } else {
+      return [];
+    }
+  }
+
+  //course_categories
+  Future storecoursecategory(List<CCategory> category) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? categoryjson = jsonEncode(category.map((e) => e.toJson()).toList());
+    await prefs.setString('category', categoryjson);
+  }
+
+  Future<List<CCategory>> getcoursecategory() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? category = prefs.getString('category');
+    if (category!= null) {
+      List categorylist = jsonDecode(category);
+      return categorylist.map((e) => CCategory.fromJson(e)).toList();
     } else {
       return [];
     }

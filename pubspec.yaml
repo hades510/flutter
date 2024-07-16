@@ -78,6 +78,7 @@ flutter:
     - assets/jsonfile/instructor.json
     - assets/jsonfile/courses.json
     - assets/jsonfile/courses_by_categories.json
+    - assets/jsonfile/course_categories.json
     - assets/jsonfile/
   #   - images/a_dot_ham.jpeg
 

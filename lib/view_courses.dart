@@ -75,9 +75,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:socialapp/dataloader.dart';
-import 'package:socialapp/models/course_categories.dart';
+// import 'package:socialapp/models/course_categories.dart';
 import 'package:socialapp/models/courses.dart';
 import 'package:socialapp/models/instructor.dart';
+
+import 'models/course_categories.dart';
 
 class CourseDetailScreen extends StatefulWidget {
   const CourseDetailScreen({
@@ -108,7 +110,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
             return Detailscreen(
               coursedetail: snapshot.data!['coursedetail'],
               teacher: snapshot.data!['instructor'],
-              category: snapshot.data![''],
+              category: snapshot.data!['category'],
             );
           }
         },
@@ -160,8 +162,13 @@ class _DetailscreenState extends State<Detailscreen> {
     return widget.teacher.firstWhere((element) => element.id == id);
   }
 
+  CCategory getcourseid(int id) {
+    return widget.category.firstWhere((element) => element.id == id);
+  }
+
   Widget _builder(Courses model) {
     Instructor teach = getid(model.id!);
+    CCategory category = getcourseid(model.id!);
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Container(

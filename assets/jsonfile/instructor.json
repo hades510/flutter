@@ -1,162 +1,23 @@
 [
-    {
-        "Id": 1,
-        "Name": "John Doe",
-        "Image": "assets/images/john_doe.jpg",
-        "Field": ["Web Development", "JavaScript"],
-        "Work_experience": 5.5,
-        "Summary": "Experienced web developer specializing in JavaScript frameworks and libraries."
-    },
-    {
-        "Id": 2,
-        "Name": "Jane Smith",
-        "Image": "assets/images/jane_smith.jpg",
-        "Field": ["Data Science", "Python"],
-        "Work_experience": 8.0,
-        "Summary": "Data scientist with extensive experience in Python and machine learning."
-    },
-    {
-        "Id": 3,
-        "Name": "Michael Johnson",
-        "Image": "assets/images/michael_johnson.jpg",
-        "Field": ["Mobile Development", "Flutter"],
-        "Work_experience": 4.2,
-        "Summary": "Mobile app developer with a focus on Flutter and cross-platform development."
-    },
-    {
-        "Id": 4,
-        "Name": "Emily Davis",
-        "Image": "assets/images/emily_davis.jpg",
-        "Field": ["Artificial Intelligence", "Machine Learning"],
-        "Work_experience": 6.7,
-        "Summary": "AI researcher and developer with a passion for machine learning and neural networks."
-    },
-    {
-        "Id": 5,
-        "Name": "David Wilson",
-        "Image": "assets/images/david_wilson.jpg",
-        "Field": ["Cyber Security", "Ethical Hacking"],
-        "Work_experience": 7.3,
-        "Summary": "Cyber security expert with a background in ethical hacking and network security."
-    },
-    {
-        "Id": 6,
-        "Name": "Sarah Brown",
-        "Image": "assets/images/sarah_brown.jpg",
-        "Field": ["Cloud Computing", "AWS"],
-        "Work_experience": 9.1,
-        "Summary": "Cloud architect specializing in AWS and cloud infrastructure management."
-    },
-    {
-        "Id": 7,
-        "Name": "James Taylor",
-        "Image": "assets/images/james_taylor.jpg",
-        "Field": ["Blockchain", "Cryptocurrency"],
-        "Work_experience": 5.0,
-        "Summary": "Blockchain developer with a deep understanding of cryptocurrency and decentralized applications."
-    },
-    {
-        "Id": 8,
-        "Name": "Jessica Anderson",
-        "Image": "assets/images/jessica_anderson.jpg",
-        "Field": ["Game Development", "Unity"],
-        "Work_experience": 3.8,
-        "Summary": "Game developer with expertise in Unity and game design."
-    },
-    {
-        "Id": 9,
-        "Name": "Matthew Thomas",
-        "Image": "assets/images/matthew_thomas.jpg",
-        "Field": ["Machine Learning", "TensorFlow"],
-        "Work_experience": 4.5,
-        "Summary": "Machine learning engineer specializing in TensorFlow and deep learning models."
-    },
-    {
-        "Id": 10,
-        "Name": "Olivia Martinez",
-        "Image": "assets/images/olivia_martinez.jpg",
-        "Field": ["Digital Marketing", "SEO"],
-        "Work_experience": 6.2,
-        "Summary": "Digital marketing strategist with a focus on SEO and online advertising."
-    },
-    {
-        "Id": 11,
-        "Name": "Daniel Lee",
-        "Image": "assets/images/daniel_lee.jpg",
-        "Field": ["UI/UX Design", "Adobe XD"],
-        "Work_experience": 5.7,
-        "Summary": "UI/UX designer with experience in Adobe XD and user-centered design."
-    },
-    {
-        "Id": 12,
-        "Name": "Sophia Harris",
-        "Image": "assets/images/sophia_harris.jpg",
-        "Field": ["DevOps", "Docker"],
-        "Work_experience": 8.4,
-        "Summary": "DevOps engineer with expertise in Docker, CI/CD pipelines, and automation."
-    },
-    {
-        "Id": 13,
-        "Name": "Alexander Clark",
-        "Image": "assets/images/alexander_clark.jpg",
-        "Field": ["Project Management", "Agile"],
-        "Work_experience": 10.0,
-        "Summary": "Project manager with a strong background in Agile methodologies and team leadership."
-    },
-    {
-        "Id": 14,
-        "Name": "Mia Lewis",
-        "Image": "assets/images/mia_lewis.jpg",
-        "Field": ["Software Testing", "Automation"],
-        "Work_experience": 7.5,
-        "Summary": "Software tester with a focus on automation and quality assurance."
-    },
-    {
-        "Id": 15,
-        "Name": "William Robinson",
-        "Image": "assets/images/william_robinson.jpg",
-        "Field": ["Big Data", "Hadoop"],
-        "Work_experience": 6.0,
-        "Summary": "Big data analyst with expertise in Hadoop and data processing."
-    },
-    {
-        "Id": 16,
-        "Name": "Ava Walker",
-        "Image": "assets/images/ava_walker.jpg",
-        "Field": ["Robotics", "ROS"],
-        "Work_experience": 5.3,
-        "Summary": "Robotics engineer with experience in ROS and robotic automation."
-    },
-    {
-        "Id": 17,
-        "Name": "Ethan Hall",
-        "Image": "assets/images/ethan_hall.jpg",
-        "Field": ["Internet of Things (IoT)", "Arduino"],
-        "Work_experience": 4.1,
-        "Summary": "IoT developer with a background in Arduino and smart device integration."
-    },
-    {
-        "Id": 18,
-        "Name": "Isabella Allen",
-        "Image": "assets/images/isabella_allen.jpg",
-        "Field": ["Quantum Computing", "Qiskit"],
-        "Work_experience": 3.5,
-        "Summary": "Quantum computing researcher with expertise in Qiskit and quantum algorithms."
-    },
-    {
-        "Id": 19,
-        "Name": "Jacob Young",
-        "Image": "assets/images/jacob_young.jpg",
-        "Field": ["Augmented Reality (AR)", "ARKit"],
-        "Work_experience": 6.8,
-        "Summary": "AR developer with experience in ARKit and augmented reality applications."
-    },
-    {
-        "Id": 20,
-        "Name": "Emma King",
-        "Image": "assets/images/emma_king.jpg",
-        "Field": ["Virtual Reality (VR)", "Unity"],
-        "Work_experience": 4.9,
-        "Summary": "VR developer specializing in Unity and virtual reality environments."
-    }
-]
+    { "Id": 1, "Name": "John Doe", "Image": "assets/images/john_doe.png", "Field": ["Programming", "IT"], "Work_experience": 10.5, "Summary": "Expert in Programming and IT with over 10 years of experience." },
+    { "Id": 2, "Name": "Jane Smith", "Image": "assets/images/jane_smith.png", "Field": ["Data Science", "Machine Learning"], "Work_experience": 8.0, "Summary": "Data Scientist with a focus on Machine Learning and AI." },
+    { "Id": 3, "Name": "Emily Davis", "Image": "assets/images/emily_davis.png", "Field": ["Design", "UI/UX"], "Work_experience": 5.5, "Summary": "Creative designer specializing in UI/UX with a passion for user-centered design." },
+    { "Id": 4, "Name": "Michael Brown", "Image": "assets/images/michael_brown.png", "Field": ["Marketing", "SEO"], "Work_experience": 12.0, "Summary": "Marketing guru with extensive experience in SEO and digital marketing strategies." },
+    { "Id": 5, "Name": "Laura Wilson", "Image": "assets/images/laura_wilson.png", "Field": ["Business", "Management"], "Work_experience": 9.0, "Summary": "Business management expert with a knack for organizational development." },
+    { "Id": 6, "Name": "Robert Taylor", "Image": "assets/images/robert_taylor.png", "Field": ["Photography", "Videography"], "Work_experience": 7.0, "Summary": "Professional photographer and videographer with a keen eye for detail." },
+    { "Id": 7, "Name": "Jessica Moore", "Image": "assets/images/jessica_moore.png", "Field": ["Music", "Production"], "Work_experience": 6.5, "Summary": "Music producer with experience in audio engineering and production." },
+    { "Id": 8, "Name": "William Anderson", "Image": "assets/images/william_anderson.png", "Field": ["Personal Development", "Leadership"], "Work_experience": 10.0, "Summary": "Personal development coach specializing in leadership and motivation." },
+    { "Id": 9, "Name": "Olivia Martinez", "Image": "assets/images/olivia_martinez.png", "Field": ["Health & Fitness", "Nutrition"], "Work_experience": 8.0, "Summary": "Fitness trainer and nutritionist with a holistic approach to health." },
+    { "Id": 10, "Name": "James Harris", "Image": "assets/images/james_harris.png", "Field": ["Finance", "Accounting"], "Work_experience": 15.0, "Summary": "Financial expert with a deep understanding of accounting principles and investment strategies." },
+    { "Id": 11, "Name": "Sophia Clark", "Image": "assets/images/sophia_clark.png", "Field": ["IT & Software", "Cloud Computing"], "Work_experience": 11.0, "Summary": "IT specialist with expertise in cloud computing and software development." },
+    { "Id": 12, "Name": "Daniel Lee", "Image": "assets/images/daniel_lee.png", "Field": ["Lifestyle", "Wellness"], "Work_experience": 7.5, "Summary": "Lifestyle coach with a focus on wellness and work-life balance." },
+    { "Id": 13, "Name": "Grace Thompson", "Image": "assets/images/grace_thompson.png", "Field": ["Office Productivity", "Software"], "Work_experience": 9.5, "Summary": "Productivity expert with extensive knowledge in office software tools." },
+    { "Id": 14, "Name": "Henry White", "Image": "assets/images/henry_white.png", "Field": ["Teaching", "Academics"], "Work_experience": 13.0, "Summary": "Academic professional with a passion for teaching and curriculum development." },
+    { "Id": 15, "Name": "Mia Lewis", "Image": "assets/images/mia_lewis.png", "Field": ["Engineering", "Robotics"], "Work_experience": 6.0, "Summary": "Engineer specializing in robotics and automation technologies." },
+    { "Id": 16, "Name": "Liam Walker", "Image": "assets/images/liam_walker.png", "Field": ["Architecture", "Design"], "Work_experience": 8.5, "Summary": "Architect with a strong background in design and urban planning." },
+    { "Id": 17, "Name": "Chloe Hall", "Image": "assets/images/chloe_hall.png", "Field": ["Law", "Criminal Justice"], "Work_experience": 10.0, "Summary": "Legal expert with a focus on criminal justice and law enforcement." },
+    { "Id": 18, "Name": "Benjamin Allen", "Image": "assets/images/benjamin_allen.png", "Field": ["Psychology", "Counseling"], "Work_experience": 9.5, "Summary": "Psychologist and counselor with a deep understanding of human behavior." },
+    { "Id": 19, "Name": "Ava Scott", "Image": "assets/images/ava_scott.png", "Field": ["Writing", "Editing"], "Work_experience": 12.0, "Summary": "Professional writer and editor with a talent for storytelling." },
+    { "Id": 20, "Name": "Noah Green", "Image": "assets/images/noah_green.png", "Field": ["Art & Crafts", "Design"], "Work_experience": 5.0, "Summary": "Artist and craftsman with a creative approach to design and craftsmanship." }
+  ]
+  

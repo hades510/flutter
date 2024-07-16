@@ -1,502 +1,373 @@
 [
     {
-        "Id": 1,
-        "Title": "Flutter Development",
-        "Subtitle": "Build Beautiful Native Apps",
-        "Description": "Learn to build native Android and iOS apps using Flutter.",
-        "Overview": "This course covers Flutter basics, UI design, state management, and more.",
-        "Instructor": [{"instructor_id": 3}],
-        "Image": "assets/images/flutter_course.jpg",
-        "Price": 49.99,
-        "Skills": ["Flutter", "Dart", "UI Design"],
-        "Is_top_course": true,
-        "Is_recently_viewed_course": false,
-        "Syllabus": [
-            {
-                "Id": 1,
-                "Title": "Introduction to Flutter",
-                "Summary": "Overview of Flutter and its advantages.",
-                "Total content": 10,
-                "Hours to completed": 2.5
-            },
-            {
-                "Id": 2,
-                "Title": "Building UI with Flutter",
-                "Summary": "Creating beautiful user interfaces with Flutter widgets.",
-                "Total content": 15,
-                "Hours to completed": 4.0
-            },
-            {
-                "Id": 3,
-                "Title": "State Management",
-                "Summary": "Managing state in Flutter applications.",
-                "Total content": 12,
-                "Hours to completed": 3.0
-            }
-        ],
-        "FAQ": [
-            {
-                "Id": 1,
-                "Title": "What prerequisites are required for this course?",
-                "Subtitle": "",
-                "Description": "Basic knowledge of programming is recommended."
-            },
-            {
-                "Id": 2,
-                "Title": "Is this course suitable for beginners?",
-                "Subtitle": "",
-                "Description": "Yes, this course is designed for beginners to learn Flutter."
-            }
-        ]
+      "Id": 1,
+      "Title": "Introduction to Programming",
+      "Subtitle": "Learn the basics of programming",
+      "Description": "This course covers the fundamentals of programming, including variables, loops, and functions.",
+      "Overview": "In this course, you'll learn the basics of programming. We'll cover variables, loops, and functions.",
+      "Instructor": [{"instructor_id": 1}],
+      "Image": "https://docs.flutter.dev/assets/images/docs/cover/beginning-app-development-with-flutter.jpg",
+      "Price": 49.99,
+      "Skills": ["Programming", "Problem Solving", "Algorithms"],
+      "Is_top_course": true,
+      "Is_recently_viewed_course": false,
+      "Syllabus": [
+        {
+          "Id": 1,
+          "Title": "Introduction",
+          "Summary": "Introduction to the course",
+          "Total_content": 5,
+          "Hours_to_completed": 1.5
+        },
+        {
+          "Id": 2,
+          "Title": "Variables",
+          "Summary": "Understanding variables",
+          "Total_content": 8,
+          "Hours_to_completed": 2.0
+        }
+      ],
+      "FAQ": [
+        {
+          "Id": 1,
+          "Title": "What is programming?",
+          "Subtitle": "An introduction to programming",
+          "Description": "Programming is the process of creating a set of instructions that tell a computer how to perform a task."
+        }
+      ]
     },
     {
-        "Id": 2,
-        "Title": "Python for Data Science",
-        "Subtitle": "Analyze Data with Python",
-        "Description": "Learn Python programming for data analysis and visualization.",
-        "Overview": "Explore data science libraries and techniques using Python.",
-        "Instructor": [{"instructor_id": 2}],
-        "Image": "assets/images/python_data_science.jpg",
-        "Price": 59.99,
-        "Skills": ["Python", "Data Analysis", "Machine Learning"],
-        "Is_top_course": true,
-        "Is_recently_viewed_course": false,
-        "Syllabus": [
-            {
-                "Id": 1,
-                "Title": "Introduction to Python",
-                "Summary": "Basic concepts of Python programming.",
-                "Total content": 8,
-                "Hours to completed": 2.0
-            },
-            {
-                "Id": 2,
-                "Title": "Data Manipulation with Pandas",
-                "Summary": "Using Pandas for data manipulation and analysis.",
-                "Total content": 10,
-                "Hours to completed": 3.0
-            },
-            {
-                "Id": 3,
-                "Title": "Machine Learning Basics",
-                "Summary": "Fundamentals of machine learning with Python.",
-                "Total content": 12,
-                "Hours to completed": 4.0
-            }
-        ],
-        "FAQ": [
-            {
-                "Id": 1,
-                "Title": "What software do I need for this course?",
-                "Subtitle": "",
-                "Description": "You will need Python and Jupyter Notebook installed."
-            },
-            {
-                "Id": 2,
-                "Title": "Do I need prior programming experience?",
-                "Subtitle": "",
-                "Description": "Some programming experience will be helpful, but not required."
-            }
-        ]
+      "Id": 2,
+      "Title": "Data Science with Python",
+      "Subtitle": "Master data science using Python",
+      "Description": "This course will teach you data science concepts and techniques using Python.",
+      "Overview": "Learn data science concepts and techniques using Python. This course covers data manipulation, analysis, and visualization.",
+      "Instructor": [{"instructor_id": 2}],
+      "Image": "https://docs.flutter.dev/assets/images/docs/cover/beginning-app-development-with-flutter.jpg",
+      "Price": 99.99,
+      "Skills": ["Data Science", "Python", "Data Analysis"],
+      "Is_top_course": true,
+      "Is_recently_viewed_course": true,
+      "Syllabus": [
+        {
+          "Id": 3,
+          "Title": "Introduction to Data Science",
+          "Summary": "Overview of data science",
+          "Total_content": 10,
+          "Hours_to_completed": 3.0
+        },
+        {
+          "Id": 4,
+          "Title": "Data Manipulation",
+          "Summary": "Working with data in Python",
+          "Total_content": 15,
+          "Hours_to_completed": 4.0
+        }
+      ],
+      "FAQ": [
+        {
+          "Id": 2,
+          "Title": "What is data science?",
+          "Subtitle": "An introduction to data science",
+          "Description": "Data science is a multidisciplinary field that uses scientific methods, processes, algorithms, and systems to extract knowledge and insights from structured and unstructured data."
+        }
+      ]
     },
     {
-        "Id": 3,
-        "Title": "Web Development Bootcamp",
-        "Subtitle": "Build Modern Websites",
-        "Description": "Comprehensive course covering HTML, CSS, JavaScript, and more.",
-        "Overview": "Learn full-stack web development with hands-on projects and exercises.",
-        "Instructor": [{"instructor_id": 1}],
-        "Image": "assets/images/web_development.jpg",
-        "Price": 79.99,
-        "Skills": ["HTML", "CSS", "JavaScript", "React", "Node.js"],
-        "Is_top_course": true,
-        "Is_recently_viewed_course": false,
-        "Syllabus": [
-            {
-                "Id": 1,
-                "Title": "HTML Fundamentals",
-                "Summary": "Learn the basics of HTML and web page structure.",
-                "Total content": 12,
-                "Hours to completed": 3.0
-            },
-            {
-                "Id": 2,
-                "Title": "CSS Styling",
-                "Summary": "Styling web pages using CSS techniques and frameworks.",
-                "Total content": 15,
-                "Hours to completed": 4.0
-            },
-            {
-                "Id": 3,
-                "Title": "JavaScript Essentials",
-                "Summary": "Fundamental concepts and syntax of JavaScript programming.",
-                "Total content": 20,
-                "Hours to completed": 5.0
-            }
-        ],
-        "FAQ": [
-            {
-                "Id": 1,
-                "Title": "Is this course suitable for beginners?",
-                "Subtitle": "",
-                "Description": "Yes, this course is designed for beginners to learn web development."
-            },
-            {
-                "Id": 2,
-                "Title": "Will I learn backend development as well?",
-                "Subtitle": "",
-                "Description": "Yes, the course covers both frontend and backend aspects of web development."
-            }
-        ]
+      "Id": 3,
+      "Title": "Graphic Design for Beginners",
+      "Subtitle": "Learn the basics of graphic design",
+      "Description": "This course introduces the principles of graphic design and the tools used to create visual content.",
+      "Overview": "Learn the basics of graphic design, including the principles of design and the tools used to create visual content.",
+      "Instructor": [{"instructor_id": 3}],
+      "Image": "https://docs.flutter.dev/assets/images/docs/cover/beginning-app-development-with-flutter.jpg",
+      "Price": 29.99,
+      "Skills": ["Design", "Creativity", "Graphic Design"],
+      "Is_top_course": false,
+      "Is_recently_viewed_course": true,
+      "Syllabus": [
+        {
+          "Id": 5,
+          "Title": "Introduction to Graphic Design",
+          "Summary": "Overview of graphic design",
+          "Total_content": 6,
+          "Hours_to_completed": 2.5
+        },
+        {
+          "Id": 6,
+          "Title": "Design Principles",
+          "Summary": "Understanding design principles",
+          "Total_content": 12,
+          "Hours_to_completed": 3.5
+        }
+      ],
+      "FAQ": [
+        {
+          "Id": 3,
+          "Title": "What is graphic design?",
+          "Subtitle": "An introduction to graphic design",
+          "Description": "Graphic design is the process of visual communication and problem-solving through the use of typography, photography, and illustration."
+        }
+      ]
     },
     {
-        "Id": 4,
-        "Title": "Machine Learning Algorithms",
-        "Subtitle": "Master AI Techniques",
-        "Description": "Explore various machine learning algorithms and their applications.",
-        "Overview": "Learn about supervised, unsupervised, and reinforcement learning algorithms.",
-        "Instructor": [{"instructor_id": 9}],
-        "Image": "assets/images/machine_learning.jpg",
-        "Price": 69.99,
-        "Skills": ["Machine Learning", "Python", "Data Science"],
-        "Is_top_course": false,
-        "Is_recently_viewed_course": false,
-        "Syllabus": [
-            {
-                "Id": 1,
-                "Title": "Introduction to Machine Learning",
-                "Summary": "Overview of machine learning concepts and types of algorithms.",
-                "Total content": 10,
-                "Hours to completed": 3.0
-            },
-            {
-                "Id": 2,
-                "Title": "Supervised Learning",
-                "Summary": "Detailed study of supervised learning algorithms.",
-                "Total content": 12,
-                "Hours to completed": 4.0
-            },
-            {
-                "Id": 3,
-                "Title": "Unsupervised Learning",
-                "Summary": "Exploration of unsupervised learning algorithms and clustering techniques.",
-                "Total content": 8,
-                "Hours to completed": 2.5
-            }
-        ],
-        "FAQ": [
-            {
-                "Id": 1,
-                "Title": "What background knowledge is required?",
-                "Subtitle": "",
-                "Description": "Basic understanding of programming and data analysis."
-            },
-            {
-                "Id": 2,
-                "Title": "Will this course cover deep learning?",
-                "Subtitle": "",
-                "Description": "No, this course focuses on traditional machine learning algorithms."
-            }
-        ]
+      "Id": 4,
+      "Title": "Digital Marketing Fundamentals",
+      "Subtitle": "Learn the basics of digital marketing",
+      "Description": "This course covers the fundamentals of digital marketing, including SEO, social media, and email marketing.",
+      "Overview": "In this course, you'll learn the basics of digital marketing. We'll cover SEO, social media, and email marketing.",
+      "Instructor": [{"instructor_id": 4}],
+      "Image": "https://docs.flutter.dev/assets/images/docs/cover/beginning-app-development-with-flutter.jpg",
+      "Price": 39.99,
+      "Skills": ["Marketing", "SEO", "Social Media"],
+      "Is_top_course": true,
+      "Is_recently_viewed_course": false,
+      "Syllabus": [
+        {
+          "Id": 7,
+          "Title": "Introduction to Digital Marketing",
+          "Summary": "Overview of digital marketing",
+          "Total_content": 4,
+          "Hours_to_completed": 1.0
+        },
+        {
+          "Id": 8,
+          "Title": "SEO Basics",
+          "Summary": "Understanding SEO",
+          "Total_content": 10,
+          "Hours_to_completed": 3.0
+        }
+      ],
+      "FAQ": [
+        {
+          "Id": 4,
+          "Title": "What is digital marketing?",
+          "Subtitle": "An introduction to digital marketing",
+          "Description": "Digital marketing is the component of marketing that utilizes the internet and online-based digital technologies to promote products and services."
+        }
+      ]
     },
     {
-        "Id": 5,
-        "Title": "iOS App Development",
-        "Subtitle": "Build Native iOS Apps",
-        "Description": "Learn to create native iOS applications using Swift and Xcode.",
-        "Overview": "Master iOS app development with hands-on projects and app deployment.",
-        "Instructor": [{"instructor_id": 3}],
-        "Image": "assets/images/ios_development.jpg",
-        "Price": 89.99,
-        "Skills": ["iOS Development", "Swift", "Xcode"],
-        "Is_top_course": false,
-        "Is_recently_viewed_course": false,
-        "Syllabus": [
-            {
-                "Id": 1,
-                "Title": "Introduction to iOS Development",
-                "Summary": "Overview of iOS app development and tools.",
-                "Total content": 8,
-                "Hours to completed": 2.0
-            },
-            {
-                "Id": 2,
-                "Title": "Building UI with Swift",
-                "Summary": "Creating user interfaces for iOS apps using Swift.",
-                "Total content": 10,
-                "Hours to completed": 3.0
-            },
-            {
-                "Id": 3,
-                "Title": "App Deployment",
-                "Summary": "Deploying iOS apps to the App Store and testing.",
-                "Total content": 12,
-                "Hours to completed": 4.0
-            }
-        ],
-        "FAQ": [
-            {
-                "Id": 1,
-                "Title": "Do I need a Mac to develop iOS apps?",
-                "Subtitle": "",
-                "Description": "Yes, you will need a Mac computer to use Xcode for iOS development."
-            },
-            {
-                "Id": 2,
-                "Title": "Will I learn about SwiftUI?",
-                "Subtitle": "",
-                "Description": "Basic SwiftUI concepts are covered in this course."
-            }
-        ]
+      "Id": 5,
+      "Title": "Business Management Essentials",
+      "Subtitle": "Learn the essentials of business management",
+      "Description": "This course covers the essentials of business management, including leadership, strategy, and operations.",
+      "Overview": "Learn the essentials of business management, including leadership, strategy, and operations.",
+      "Instructor": [{"instructor_id": 5}],
+      "Image": "https://docs.flutter.dev/assets/images/docs/cover/beginning-app-development-with-flutter.jpg",
+      "Price": 59.99,
+      "Skills": ["Business", "Management", "Leadership"],
+      "Is_top_course": false,
+      "Is_recently_viewed_course": true,
+      "Syllabus": [
+        {
+          "Id": 9,
+          "Title": "Introduction to Business Management",
+          "Summary": "Overview of business management",
+          "Total_content": 5,
+          "Hours_to_completed": 2.0
+        },
+        {
+          "Id": 10,
+          "Title": "Leadership and Strategy",
+          "Summary": "Understanding leadership and strategy",
+          "Total_content": 12,
+          "Hours_to_completed": 3.5
+        }
+      ],
+      "FAQ": [
+        {
+          "Id": 5,
+          "Title": "What is business management?",
+          "Subtitle": "An introduction to business management",
+          "Description": "Business management involves coordinating and organizing business activities to achieve defined objectives."
+        }
+      ]
     },
     {
-        "Id": 6,
-        "Title": "Data Visualization with Tableau",
-        "Subtitle": "Visualize Data Effectively",
-        "Description": "Learn to create insightful visualizations and dashboards with Tableau.",
-        "Overview": "Master data visualization techniques for business analytics and reporting.",
-        "Instructor": [{"instructor_id": 2}],
-        "Image": "assets/images/tableau_data_viz.jpg",
-        "Price": 49.99,
-        "Skills": ["Tableau", "Data Visualization", "Business Intelligence"],
-        "Is_top_course": false,
-        "Is_recently_viewed_course": false,
-        "Syllabus": [
-            {
-                "Id": 1,
-                "Title": "Introduction to Tableau",
-                "Summary": "Overview of Tableau software and its capabilities.",
-                "Total content": 10,
-                "Hours to completed": 2.5
-            },
-            {
-                "Id": 2,
-                "Title": "Creating Dashboards",
-                "Summary": "Designing interactive dashboards in Tableau.",
-                "Total content": 12,
-                "Hours to completed": 3.0
-            },
-            {
-                "Id": 3,
-                "Title": "Advanced Visualizations",
-                "Summary": "Advanced techniques for data visualization in Tableau.",
-                "Total content": 8,
-                "Hours to completed": 2.0
-            }
-        ],
-        "FAQ": [
-            {
-                "Id": 1,
-                "Title": "Is Tableau used in business analytics?",
-                "Subtitle": "",
-                "Description": "Yes, Tableau is widely used for business intelligence and data analysis."
-            },
-            {
-                "Id": 2,
-                "Title": "Do I need SQL knowledge for this course?",
-                "Subtitle": "",
-                "Description": "Basic SQL knowledge is helpful but not required."
-            }
-        ]
+      "Id": 6,
+      "Title": "Photography for Beginners",
+      "Subtitle": "Learn the basics of photography",
+      "Description": "This course introduces the principles of photography and the techniques used to capture stunning images.",
+      "Overview": "Learn the basics of photography, including the principles of photography and the techniques used to capture stunning images.",
+      "Instructor": [{"instructor_id": 6}],
+      "Image": "https://docs.flutter.dev/assets/images/docs/cover/beginning-app-development-with-flutter.jpg",
+      "Price": 19.99,
+      "Skills": ["Photography", "Creativity", "Image Editing"],
+      "Is_top_course": true,
+      "Is_recently_viewed_course": false,
+      "Syllabus": [
+        {
+          "Id": 11,
+          "Title": "Introduction to Photography",
+          "Summary": "Overview of photography",
+          "Total_content": 6,
+          "Hours_to_completed": 2.0
+        },
+        {
+          "Id": 12,
+          "Title": "Camera Basics",
+          "Summary": "Understanding camera settings",
+          "Total_content": 8,
+          "Hours_to_completed": 2.5
+        }
+      ],
+      "FAQ": [
+        {
+          "Id": 6,
+          "Title": "What is photography?",
+          "Subtitle": "An introduction to photography",
+          "Description": "Photography is the art, application, and practice of creating durable images by recording light or other electromagnetic radiation."
+        }
+      ]
     },
     {
-        "Id": 7,
-        "Title": "JavaScript Fundamentals",
-        "Subtitle": "Master the Basics",
-        "Description": "Learn the fundamental concepts of JavaScript programming.",
-        "Overview": "Explore JavaScript syntax, functions, objects, and DOM manipulation.",
-        "Instructor": [{"instructor_id": 1}],
-        "Image": "assets/images/javascript_fundamentals.jpg",
-        "Price": 39.99,
-        "Skills": ["JavaScript", "Web Development", "Frontend Development"],
-        "Is_top_course": false,
-        "Is_recently_viewed_course": false,
-        "Syllabus": [
-            {
-                "Id": 1,
-                "Title": "Introduction to JavaScript",
-                "Summary": "Overview of JavaScript language and its applications.",
-                "Total content": 8,
-                "Hours to completed": 2.0
-            },
-            {
-                "Id": 2,
-                "Title": "Functions and Objects",
-                "Summary": "Understanding functions, objects, and prototypes in JavaScript.",
-                "Total content": 10,
-                "Hours to completed": 3.0
-            },
-            {
-                "Id": 3,
-                "Title": "DOM Manipulation",
-                "Summary": "Manipulating HTML elements and event handling with JavaScript.",
-                "Total content": 12,
-                "Hours to completed": 3.5
-            }
-        ],
-        "FAQ": [
-            {
-                "Id": 1,
-                "Title": "Is this course suitable for beginners?",
-                "Subtitle": "",
-                "Description": "Yes, this course is designed for beginners to learn JavaScript."
-            },
-            {
-                "Id": 2,
-                "Title": "Will I learn about ES6 features?",
-                "Subtitle": "",
-                "Description": "Yes, ES6 features are covered in this course."
-            }
-        ]
+      "Id": 7,
+      "Title": "Music Production Basics",
+      "Subtitle": "Learn the basics of music production",
+      "Description": "This course covers the fundamentals of music production, including audio engineering, mixing, and mastering.",
+      "Overview": "In this course, you'll learn the basics of music production. We'll cover audio engineering, mixing, and mastering.",
+      "Instructor": [{"instructor_id": 7}],
+      "Image": "https://docs.flutter.dev/assets/images/docs/cover/beginning-app-development-with-flutter.jpg",
+      "Price": 79.99,
+      "Skills": ["Music", "Production", "Audio Engineering"],
+      "Is_top_course": false,
+      "Is_recently_viewed_course": true,
+      "Syllabus": [
+        {
+          "Id": 13,
+          "Title": "Introduction to Music Production",
+          "Summary": "Overview of music production",
+          "Total_content": 5,
+          "Hours_to_completed": 1.5
+        },
+        {
+          "Id": 14,
+          "Title": "Audio Engineering Basics",
+          "Summary": "Understanding audio engineering",
+          "Total_content": 10,
+          "Hours_to_completed": 3.0
+        }
+      ],
+      "FAQ": [
+        {
+          "Id": 7,
+          "Title": "What is music production?",
+          "Subtitle": "An introduction to music production",
+          "Description": "Music production involves the process of creating, recording, and refining music tracks."
+        }
+      ]
     },
     {
-        "Id": 8,
-        "Title": "React Native Development",
-        "Subtitle": "Build Mobile Apps with React",
-        "Description": "Create cross-platform mobile applications using React Native.",
-        "Overview": "Learn to build mobile apps for iOS and Android with React Native.",
-        "Instructor": [{"instructor_id": 1}],
-        "Image": "assets/images/react_native_development.jpg",
-        "Price": 69.99,
-        "Skills": ["React Native", "JavaScript", "Mobile Development"],
-        "Is_top_course": false,
-        "Is_recently_viewed_course": false,
-        "Syllabus": [
-            {
-                "Id": 1,
-                "Title": "Introduction to React Native",
-                "Summary": "Overview of React Native framework and its advantages.",
-                "Total content": 10,
-                "Hours to completed": 2.5
-            },
-            {
-                "Id": 2,
-                "Title": "Building UI Components",
-                "Summary": "Creating reusable UI components with React Native.",
-                "Total content": 12,
-                "Hours to completed": 3.0
-            },
-            {
-                "Id": 3,
-                "Title": "Navigation and State Management",
-                "Summary": "Managing navigation and state in React Native applications.",
-                "Total content": 8,
-                "Hours to completed": 2.0
-            }
-        ],
-        "FAQ": [
-            {
-                "Id": 1,
-                "Title": "Do I need prior React knowledge?",
-                "Subtitle": "",
-                "Description": "Basic knowledge of React will be helpful, but not required."
-            },
-            {
-                "Id": 2,
-                "Title": "Will I learn about Redux?",
-                "Subtitle": "",
-                "Description": "Basic Redux concepts are covered in this course."
-            }
-        ]
+      "Id": 8,
+      "Title": "Personal Development and Leadership",
+      "Subtitle": "Develop your personal and leadership skills",
+      "Description": "This course focuses on personal development and leadership skills, including goal setting, time management, and communication.",
+      "Overview": "Learn personal development and leadership skills, including goal setting, time management, and communication.",
+      "Instructor": [{"instructor_id": 8}],
+      "Image": "https://docs.flutter.dev/assets/images/docs/cover/beginning-app-development-with-flutter.jpg",
+      "Price": 89.99,
+      "Skills": ["Personal Development", "Leadership", "Communication"],
+      "Is_top_course": true,
+      "Is_recently_viewed_course": false,
+      "Syllabus": [
+        {
+          "Id": 15,
+          "Title": "Introduction to Personal Development",
+          "Summary": "Overview of personal development",
+          "Total_content": 4,
+          "Hours_to_completed": 1.0
+        },
+        {
+          "Id": 16,
+          "Title": "Leadership Skills",
+          "Summary": "Developing leadership skills",
+          "Total_content": 12,
+          "Hours_to_completed": 3.5
+        }
+      ],
+      "FAQ": [
+        {
+          "Id": 8,
+          "Title": "What is personal development?",
+          "Subtitle": "An introduction to personal development",
+          "Description": "Personal development involves activities that improve awareness and identity, develop talents and potential, and enhance the quality of life."
+        }
+      ]
     },
     {
-        "Id": 9,
-        "Title": "Blockchain Fundamentals",
-        "Subtitle": "Explore Blockchain Technology",
-        "Description": "Learn the basics of blockchain, cryptocurrencies, and decentralized applications.",
-        "Overview": "Understand blockchain architecture, smart contracts, and blockchain security.",
-        "Instructor": [{"instructor_id": 7}],
-        "Image": "assets/images/blockchain_fundamentals.jpg",
-        "Price": 59.99,
-        "Skills": ["Blockchain", "Cryptocurrency", "Smart Contracts"],
-        "Is_top_course": false,
-        "Is_recently_viewed_course": false,
-        "Syllabus": [
-            {
-                "Id": 1,
-                "Title": "Introduction to Blockchain",
-                "Summary": "Overview of blockchain technology and its applications.",
-                "Total content": 8,
-                "Hours to completed": 2.0
-            },
-            {
-                "Id": 2,
-                "Title": "Smart Contracts",
-                "Summary": "Writing and deploying smart contracts on blockchain platforms.",
-                "Total content": 10,
-                "Hours to completed": 3.0
-            },
-            {
-                "Id": 3,
-                "Title": "Blockchain Security",
-                "Summary": "Security challenges and best practices in blockchain.",
-                "Total content": 12,
-                "Hours to completed": 4.0
-            }
-        ],
-        "FAQ": [
-            {
-                "Id": 1,
-                "Title": "Do I need programming knowledge for this course?",
-                "Subtitle": "",
-                "Description": "Basic understanding of programming concepts is recommended."
-            },
-            {
-                "Id": 2,
-                "Title": "Will I learn about Ethereum?",
-                "Subtitle": "",
-                "Description": "Yes, Ethereum and its smart contract development are covered."
-            }
-        ]
+      "Id": 9,
+      "Title": "Health and Fitness Fundamentals",
+      "Subtitle": "Learn the basics of health and fitness",
+      "Description": "This course covers the fundamentals of health and fitness, including exercise, nutrition, and wellness.",
+      "Overview": "Learn the basics of health and fitness, including exercise, nutrition, and wellness.",
+      "Instructor": [{"instructor_id": 9}],
+      "Image": "https://docs.flutter.dev/assets/images/docs/cover/beginning-app-development-with-flutter.jpg",
+      "Price": 69.99,
+      "Skills": ["Health", "Fitness", "Nutrition"],
+      "Is_top_course": false,
+      "Is_recently_viewed_course": true,
+      "Syllabus": [
+        {
+          "Id": 17,
+          "Title": "Introduction to Health and Fitness",
+          "Summary": "Overview of health and fitness",
+          "Total_content": 6,
+          "Hours_to_completed": 2.0
+        },
+        {
+          "Id": 18,
+          "Title": "Exercise and Nutrition",
+          "Summary": "Understanding exercise and nutrition",
+          "Total_content": 10,
+          "Hours_to_completed": 3.0
+        }
+      ],
+      "FAQ": [
+        {
+          "Id": 9,
+          "Title": "What is health and fitness?",
+          "Subtitle": "An introduction to health and fitness",
+          "Description": "Health and fitness involve the state of being physically and mentally fit and healthy."
+        }
+      ]
     },
     {
-        "Id": 10,
-        "Title": "UX Design Principles",
-        "Subtitle": "Create User-Centered Designs",
-        "Description": "Learn the principles and techniques of user experience (UX) design.",
-        "Overview": "Develop skills in usability testing, wireframing, and user interface design.",
-        "Instructor": [{"instructor_id": 11}],
-        "Image": "assets/images/ux_design_principles.jpg",
-        "Price": 49.99,
-        "Skills": ["UX Design", "Usability Testing", "Wireframing"],
-        "Is_top_course": false,
-        "Is_recently_viewed_course": false,
-        "Syllabus": [
-            {
-                "Id": 1,
-                "Title": "Introduction to UX Design",
-                "Summary": "Fundamental principles and goals of UX design.",
-                "Total content": 8,
-                "Hours to completed": 2.0
-            },
-            {
-                "Id": 2,
-                "Title": "User Research and Personas",
-                "Summary": "Conducting user research and creating user personas.",
-                "Total content": 10,
-                "Hours to completed": 3.0
-            },
-            {
-                "Id": 3,
-                "Title": "Wireframing and Prototyping",
-                "Summary": "Creating wireframes and interactive prototypes for UX design.",
-                "Total content": 12,
-                "Hours to completed": 3.5
-            }
-        ],
-        "FAQ": [
-            {
-                "Id": 1,
-                "Title": "What tools will I learn to use?",
-                "Subtitle": "",
-                "Description": "Tools such as Adobe XD and Figma for UX design."
-            },
-            {
-                "Id": 2,
-                "Title": "Is this course suitable for beginners?",
-                "Subtitle": "",
-                "Description": "Yes, beginners can learn foundational UX design skills in this course."
-            }
-        ]
+      "Id": 10,
+      "Title": "Finance and Accounting Basics",
+      "Subtitle": "Learn the basics of finance and accounting",
+      "Description": "This course covers the fundamentals of finance and accounting, including financial statements, budgeting, and investment strategies.",
+      "Overview": "Learn the basics of finance and accounting, including financial statements, budgeting, and investment strategies.",
+      "Instructor": [{"instructor_id": 10}],
+      "Image": "https://docs.flutter.dev/assets/images/docs/cover/beginning-app-development-with-flutter.jpg",
+      "Price": 59.99,
+      "Skills": ["Finance", "Accounting", "Investment"],
+      "Is_top_course": true,
+      "Is_recently_viewed_course": false,
+      "Syllabus": [
+        {
+          "Id": 19,
+          "Title": "Introduction to Finance and Accounting",
+          "Summary": "Overview of finance and accounting",
+          "Total_content": 5,
+          "Hours_to_completed": 2.0
+        },
+        {
+          "Id": 20,
+          "Title": "Financial Statements",
+          "Summary": "Understanding financial statements",
+          "Total_content": 8,
+          "Hours_to_completed": 2.5
+        }
+      ],
+      "FAQ": [
+        {
+          "Id": 10,
+          "Title": "What is finance and accounting?",
+          "Subtitle": "An introduction to finance and accounting",
+          "Description": "Finance and accounting involve the management of money, including investing, borrowing, lending, budgeting, and saving."
+        }
+      ]
     }
-]
+  ]
+  
