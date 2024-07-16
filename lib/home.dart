@@ -67,10 +67,10 @@
 //   }
 // }
 import 'package:flutter/material.dart';
-import 'package:socialapp/available%20courses.dart';
+import 'package:socialapp/courses/available%20courses.dart';
 import 'package:socialapp/login.dart';
-import 'package:socialapp/newsfeed.dart';
-import 'package:socialapp/view_courses.dart';
+import 'package:socialapp/feeds/newsfeed.dart';
+import 'package:socialapp/courses/view_courses.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});

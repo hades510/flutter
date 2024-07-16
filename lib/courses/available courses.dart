@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:socialapp/dataloader.dart';
 import 'package:socialapp/models/course_categories.dart';
-import 'package:socialapp/view_courses.dart';
+import 'package:socialapp/models/courses.dart';
+import 'package:socialapp/models/instructor.dart';
+import 'package:socialapp/courses/view_courses.dart';
 
 class AvailableCourses extends StatefulWidget {
   const AvailableCourses({super.key});
@@ -51,6 +53,7 @@ class AvailableScreen extends StatefulWidget {
 }
 
 class _AvailableScreenState extends State<AvailableScreen> {
+  Dataloader dataloader = Dataloader();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,11 +68,17 @@ class _AvailableScreenState extends State<AvailableScreen> {
 
   Widget _builderccategory(CCategory model) {
     return ListTile(
-      onTap: () {
+      onTap: () async {
+        Courses? detail = await dataloader.loadcore(model.id!);
+        Instructor? teach =await dataloader.loadins(model.id!);
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const CourseDetailScreen(),
+              builder: (context) => CourseDetailScreen(
+                courseCategory: model,
+                detail: detail,
+                teach: teach,
+              ),
             ));
       },
       leading: Text('${model.id!}'),

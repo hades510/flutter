@@ -29,6 +29,7 @@ class Dataloader {
     return userlist.map((e) => User.fromJson(e)).toList();
   }
 
+//login id authenthication
   Future<UserDetail> loaddetail(int userid) async {
     String userdetailjson =
         await rootBundle.loadString('assets/jsonfile/user_detail.json');
@@ -38,6 +39,7 @@ class Dataloader {
     return UserDetail.fromJson(json);
   }
 
+//fo oter purpose
   Future<List<UserDetail>> loaduserdetail() async {
     String userdetailjson =
         await rootBundle.loadString('assets/jsonfile/user_detail.json');
@@ -64,6 +66,20 @@ class Dataloader {
     return friendlist.map((e) => UserFriendlist.fromJson(e)).toList();
   }
 
+  //for authenticated files like logina
+  Future<Courses?> loadcore(int id) async {
+    String corejson =
+        await rootBundle.loadString('assets/jsonfile/courses.json');
+    List coreroot = json.decode(corejson);
+    for (var i in coreroot) {
+      if (i['Id'] == id) {
+        return Courses.fromJson(i);
+      }
+      // return null;
+    }
+  }
+
+//for other things
   Future<List<Courses>> loadcourses() async {
     String coursesjson =
         await rootBundle.loadString('assets/jsonfile/courses.json');
@@ -76,6 +92,19 @@ class Dataloader {
         .loadString('assets/jsonfile/courses_by_categories.json');
     List categorylist = json.decode(categoryjson);
     return categorylist.map((e) => CoursesCategory.fromJson(e)).toList();
+  }
+
+  //for authenticated files like logina
+  Future<Instructor?> loadins(int id) async {
+    String corejson =
+        await rootBundle.loadString('assets/jsonfile/instructor.json');
+    List coreroot = json.decode(corejson);
+    for (var i in coreroot) {
+      if (i['Id'] == id) {
+        return Instructor.fromJson(i);
+      }
+      // return null;
+    }
   }
 
   Future<List<Instructor>> loadinstructor() async {

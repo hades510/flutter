@@ -1,6 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/dataloader.dart';
-import 'package:socialapp/datastorage.dart';
 import 'package:socialapp/models/user.dart';
 import 'package:socialapp/models/user_detail.dart';
 

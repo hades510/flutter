@@ -3,7 +3,7 @@ import 'package:socialapp/dataloader.dart';
 import 'package:socialapp/home.dart';
 import 'package:socialapp/login.dart';
 import 'package:socialapp/loginregister.dart';
-import 'package:socialapp/newsfeed.dart';
+import 'package:socialapp/feeds/newsfeed.dart';
 import 'package:socialapp/splash.dart';
 
 void main() async {

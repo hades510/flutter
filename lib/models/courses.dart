@@ -1,4 +1,3 @@
-
 import 'package:socialapp/models/instructor.dart';
 
 class Courses {
@@ -40,7 +39,7 @@ class Courses {
     if (json['Instructor'] != null) {
       instructor = <Instructor>[];
       json['Instructor'].forEach((v) {
-        instructor!.add(new Instructor.fromJson(v));
+        instructor!.add(Instructor.fromJson(v));
       });
     }
     image = json['Image'];
@@ -51,13 +50,13 @@ class Courses {
     if (json['Syllabus'] != null) {
       syllabus = <Syllabus>[];
       json['Syllabus'].forEach((v) {
-        syllabus!.add(new Syllabus.fromJson(v));
+        syllabus!.add(Syllabus.fromJson(v));
       });
     }
     if (json['FAQ'] != null) {
       fAQ = <FAQ>[];
       json['FAQ'].forEach((v) {
-        fAQ!.add(new FAQ.fromJson(v));
+        fAQ!.add(FAQ.fromJson(v));
       });
     }
   }
@@ -87,22 +86,6 @@ class Courses {
   }
 }
 
-// class Instructor {
-//   int? instructorId;
-
-//   Instructor({this.instructorId});
-
-//   Instructor.fromJson(Map<String, dynamic> json) {
-//     instructorId = json['instructor_id'];
-//   }
-
-//   Map<String, dynamic> toJson() {
-//     final Map<String, dynamic> data = <String, dynamic>{};
-//     data['instructor_id'] = instructorId;
-//     return data;
-//   }
-// }
-
 class Syllabus {
   int? id;
   String? title;
@@ -121,8 +104,8 @@ class Syllabus {
     id = json['Id'];
     title = json['Title'];
     summary = json['Summary'];
-    totalContent = json['Total content'];
-    hoursToCompleted = json['Hours to completed'];
+    totalContent = json['Total_content'];
+    hoursToCompleted = json['Hours_to_completed'];
   }
 
   Map<String, dynamic> toJson() {
@@ -130,8 +113,8 @@ class Syllabus {
     data['Id'] = id;
     data['Title'] = title;
     data['Summary'] = summary;
-    data['Total content'] = totalContent;
-    data['Hours to completed'] = hoursToCompleted;
+    data['Total_content'] = totalContent;
+    data['Hours_to_completed'] = hoursToCompleted;
     return data;
   }
 }

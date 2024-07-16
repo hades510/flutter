@@ -110,7 +110,7 @@ class _LoginPageState extends State<Signup> {
                             contentPadding:
                                 const EdgeInsets.symmetric(vertical: 25),
                             labelText: 'Password',
-                            prefixIcon: const Icon(Icons.password),
+                            prefixIcon: const Icon(Icons.lock),
                             suffixIcon: IconButton(
                                 onPressed: () {
                                   setState(() {
@@ -150,7 +150,7 @@ class _LoginPageState extends State<Signup> {
                             contentPadding:
                                 const EdgeInsets.symmetric(vertical: 25),
                             labelText: 'Confirm Password',
-                            prefixIcon: const Icon(Icons.password),
+                            prefixIcon: const Icon(Icons.lock),
                             suffixIcon: IconButton(
                                 onPressed: () {
                                   setState(() {

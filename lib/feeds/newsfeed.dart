@@ -9,7 +9,7 @@ import 'package:socialapp/models/user.dart';
 import 'package:socialapp/models/user_detail.dart';
 import 'package:socialapp/models/user_friendlist.dart';
 import 'package:socialapp/models/user_post.dart';
-import 'package:socialapp/newsscreen.dart';
+import 'package:socialapp/feeds/newsscreen.dart';
 import 'package:socialapp/view_profile.dart';
 
 class Newsfeed extends StatefulWidget {

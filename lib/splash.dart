@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:socialapp/home.dart';
-import 'package:socialapp/newsfeed.dart';
+import 'package:socialapp/feeds/newsfeed.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});

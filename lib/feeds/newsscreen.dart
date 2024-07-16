@@ -150,7 +150,7 @@ class _NewscreenState extends State<Newscreen> {
 
   Widget _builderimage(Postedphoto image) {
     return Container(
-      margin:const EdgeInsets.only(right: 10),
+      margin: const EdgeInsets.only(right: 10),
       child: Image.network(
         width: 390,
         image.url!,
