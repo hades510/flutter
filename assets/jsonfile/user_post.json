@@ -48,7 +48,12 @@
             {
                 "Id": 2,
                 "Url": "https://images.stockcake.com/public/a/8/e/a8eedc01-cfc1-40b6-bf2d-53a591333d35_large/safety-helmet-display-stockcake.jpg"
+            },
+            {
+                "Id": 2,
+                "Url": "https://images.stockcake.com/public/a/8/e/a8eedc01-cfc1-40b6-bf2d-53a591333d35_large/safety-helmet-display-stockcake.jpg"
             }
+           
         ],
         "Post_liked_by": [
             {
@@ -68,6 +73,14 @@
         "title": "Amazing Sunset",
         "description": "Look at this beautiful sunset!",
         "Postedphoto": [
+            {
+                "Id": 3,
+                "Url": "https://images.stockcake.com/public/a/8/e/a8eedc01-cfc1-40b6-bf2d-53a591333d35_large/safety-helmet-display-stockcake.jpg"
+            },
+            {
+                "Id": 3,
+                "Url": "https://images.stockcake.com/public/a/8/e/a8eedc01-cfc1-40b6-bf2d-53a591333d35_large/safety-helmet-display-stockcake.jpg"
+            },
             {
                 "Id": 3,
                 "Url": "https://images.stockcake.com/public/a/8/e/a8eedc01-cfc1-40b6-bf2d-53a591333d35_large/safety-helmet-display-stockcake.jpg"
@@ -91,6 +104,18 @@
         "title": "Delicious Food",
         "description": "Check out this delicious meal I had!",
         "Postedphoto": [
+            {
+                "Id": 4,
+                "Url": "https://images.stockcake.com/public/a/8/e/a8eedc01-cfc1-40b6-bf2d-53a591333d35_large/safety-helmet-display-stockcake.jpg"
+            },
+            {
+                "Id": 4,
+                "Url": "https://images.stockcake.com/public/a/8/e/a8eedc01-cfc1-40b6-bf2d-53a591333d35_large/safety-helmet-display-stockcake.jpg"
+            },
+            {
+                "Id": 4,
+                "Url": "https://images.stockcake.com/public/a/8/e/a8eedc01-cfc1-40b6-bf2d-53a591333d35_large/safety-helmet-display-stockcake.jpg"
+            },
             {
                 "Id": 4,
                 "Url": "https://images.stockcake.com/public/a/8/e/a8eedc01-cfc1-40b6-bf2d-53a591333d35_large/safety-helmet-display-stockcake.jpg"

@@ -1,13 +1,12 @@
-class CoursesCategory {
+class CourseBy {
   int? courseById;
   int? courseId;
   int? categoriesId;
   String? createdAt;
 
-  CoursesCategory(
-      {this.courseById, this.courseId, this.categoriesId, this.createdAt});
+  CourseBy({this.courseById, this.courseId, this.categoriesId, this.createdAt});
 
-  CoursesCategory.fromJson(Map<String, dynamic> json) {
+  CourseBy.fromJson(Map<String, dynamic> json) {
     courseById = json['Course_by_id'];
     courseId = json['Course_id'];
     categoriesId = json['Categories_id'];

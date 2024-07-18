@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:socialapp/login.dart';
 
 class Signup extends StatefulWidget {
@@ -19,6 +18,7 @@ class _LoginPageState extends State<Signup> {
   final TextEditingController password = TextEditingController();
   final TextEditingController confirmpassword = TextEditingController();
   bool obscure = false;
+  bool obscureconfirm = false;
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +144,7 @@ class _LoginPageState extends State<Signup> {
                         ),
                         TextFormField(
                           controller: confirmpassword,
-                          obscureText: !obscure,
+                          obscureText: !obscureconfirm,
                           // maxLength: 40,
                           decoration: InputDecoration(
                             contentPadding:
@@ -154,10 +154,10 @@ class _LoginPageState extends State<Signup> {
                             suffixIcon: IconButton(
                                 onPressed: () {
                                   setState(() {
-                                    obscure = !obscure;
+                                    obscureconfirm = !obscureconfirm;
                                   });
                                 },
-                                icon: obscure
+                                icon: obscureconfirm
                                     ? const Icon(Icons.visibility_off)
                                     : const Icon(Icons.visibility)),
                             enabledBorder: OutlineInputBorder(

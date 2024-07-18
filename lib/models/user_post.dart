@@ -1,5 +1,3 @@
-
-
 class UserPost {
   int? postId;
   int? userId;
@@ -8,6 +6,9 @@ class UserPost {
   String? description;
   List<Postedphoto>? image;
   List<PostLikedBy>? postLikedBy;
+  //to manage like and dislike of each post
+  bool isliked = false;
+  bool isDisliked = false;
 
   UserPost(
       {this.postId,
@@ -16,7 +17,9 @@ class UserPost {
       this.title,
       this.description,
       this.image,
-      this.postLikedBy});
+      this.postLikedBy,
+      required this.isDisliked,
+      required this.isliked});
 
   UserPost.fromJson(Map<String, dynamic> json) {
     postId = json['post_id'];
@@ -58,8 +61,11 @@ class UserPost {
 class Postedphoto {
   int? id;
   String? url;
+  //to manage like and dislike state of each image
+  bool isLiked = false;
+  bool isDisliked = false;
 
-  Postedphoto({this.id, this.url});
+  Postedphoto({this.id, this.url,required this.isDisliked, required this.isLiked});
 
   Postedphoto.fromJson(Map<String, dynamic> json) {
     id = json['Id'];

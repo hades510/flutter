@@ -1,10 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/authenthication/login_auth.dart';
+import 'package:socialapp/change_psw.dart';
 import 'package:socialapp/dataloader.dart';
 import 'package:socialapp/datastorage.dart';
+import 'package:socialapp/feeds/newsfeed.dart';
 import 'package:socialapp/forgotpassword.dart';
+import 'package:socialapp/home.dart';
 import 'package:socialapp/models/user.dart';
 import 'package:socialapp/models/user_detail.dart';
 import 'package:socialapp/signup.dart';
@@ -22,13 +26,13 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  List<dynamic> userlist = [];
   final formKey = GlobalKey<FormState>();
   final TextEditingController password = TextEditingController();
   final TextEditingController email = TextEditingController();
   bool obscure = false;
   bool isChecked = false;
-  final Auth service = Auth();
+  Dataloader dataloader = Dataloader();
+  late Auth service;
 
   // Future<User?> auth(String email, String password) async {
   //   DataStorage provider = DataStorage();
@@ -43,43 +47,33 @@ class _LoginPageState extends State<LoginPage> {
   //   }
   //   return null;
   // }
+  @override
+  void initState() {
+    super.initState();
+    service = Auth(dataloader);
+    dataloader.loadalluserdatas();
+  }
 
-  void login() async {
-    var result = await service.login(email.text, password.text);
-    if (result != null) {
-      User user = result['user'];
-      UserDetail userDetail = result['userdetail'];
-      Navigator.push(
+  void _login() async {
+    bool isSuccess = await service.login(email.text, password.text);
+    
+
+    if (isSuccess) {
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(const SnackBar(
+          duration: Duration(seconds: 1), content: Text("Logged In")));
+          
+      Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (context) => Profile(
-              user: user,
-              userDetail: userDetail,
-            ),
-          ));
+          MaterialPageRoute(builder: (context) => const Home()
+              // ViewProfile(
+              //   service: service,
+              // ),
+              ));
     } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Invalid email or password')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Invalid email and password')));
     }
   }
-  //  {
-  //   if (formKey.currentState!.validate()) {
-  //     var result = await auth(email.text, password.text);
-  //     print('$result');
-  //     if (result) {
-  //       print('successfull');
-  //       Navigator.push(
-  //           context,
-  //           MaterialPageRoute(
-  //             builder: (context) => const Profile(),
-  //           ));
-  //     } else {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //           const SnackBar(content: Text("Invalid email and password")));
-  //     }
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -201,7 +195,7 @@ class _LoginPageState extends State<LoginPage> {
                         GestureDetector(
                           onTap: () {
                             if (formKey.currentState!.validate()) {
-                              login();
+                              _login();
                             }
                           },
                           child: Container(
@@ -227,17 +221,22 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         Row(
                           children: [
-                            Checkbox(
-                              value: isChecked,
-                              onChanged: (value) {
-                                setState(() {
-                                  isChecked = !isChecked;
-                                });
-                              },
-                            ),
-                            const Text('Remember me'),
+                            GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const ChangePsw(),
+                                      ));
+                                },
+                                child: const Text(
+                                  'Change Password',
+                                  style: TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      color: Colors.blue),
+                                )),
                             const SizedBox(
-                              width: 60,
+                              width: 90,
                             ),
                             GestureDetector(
                               onTap: () {
@@ -257,6 +256,9 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                           ],
+                        ),
+                        const SizedBox(
+                          height: 20,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,

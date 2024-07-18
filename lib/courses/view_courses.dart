@@ -294,159 +294,340 @@
 //     );
 //   }
 // }
+// import 'package:flutter/material.dart';
+// import 'package:socialapp/models/course_categories.dart';
+// import 'package:socialapp/models/instructor.dart';
+
+// import '../models/courses.dart';
+
+// class CourseDetailScreen extends StatelessWidget {
+//   final CoursesCategory courseCategory;
+//   final Courses? detail;
+//   final Instructor? teach;
+
+//   const CourseDetailScreen(
+//       {super.key,
+//       required this.courseCategory,
+//       required this.detail,
+//       required this.teach});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//         appBar: AppBar(
+//           title: Text(courseCategory.title ?? 'Course Details'),
+//         ),
+//         body:
+//         SingleChildScrollView(
+//           child: Padding(
+//             padding: const EdgeInsets.all(16.0),
+//             child: Container(
+//               decoration: BoxDecoration(
+//                   border: Border.all(),
+//                   borderRadius: BorderRadius.circular(25)),
+//               child: Padding(
+//                 padding: const EdgeInsets.all(16.0),
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Card(
+//                       child: Image.network(
+//                         detail!.image!,
+//                         cacheHeight: 400,
+//                         width: 200,
+//                       ),
+//                     ),
+//                     const SizedBox(
+//                       height: 16.0,
+//                     ),
+//                     Container(
+//                       padding: const EdgeInsets.all(10),
+//                       decoration: BoxDecoration(
+//                         border: Border.all(),
+//                         borderRadius: BorderRadius.circular(10),
+//                       ),
+//                       child: Column(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         children: [
+//                           Text(
+//                             detail!.title!,
+//                             style: const TextStyle(
+//                                 fontSize: 24.0,
+//                                 fontWeight: FontWeight.bold,
+//                                 decoration: TextDecoration.underline,
+//                                 decorationThickness: 2),
+//                           ),
+//                           const SizedBox(
+//                             height: 8,
+//                           ),
+//                           Text(
+//                             detail!.subtitle!,
+//                             style: const TextStyle(
+//                                 fontSize: 18, fontWeight: FontWeight.w600),
+//                           ),
+//                           const SizedBox(
+//                             height: 8,
+//                           ),
+//                           Text(
+//                             detail!.description!,
+//                             style: const TextStyle(fontSize: 16),
+//                           ),
+//                           const SizedBox(
+//                             height: 16,
+//                           ),
+//                           const Text(
+//                             'OverView',
+//                             style: TextStyle(
+//                                 fontSize: 20,
+//                                 fontWeight: FontWeight.bold,
+//                                 decoration: TextDecoration.underline,
+//                                 decorationThickness: 2),
+//                           ),
+//                           const SizedBox(
+//                             height: 8,
+//                           ),
+//                           Text(detail!.overview!),
+//                           const SizedBox(
+//                             height: 16,
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                     const SizedBox(
+//                       height: 16,
+//                     ),
+//                     const Text(
+//                       'Syllabus',
+//                       style: TextStyle(
+//                           fontSize: 20,
+//                           fontWeight: FontWeight.bold,
+//                           decoration: TextDecoration.underline,
+//                           decorationThickness: 2),
+//                     ),
+//                     ...detail!.syllabus!.map((e) {
+//                       return ListTile(
+//                         title: Text(e.title!),
+//                         subtitle: Text(e.summary!),
+//                         trailing: Text('${e.hoursToCompleted} hrs'),
+//                       );
+//                     }),
+//                     const SizedBox(
+//                       height: 16,
+//                     ),
+//                     const Text(
+//                       'FAQ',
+//                       style: TextStyle(
+//                           fontSize: 20,
+//                           fontWeight: FontWeight.bold,
+//                           decoration: TextDecoration.underline,
+//                           decorationThickness: 2),
+//                     ),
+//                     ...detail!.fAQ!.map((e) {
+//                       return ListTile(
+//                         title: Text(e.title!),
+//                         subtitle: Text(e.description!),
+//                       );
+//                     }),
+//                     const SizedBox(
+//                       height: 20,
+//                     ),
+//                     const Text(
+//                       'Instructor',
+//                       style: TextStyle(fontSize: 25),
+//                     ),
+//                     ListTile(
+//                       leading: CircleAvatar(
+//                         backgroundImage: NetworkImage(teach!.image!),
+//                       ),
+//                       title: Text(teach!.name!),
+//                       subtitle: Text('${teach!.field}'),
+//                       trailing: Text('${teach!.workExperience} Years'),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           ),
+//         ),
+//         );
+//   }
+// }
 import 'package:flutter/material.dart';
-import 'package:socialapp/models/course_categories.dart';
+import 'package:socialapp/models/courses.dart';
+import 'package:socialapp/dataloader.dart';
 import 'package:socialapp/models/instructor.dart';
 
-import '../models/courses.dart';
+class CourseDetailPage extends StatelessWidget {
+  final int courseId;
+  final int instructorid;
 
-class CourseDetailScreen extends StatelessWidget {
-  final CCategory courseCategory;
-  final Courses? detail;
-  final Instructor? teach;
-
-  const CourseDetailScreen(
-      {super.key,
-      required this.courseCategory,
-      required this.detail,
-      required this.teach});
+  const CourseDetailPage(
+      {super.key, required this.courseId, required this.instructorid});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(courseCategory.title ?? 'Course Details'),
-        ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Container(
-              decoration: BoxDecoration(
-                  border: Border.all(),
-                  borderRadius: BorderRadius.circular(25)),
+      appBar: AppBar(
+        title: const Text('Course Details'),
+      ),
+      body: FutureBuilder(
+        future: _fetchCourseDetails(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(
+                child: RichText(
+                    text: const TextSpan(
+                        style: TextStyle(fontSize: 30, color: Colors.black),
+                        children: [
+                  TextSpan(text: 'Courses '),
+                  TextSpan(text: 'Comming Soon', style: TextStyle(fontSize: 10))
+                ])));
+            // return Text('${snapshot.error}');// to show error
+          } else {
+            final detail = snapshot.data as Courses;
+            return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Card(
-                      child: Image.network(
-                        detail!.image!,
-                        cacheHeight: 400,
-                        width: 200,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 16.0,
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        border: Border.all(),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            detail!.title!,
-                            style: const TextStyle(
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.bold,
-                                decoration: TextDecoration.underline,
-                                decorationThickness: 2),
+                child: Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(),
+                      borderRadius: BorderRadius.circular(25)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Card(
+                          child: Image.network(
+                            detail!.image!,
+                            cacheHeight: 400,
+                            width: 200,
                           ),
-                          const SizedBox(
-                            height: 8,
+                        ),
+                        const SizedBox(
+                          height: 16.0,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            border: Border.all(),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          Text(
-                            detail!.subtitle!,
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w600),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                detail!.title!,
+                                style: const TextStyle(
+                                    fontSize: 24.0,
+                                    fontWeight: FontWeight.bold,
+                                    decoration: TextDecoration.underline,
+                                    decorationThickness: 2),
+                              ),
+                              const SizedBox(
+                                height: 8,
+                              ),
+                              Text(
+                                detail!.subtitle!,
+                                style: const TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w600),
+                              ),
+                              const SizedBox(
+                                height: 8,
+                              ),
+                              Text(
+                                detail!.description!,
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                              const Text(
+                                'OverView',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    decoration: TextDecoration.underline,
+                                    decorationThickness: 2),
+                              ),
+                              const SizedBox(
+                                height: 8,
+                              ),
+                              Text(detail!.overview!),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                            ],
                           ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          Text(
-                            detail!.description!,
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          const Text(
-                            'OverView',
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                decoration: TextDecoration.underline,
-                                decorationThickness: 2),
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          Text(detail!.overview!),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        const Text(
+                          'Syllabus',
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.underline,
+                              decorationThickness: 2),
+                        ),
+                        ...detail!.syllabus!.map((e) {
+                          return ListTile(
+                            title: Text(e.title!),
+                            subtitle: Text(e.summary!),
+                            trailing: Text('${e.hoursToCompleted} hrs'),
+                          );
+                        }),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        const Text(
+                          'FAQ',
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.underline,
+                              decorationThickness: 2),
+                        ),
+                        ...detail!.fAQ!.map((e) {
+                          return ListTile(
+                            title: Text(e.title!),
+                            subtitle: Text(e.description!),
+                          );
+                        }),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        // const Text(
+                        //   'Instructor',
+                        //   style: TextStyle(fontSize: 25),
+                        // ),
+                        // ListTile(
+                        //   leading: CircleAvatar(
+                        //     backgroundImage: NetworkImage(teach!.image!),
+                        //   ),
+                        //   title: Text(teach!.name!),
+                        //   subtitle: Text('${teach!.field}'),
+                        //   trailing: Text('${teach!.workExperience} Years'),
+                        // ),
+                      ],
                     ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    const Text(
-                      'Syllabus',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.underline,
-                          decorationThickness: 2),
-                    ),
-                    ...detail!.syllabus!.map((e) {
-                      return ListTile(
-                        title: Text(e.title!),
-                        subtitle: Text(e.summary!),
-                        trailing: Text('${e.hoursToCompleted} hrs'),
-                      );
-                    }),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    const Text(
-                      'FAQ',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.underline,
-                          decorationThickness: 2),
-                    ),
-                    ...detail!.fAQ!.map((e) {
-                      return ListTile(
-                        title: Text(e.title!),
-                        subtitle: Text(e.description!),
-                      );
-                    }),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    const Text(
-                      'Instructor',
-                      style: TextStyle(fontSize: 25),
-                    ),
-                    ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage: NetworkImage(teach!.image!),
-                      ),
-                      title: Text(teach!.name!),
-                      subtitle: Text('${teach!.field}'),
-                      trailing: Text('${teach!.workExperience} Years'),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
-        ));
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  Future _fetchCourseDetails() async {
+    Dataloader dataloader = Dataloader();
+    List<Courses> courses = await dataloader.getCourse();
+    List<Instructor> instructor = await dataloader.getInstructor();
+    return courses.firstWhere((course) => course.id == courseId);
   }
 }

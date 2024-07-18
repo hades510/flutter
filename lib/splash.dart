@@ -18,12 +18,14 @@ class _SplashState extends State<Splash> {
   void initState() {
     super.initState();
     Timer(
-       const Duration(seconds: 2),
-        () => Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const Home(),
-            )));
+      const Duration(seconds: 2),
+      () => Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const Home(),
+        ),
+      ),
+    );
   }
 
   @override
@@ -47,7 +49,3 @@ class _SplashState extends State<Splash> {
     );
   }
 }
-//Text("Hello").animate() 
-//   .fadeIn(duration: 600.ms)
-//   .then(delay: 200.ms) // baseline=800ms
-//   .slide()

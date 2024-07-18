@@ -1,260 +1,61 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+import 'dart:convert';
 
-// ignore_for_file: public_member_api_docs
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socialapp/models/user.dart';
 
-import 'dart:async';
+class DataLoader {
+  static String userkey = 'users';
 
-import 'package:flutter/material.dart';
-import 'package:url_launcher/link.dart';
-import 'package:url_launcher/url_launcher.dart';
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'URL Launcher',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'URL Launcher'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  bool _hasCallSupport = false;
-  Future<void>? _launched;
-  String _phone = '';
-
-  @override
-  void initState() {
-    super.initState();
-    // Check for phone call support.
-    canLaunchUrl(Uri(scheme: 'tel', path: '123')).then((bool result) {
-      setState(() {
-        _hasCallSupport = result;
-      });
-    });
+  Future<void> loadAllUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userJson = await rootBundle.loadString('assets/jsonfile/user.json'); // Fetch data in string
+    prefs.setString(userkey, userJson);
   }
 
-  Future<void> _launchInBrowser(Uri url) async {
-    if (!await launchUrl(
-      url,
-      mode: LaunchMode.externalApplication,
-    )) {
-      throw Exception('Could not launch $url');
-    }
-  }
-
-  Future<void> _launchInBrowserView(Uri url) async {
-    if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView)) {
-      throw Exception('Could not launch $url');
-    }
-  }
-
-  Future<void> _launchInWebView(Uri url) async {
-    if (!await launchUrl(url, mode: LaunchMode.inAppWebView)) {
-      throw Exception('Could not launch $url');
-    }
-  }
-
-  Future<void> _launchInAppWithBrowserOptions(Uri url) async {
-    if (!await launchUrl(
-      url,
-      mode: LaunchMode.inAppBrowserView,
-      browserConfiguration: const BrowserConfiguration(showTitle: true),
-    )) {
-      throw Exception('Could not launch $url');
-    }
-  }
-
-  Future<void> _launchAsInAppWebViewWithCustomHeaders(Uri url) async {
-    if (!await launchUrl(
-      url,
-      mode: LaunchMode.inAppWebView,
-      webViewConfiguration: const WebViewConfiguration(
-          headers: <String, String>{'my_header_key': 'my_header_value'}),
-    )) {
-      throw Exception('Could not launch $url');
-    }
-  }
-
-  Future<void> _launchInWebViewWithoutJavaScript(Uri url) async {
-    if (!await launchUrl(
-      url,
-      mode: LaunchMode.inAppWebView,
-      webViewConfiguration: const WebViewConfiguration(enableJavaScript: false),
-    )) {
-      throw Exception('Could not launch $url');
-    }
-  }
-
-  Future<void> _launchInWebViewWithoutDomStorage(Uri url) async {
-    if (!await launchUrl(
-      url,
-      mode: LaunchMode.inAppWebView,
-      webViewConfiguration: const WebViewConfiguration(enableDomStorage: false),
-    )) {
-      throw Exception('Could not launch $url');
-    }
-  }
-
-  Future<void> _launchUniversalLinkIOS(Uri url) async {
-    final bool nativeAppLaunchSucceeded = await launchUrl(
-      url,
-      mode: LaunchMode.externalNonBrowserApplication,
-    );
-    if (!nativeAppLaunchSucceeded) {
-      await launchUrl(
-        url,
-        mode: LaunchMode.inAppBrowserView,
-      );
-    }
-  }
-
-  Widget _launchStatus(BuildContext context, AsyncSnapshot<void> snapshot) {
-    if (snapshot.hasError) {
-      return Text('Error: ${snapshot.error}');
+  Future<List<User>> getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? user = prefs.getString(userkey);
+    if (user != null) {
+      List userList = json.decode(user);
+      return userList.map((e) => User.fromJson(e)).toList();
     } else {
-      return const Text('');
+      return [];
     }
   }
 
-  Future<void> _makePhoneCall(String phoneNumber) async {
-    final Uri launchUri = Uri(
-      scheme: 'tel',
-      path: phoneNumber,
-    );
-    await launchUrl(launchUri);
-  }
+  Future<void> updateUserPassword(int userId, String newPassword) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userJson = prefs.getString(userkey);
 
-  @override
-  Widget build(BuildContext context) {
-    // onPressed calls using this URL are not gated on a 'canLaunch' check
-    // because the assumption is that every device can launch a web URL.
-    final Uri toLaunch =
-        Uri(scheme: 'https', host: 'www.cylog.org', path: 'headers/');
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: ListView(
-        children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: TextField(
-                    onChanged: (String text) => _phone = text,
-                    decoration: const InputDecoration(
-                        hintText: 'Input the phone number to launch')),
-              ),
-              ElevatedButton(
-                onPressed: _hasCallSupport
-                    ? () => setState(() {
-                          _launched = _makePhoneCall(_phone);
-                        })
-                    : null,
-                child: _hasCallSupport
-                    ? const Text('Make phone call')
-                    : const Text('Calling not supported'),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(toLaunch.toString()),
-              ),
-              ElevatedButton(
-                onPressed: () => setState(() {
-                  _launched = _launchInBrowser(toLaunch);
-                }),
-                child: const Text('Launch in browser'),
-              ),
-              const Padding(padding: EdgeInsets.all(16.0)),
-              ElevatedButton(
-                onPressed: () => setState(() {
-                  _launched = _launchInBrowserView(toLaunch);
-                }),
-                child: const Text('Launch in app'),
-              ),
-              ElevatedButton(
-                onPressed: () => setState(() {
-                  _launched = _launchAsInAppWebViewWithCustomHeaders(toLaunch);
-                }),
-                child: const Text('Launch in app (Custom Headers)'),
-              ),
-              ElevatedButton(
-                onPressed: () => setState(() {
-                  _launched = _launchInWebViewWithoutJavaScript(toLaunch);
-                }),
-                child: const Text('Launch in app (JavaScript OFF)'),
-              ),
-              ElevatedButton(
-                onPressed: () => setState(() {
-                  _launched = _launchInWebViewWithoutDomStorage(toLaunch);
-                }),
-                child: const Text('Launch in app (DOM storage OFF)'),
-              ),
-              const Padding(padding: EdgeInsets.all(16.0)),
-              ElevatedButton(
-                onPressed: () => setState(() {
-                  _launched = _launchUniversalLinkIOS(toLaunch);
-                }),
-                child: const Text(
-                    'Launch a universal link in a native app, fallback to Safari.(Youtube)'),
-              ),
-              const Padding(padding: EdgeInsets.all(16.0)),
-              ElevatedButton(
-                onPressed: () => setState(() {
-                  _launched = _launchInWebView(toLaunch);
-                  Timer(const Duration(seconds: 5), () {
-                    closeInAppWebView();
-                  });
-                }),
-                child: const Text('Launch in app + close after 5 seconds'),
-              ),
-              const Padding(padding: EdgeInsets.all(16.0)),
-              ElevatedButton(
-                onPressed: () => setState(() {
-                  _launched = _launchInAppWithBrowserOptions(toLaunch);
-                }),
-                child: const Text('Launch in app with title displayed'),
-              ),
-              const Padding(padding: EdgeInsets.all(16.0)),
-              Link(
-                uri: Uri.parse(
-                    'https://pub.dev/documentation/url_launcher/latest/link/link-library.html'),
-                target: LinkTarget.blank,
-                builder: (BuildContext ctx, FollowLink? openLink) {
-                  return TextButton.icon(
-                    onPressed: openLink,
-                    label: const Text('Link Widget documentation'),
-                    icon: const Icon(Icons.read_more),
-                  );
-                },
-              ),
-              const Padding(padding: EdgeInsets.all(16.0)),
-              FutureBuilder<void>(future: _launched, builder: _launchStatus),
-            ],
-          ),
-        ],
-      ),
-    );
+    if (userJson != null) {
+      List<dynamic> userList = json.decode(userJson);
+      for (var user in userList) {
+        if (user['id'] == userId) {
+          user['password'] = newPassword;
+          break;
+        }
+      }
+
+      String updatedUserJson = json.encode(userList);
+      prefs.setString(userkey, updatedUserJson);
+    }
   }
+}
+
+// Example Usage:
+void main() async {
+  DataLoader dataLoader = DataLoader();
+  await dataLoader.loadAllUserData(); // Load initial data
+  List<User> users = await dataLoader.getUser(); // Get all users
+
+  print('Before password change:');
+  print(users.firstWhere((user) => user.id == 1).password); // Print current password
+
+  await dataLoader.updateUserPassword(1, 'newPassword123'); // Change password
+
+  users = await dataLoader.getUser(); // Get updated users
+
+  print('After password change:');
+  print(users.firstWhere((user) => user.id == 1).password); // Print new password
 }
