@@ -98,12 +98,13 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/courses/available%20courses.dart';
 import 'package:socialapp/dataloader.dart';
 import 'package:socialapp/login.dart';
 import 'package:socialapp/feeds/newsfeed.dart';
 import 'package:socialapp/courses/view_courses.dart';
-import 'package:socialapp/view_profile.dart';
+import 'package:socialapp/profiles/view_profile.dart';
 
 import 'authenthication/login_auth.dart';
 
@@ -120,14 +121,27 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    dataloader.loadalluserdatas();
+    loadData();
+
     service = Auth(dataloader);
+  }
+
+  void loadData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isJsonLoaded = prefs.getBool("jsonData") ?? false; //here it load the fetched json data if there is not data in shared preferences
+    //send false  
+
+
+    if (!isJsonLoaded) {
+      dataloader.loadalluserdatas();
+      prefs.setBool("jsonData", true);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: 4,
+        length: 3,
         child: Scaffold(
           appBar: AppBar(
             toolbarHeight: 25,
@@ -145,10 +159,10 @@ class _HomeState extends State<Home> {
                   color: Colors.black,
                 ),
                 // Icon(Icons.book_outlined,
-                const Icon(
-                  Icons.login_outlined,
-                  size: 30,
-                ),
+                // const Icon(
+                //   Icons.login_outlined,
+                //   size: 30,
+                // ),
                 const Icon(
                   Icons.account_circle,
                   size: 30,
@@ -156,12 +170,12 @@ class _HomeState extends State<Home> {
               ],
             ),
           ),
-          body: TabBarView(
+          body: const TabBarView(
             children: [
-              const Newsfeed(),
-              const AvailableCourses(),
-              const LoginPage(),
-              ViewProfile(service: service),
+              Newsfeed(),
+              AvailableCourses(),
+              // LoginPage(),
+              ViewProfile(),
             ],
           ),
         ));

@@ -1,7 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:socialapp/dataloader.dart';
-import 'package:socialapp/models/user_detail.dart';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socialapp/dataloader.dart';
+// import 'package:socialapp/models/user_detail.dart';
+
+import 'authenthication/login_auth.dart';
 import 'models/user.dart';
 
 class ChangePsw extends StatefulWidget {
@@ -19,12 +23,14 @@ class _ChangePswState extends State<ChangePsw> {
   bool obscureold = false;
   bool obscurenew = false;
   bool obscureconfirm = false;
-  Dataloader dataloader = Dataloader();
+  // Dataloader dataloader = Dataloader();
+  late Auth auth;
 
   @override
   void initState() {
     super.initState();
-    dataloader.loadalluserdatas();
+    // dataloader.loadalluserdatas();
+    auth = Auth(Dataloader()); //ensureing taht data i loaded prpoerly
   }
 
   @override
@@ -35,19 +41,26 @@ class _ChangePswState extends State<ChangePsw> {
     super.dispose();
   }
 
-  Future changepassword() async {
-    List<User> users = await dataloader.getuser();
-    List<UserDetail> userDetails = await dataloader.getuserdetail();
-    
+  void _changepassword() async {
+    bool isSuccess =
+        await auth.changepassword(oldpsw.text, newpsw.text);
+    if (isSuccess) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Password Changed')));
+      Navigator.pop(context);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to change the password')));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-          child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 25),
-        child: Form(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25),
+          child: Form(
             key: formkey,
             child: Center(
               child: SingleChildScrollView(
@@ -208,8 +221,9 @@ class _ChangePswState extends State<ChangePsw> {
                         GestureDetector(
                           onTap: () {
                             if (formkey.currentState!.validate()) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Ook')));
+                              _changepassword();
+                              // ScaffoldMessenger.of(context).showSnackBar(
+                              //     const SnackBar(content: Text('Ook')));
                             }
                           },
                           child: Container(
@@ -234,8 +248,10 @@ class _ChangePswState extends State<ChangePsw> {
                   ),
                 ),
               ),
-            )),
-      )),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

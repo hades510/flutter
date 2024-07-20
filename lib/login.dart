@@ -1,18 +1,18 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:socialapp/authenthication/dddart.dart';
 import 'package:socialapp/authenthication/login_auth.dart';
 import 'package:socialapp/change_psw.dart';
 import 'package:socialapp/dataloader.dart';
-import 'package:socialapp/datastorage.dart';
-import 'package:socialapp/feeds/newsfeed.dart';
+// import 'package:socialapp/datastorage.dart';
+// import 'package:socialapp/feeds/newsfeed.dart';
 import 'package:socialapp/forgotpassword.dart';
 import 'package:socialapp/home.dart';
-import 'package:socialapp/models/user.dart';
-import 'package:socialapp/models/user_detail.dart';
+// import 'package:socialapp/models/user.dart';
+// import 'package:socialapp/models/user_detail.dart';
 import 'package:socialapp/signup.dart';
-import 'package:socialapp/view_profile.dart';
+// import 'package:socialapp/view_profile.dart';
 
 class LoginPage extends StatefulWidget {
   // final Function()? ontap; //this toggles between sign up and login
@@ -31,8 +31,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController email = TextEditingController();
   bool obscure = false;
   bool isChecked = false;
-  Dataloader dataloader = Dataloader();
-  late Auth service;
+  late Auth auth;
 
   // Future<User?> auth(String email, String password) async {
   //   DataStorage provider = DataStorage();
@@ -50,23 +49,25 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    service = Auth(dataloader);
-    dataloader.loadalluserdatas();
+    auth = Auth(Dataloader()); //initialized to update the logged usr
   }
 
   void _login() async {
-    bool isSuccess = await service.login(email.text, password.text);
-    
+    bool isSuccess = await auth.login(email.text, password.text);
 
     if (isSuccess) {
-      ScaffoldMessenger.maybeOf(context)?.showSnackBar(const SnackBar(
-          duration: Duration(seconds: 1), content: Text("Logged In")));
-          
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          duration: Duration(seconds: 1),
+          content: Text("Logged In"),
+        ),
+      );
+
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const Home()
               // ViewProfile(
-              //   service: service,
+              //   auth: auth,
               // ),
               ));
     } else {
@@ -74,6 +75,7 @@ class _LoginPageState extends State<LoginPage> {
           const SnackBar(content: Text('Invalid email and password')));
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -223,14 +225,13 @@ class _LoginPageState extends State<LoginPage> {
                           children: [
                             GestureDetector(
                                 onTap: () {
-                                  Navigator.push(
+                                  Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => const ChangePsw(),
-                                      ));
+                                          builder: (context) => const Home()));
                                 },
                                 child: const Text(
-                                  'Change Password',
+                                  "Dont't want to login",
                                   style: TextStyle(
                                       fontStyle: FontStyle.italic,
                                       color: Colors.blue),

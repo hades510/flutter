@@ -53,38 +53,116 @@ import 'package:socialapp/models/user_detail.dart';
 import '../models/user.dart';
 
 class Auth {
-  static String loggdin = 'Logged';
-  Dataloader dataloader = Dataloader();
+  static String isUserloggedin = 'Logged';//use this key to save the data updated
+  
+  Dataloader dataloader;
   Auth(this.dataloader);
-
+//login
   Future<bool> login(String email, String password) async {
-    List<User> users = await dataloader.getuser();
-    List<UserDetail> userdetail = await dataloader.getuserdetail();
-    for (User e in users) {
-      if (e.email == email && e.password == password) {
-        /*UserDetail*/ var userdetailmatch =
-            userdetail.firstWhere((element) => element.id == e.id);
-        if (userdetailmatch != null) {
-          final prefs = await SharedPreferences.getInstance();
-          prefs.setString(loggdin, json.encode(userdetailmatch.toJson()));
-          return true;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userjson = prefs.getString(Dataloader.userkey);
+    if (userjson != null) {
+      List userlist = jsonDecode(userjson);
+      List<User> users = userlist.map((e) => User.fromJson(e)).toList();
+      for (User e in users) {
+        if (e.email == email && e.password == password) {
+          List<UserDetail> userdetail = await dataloader.getuserdetail();
+          UserDetail userdetailmatch =
+              userdetail.firstWhere((element) => element.id == e.id);
+          if (userdetailmatch != null) {
+            prefs.setString(
+                isUserloggedin, jsonEncode(userdetailmatch.toJson()));
+            return true;
+          }
         }
       }
     }
     return false;
   }
 
+//logout
   Future logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove(loggdin);
+    prefs.remove(isUserloggedin);
   }
 
+//checking if user is logged in
   Future<UserDetail?> getloggedinuser() async {
+    //used for fetching data in future builder if loggedin
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userstring = prefs.getString(loggdin);
+    String? userstring = prefs.getString(isUserloggedin);
     if (userstring != null) {
       return UserDetail.fromJson(jsonDecode(userstring));
     }
+
     return null;
   }
+
+//change the password
+  Future<bool> changepassword(
+    String oldpassword,
+    String newpassword,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userjson = prefs.getString(Dataloader.userkey);
+    if (userjson != null) {
+      List userlist = jsonDecode(userjson);
+      List<User> users = userlist.map((e) => User.fromJson(e)).toList();
+
+      for (User user in users) {
+        if (user.password == oldpassword) {
+          user.password = newpassword;
+
+          String updateduserJson = jsonEncode(user.toJson());
+          List updatedlist = users.map((e) => e.toJson()).toList();
+
+          prefs.setString(Dataloader.userkey, jsonEncode(updatedlist));
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+  //
 }
+// Future<bool> changeprofiles(String newpic) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? userdetailjson = prefs.getString(
+  //       Dataloader.userdetailkey); //load the key value// that is userdetail
+  //   if (userdetailjson != null) {
+  //     List detaillist = jsonDecode(userdetailjson);
+  //     List<UserDetail> details =
+  //         detaillist.map((e) => UserDetail.fromJson(e)).toList();
+
+  //     for (UserDetail detail in details) {
+  //       if (detail.profileImage!.imagePath == newpic) {
+  //         detail.profileImage!.imagePath = newpic;
+
+  //         String updatedpic = jsonEncode(detail.toJson());
+  //         List updatelist = details.map((e) => e.toJson()).toList();
+
+  //          save updated user detail
+  //         prefs.setString(Dataloader.userdetailkey, jsonEncode(updatelist));
+  //         return true;
+  //       }
+  //     }
+  //   }
+  //   return false;
+  // }
+
+
+//Copy code
+// Future<bool> changeProfileImage(String newImagePath) async {
+//   SharedPreferences prefs = await SharedPreferences.getInstance();
+//   String? userdetailJson = prefs.getString(isUserloggedin);
+
+//   if (userdetailJson != null) {
+//     UserDetail userDetail = UserDetail.fromJson(jsonDecode(userdetailJson));
+//     userDetail.profileImage?.imagePath = newImagePath;
+
+//     // Save updated user details
+//     prefs.setString(isUserloggedin, jsonEncode(userDetail.toJson()));
+//     return true;
+//   }
+//   return false;
+// }

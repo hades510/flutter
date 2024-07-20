@@ -11,7 +11,7 @@ import 'package:socialapp/models/user_detail.dart';
 import 'package:socialapp/models/user_friendlist.dart';
 import 'package:socialapp/models/user_post.dart';
 import 'package:socialapp/feeds/Albumscreen.dart';
-import 'package:socialapp/view_profile.dart';
+import 'package:socialapp/profiles/view_profile.dart';
 
 class Newsfeed extends StatefulWidget {
   // final UserPost post;
@@ -220,7 +220,7 @@ class _NewscreenState extends State<Newscreen> {
   }
 
   Widget _builderimage(List<Postedphoto> image, UserDetail detail, User user) {
-    int remainimages = image.length - 3;
+    int remainimages = image.length - 3;//remaining after 3 images foe the stack
     if (image.length == 1) {
       return Image.network(
         image[0].url!,

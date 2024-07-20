@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
-class UserDetailModel {
+class UserDetail {
   int? id;
   BasicInfo? basicInfo;
   ProfileImage? profileImage;
@@ -17,7 +17,7 @@ class UserDetailModel {
   List<Accomplishments>? accomplishments;
   ContactInfo? contactInfo;
 
-  UserDetailModel(
+  UserDetail(
       {this.id,
       this.basicInfo,
       this.profileImage,
@@ -31,7 +31,7 @@ class UserDetailModel {
       this.accomplishments,
       this.contactInfo});
 
-  UserDetailModel.fromJson(Map<String, dynamic> json) {
+  UserDetail.fromJson(Map<String, dynamic> json) {
     id = json['Id'];
     basicInfo = json['BasicInfo'] != null
         ? BasicInfo.fromJson(json['BasicInfo'])
@@ -40,6 +40,7 @@ class UserDetailModel {
         ? ProfileImage.fromJson(json['ProfileImage'])
         : null;
     coverImage = json['CoverImage'] != null
+    
         ? CoverImage.fromJson(json['CoverImage'])
         : null;
     if (json['WorkExperience'] != null) {

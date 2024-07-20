@@ -1,24 +1,25 @@
-class UserModel {
+class User {
   int? id;
   String? name;
   String? email;
   String? password;
+  User({this.id, this.email, this.name, this.password});
 
-  UserModel({this.email, this.id, this.name, this.password});
-
-  UserModel.fromJson(Map<String, dynamic> map) {
+  User.fromJson(Map<String, dynamic> map) {
     id = map['Id'];
-    name = map['Name'];
     email = map['Email'];
     password = map['Password'];
+    name = map['Name'];
   }
 
+  // get snapshot => null;
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['Id'] = id;
     data['Name'] = name;
-    data['Email'] = email;
     data['Password'] = password;
+    data['Email'] = email;
+
     return data;
   }
 }

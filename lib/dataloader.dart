@@ -11,10 +11,10 @@ import 'package:socialapp/models/user_detail.dart';
 import 'package:socialapp/models/user_friendlist.dart';
 import 'package:socialapp/models/user_post.dart';
 // Future<Map<String,dynamic>> loaduser() async {
-  //   String userjson = await rootBundle
-  //       .loadString('assets/jsonfile/user.json'); //fetch data in string
-  //   return jsonDecode(userjson); // returns a json structure
-  // }
+//   String userjson = await rootBundle
+//       .loadString('assets/jsonfile/user.json'); //fetch data in string
+//   return jsonDecode(userjson); // returns a json structure
+// }
 
 // Loads a JSON file containing user data from the assets bundle.
 // Parses the JSON string into a list of dynamic objects.
@@ -22,16 +22,9 @@ import 'package:socialapp/models/user_post.dart';
 // Returns a Future that completes with a list of User objects.
 
 //
-  // Future<List<User>> loaduser() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String userjson = await rootBundle
-  //       .loadString('assets/jsonfile/user.json'); //fetch data in string
-
-  //   List userlist = json.decode(userjson);
-  //   return userlist.map((e) => User.fromJson(e)).toList();
-  // }
+//
+// }
 class Dataloader {
-  
   static String userkey = 'users';
   static String userdetailkey = 'userdetail';
   static String userpostkey = 'userpost';
@@ -41,9 +34,11 @@ class Dataloader {
   static String coursescategorykey = 'coursescategory';
   static String instructorkey = 'instrucor';
   Future loadalluserdatas() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs = await SharedPreferences
+        .getInstance(); //when chnaged it get's new password
     String userjson = await rootBundle
         .loadString('assets/jsonfile/user.json'); //fetch data in string
+    print('$userjson');
     prefs.setString(userkey, userjson);
 
     String userdetailjson =
@@ -78,7 +73,8 @@ class Dataloader {
   // gets
   Future<List<User>> getuser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? user = prefs.getString(userkey);
+    String? user = prefs.getString(userkey); //also get password new
+    print('$prefs');
     if (user != null) {
       List userlist = json.decode(user);
       return userlist.map((e) => User.fromJson(e)).toList();
@@ -92,6 +88,9 @@ class Dataloader {
     String? detail = prefs.getString(userdetailkey);
     if (detail != null) {
       List detaillist = json.decode(detail);
+      print('$prefs');
+      print('$detail');
+      print('$detaillist');
       return detaillist.map((e) => UserDetail.fromJson(e)).toList();
     } else {
       return [];
@@ -152,7 +151,8 @@ class Dataloader {
       return [];
     }
   }
-   Future<List<Instructor>> getInstructor() async {
+
+  Future<List<Instructor>> getInstructor() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? instructor = prefs.getString(instructorkey);
     if (instructor != null) {
@@ -161,9 +161,6 @@ class Dataloader {
     } else {
       return [];
     }
-  }
-  Future updatePassword(String? email,String? password) async {
-    
   }
 }
 
