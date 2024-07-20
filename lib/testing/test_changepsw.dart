@@ -22,7 +22,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   }
 
   void _changePassword() async {
-    bool isSuccess = await auth.changePassword(oldPasswordController.text, newPasswordController.text);
+    bool isSuccess = await auth.changepassword(oldPasswordController.text, newPasswordController.text);
 
     if (isSuccess) {
       ScaffoldMessenger.of(context).showSnackBar(

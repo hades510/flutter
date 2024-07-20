@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:path_provider/path_provider.dart';
 // import 'package:socialapp/authenthication/dddart.dart';
 import 'package:socialapp/change_psw.dart';
 import 'package:socialapp/dataloader.dart';
@@ -29,7 +31,6 @@ class _ViewProfileState extends State<ViewProfile> {
   late Auth auth;
   UserDetail? userDetail;
   //image
-  final ImagePicker picker = ImagePicker();
   File? profile;
   File? cover;
   String? profielbase64;
@@ -45,63 +46,121 @@ class _ViewProfileState extends State<ViewProfile> {
     UserDetail? detail = await auth.getloggedinuser();
     setState(() {
       userDetail = detail;
+      //checking if profileimage is null and the state of the check if it is network or local
       if (userDetail!.profileImage != null &&
-          !userDetail!.profileImage!.isNetworkUrl!) {
-        final imagepath = base64Decode(userDetail!.profileImage!.imagePath!);
-
-        // Creating a temporary file to store the image data
-        final tempDir = Directory.systemTemp;
-        final tempFile = File('${tempDir.path}/temp_profile_image.png');
-
-        // Write the decoded data to the temporary file
-        tempFile.writeAsBytesSync(imagepath);
-
-        // Update _imageFile with the temporary file
-        profile = tempFile;
+          userDetail!.profileImage!.isNetworkUrl!) {
+        //this displays the original/initial  image;
+        profile = null;
+      } else {
+        //separate fn created because of async type was needed
+        _loadprofileImage();
+      }
+      if (userDetail!.coverImage != null &&
+          userDetail!.coverImage!.isNetworkUrl!) {
+        cover = null;
+      } else {
+        _loadcoverImage();
       }
     });
   }
- Future<void> _changeProfilePicture() async {
-    final XFile? pickedFile = await picker.pickImage(
-      source: ImageSource.gallery, // Change to ImageSource.camera for camera
-      imageQuality: 100, // Adjust image quality as needed
-    );
 
+  //here this method was created, beacuse it has a async fn which needs to be set inside the setState
+
+  //
+  /// The function `_loadprofileImage` decodes a base64 image, saves it as a temporary file, and updates
+  /// the profile with the temporary file.
+  void _loadprofileImage() async {
+    final imagepath = base64Decode(userDetail!.profileImage!
+        .imagePath!); //decode the image that is located inside it into  uint8list
+
+    // Creating a temporary file to store the image data
+    //
+    //creates a temporary directory
+    final tempDir = await getTemporaryDirectory();
+    // Creates a temporary file path in the temporary directory to store the image
+    final tempFile = File('${tempDir.path}/temp_profile_image.png');
+
+    // Write the decoded image data (Uint8List) to the temporary file
+    // This will effectively save the image data as a file on the device
+    tempFile.writeAsBytesSync(imagepath);
+    setState(() {
+      // Update profile with the temporary file
+      profile = tempFile;
+    });
+  }
+
+  Future _updateProfileImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
     if (pickedFile != null) {
+      final file = File(pickedFile.path);
+      final imageBytes = await file.readAsBytes();
+      final base64Image = base64Encode(imageBytes);
+
       setState(() {
-        profile = File(pickedFile.path);
+        profile = file;
+        userDetail!.profileImage!.imagePath = base64Image;
+        userDetail!.profileImage!.isNetworkUrl =
+            false; // Update flag for local image
       });
 
-      // Update user details with the new profile image
-      if (userDetail != null) {
-        final bytes = profile!.readAsBytesSync();
-        userDetail!.profileImage = ProfileImage(
-          isNetworkUrl: false,
-          imagePath: base64Encode(bytes), // Encode file to base64
-        );
-
-        // Save the updated user detail (e.g., to SharedPreferences or server)
-        await auth
-      }
+      // Save the updated user details
+      await auth.saveUserDetail(userDetail!);
     }
   }
 
+  void _loadcoverImage() async {
+    final imagepath = base64Decode(userDetail!.coverImage!.imagepath!);
+
+    final tempDir = await getTemporaryDirectory();
+    final tempFile = File('${tempDir.path}/temp_cover_image.png');
+    tempFile.writeAsBytesSync(imagepath);
+    setState(() {
+      cover = tempFile;
+    });
+  }
+
+  Future _updatecoverImage(ImageSource source) async {
+    final picker = ImagePicker();
+    XFile? picked = await picker.pickImage(source: source);
+    if (picked != null) {
+      File file = File(picked.path);
+      Uint8List imagebytes = await file.readAsBytes();
+      String base64string = base64Encode(imagebytes);
+
+      setState(() {
+        cover = file;
+        userDetail!.coverImage!.imagepath = base64string;
+        userDetail!.coverImage!.isNetworkUrl = false;
+      });
+
+      //for saving
+      await auth.saveUserDetail(userDetail!);
+    }
+  }
+
+  //created this imageprovider fn cause ternary operator in background image did't work
+  //kept show error The argument type 'Object' can't be assigned to the parameter type 'ImageProvider<Object>?'
+  ImageProvider<Object>? _getprofileimage() {
+    if (profile != null) {
+      return FileImage(profile!);
+    } else if (userDetail != null && userDetail!.profileImage != null) {
+      if (userDetail!.profileImage!.isNetworkUrl!) {
+        return NetworkImage(userDetail!.profileImage!.imagePath!);
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
 // void _loadUserDetail() async {
 //     UserDetail? detail = await auth.getloggedinuser(); // Fetch user details
 //     setState(() {
 //       userDetail = detail;
-//       if (userDetail?.profileImage != null && !userDetail!.profileImage!.isNetworkUrl!) {
-//         profile = File(base64Decode(userDetail!.profileImage!.imagePath!));
-//       }
+//
 //     });
 //   }
-  // void _changeprofile() async {
-  //   bool replaces = await auth.changeprofiles(profielbase64!);
-  //   if (replaces == false) {
-  //     ScaffoldMessenger.of(context)
-  //         .showSnackBar(SnackBar(content: Text('failed')));
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -111,25 +170,58 @@ class _ViewProfileState extends State<ViewProfile> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text('User Profile'),
-            GestureDetector(
-                onTap: () {
-                  if (userDetail == null) {
-                    Navigator.pushReplacement(
+            userDetail == null
+                ? ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const LoginPage(),
-                        ));
-                  } else {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ChangePsw(),
-                        ));
-                  }
-                },
-                child: const Icon(
-                  Icons.lock,
-                )),
+                        ),
+                      );
+                    },
+                    child: const Icon(Icons.login)
+                    // const Text(
+                    //   'Login',
+                    //   style: TextStyle(color: Colors.black),
+                    // ),
+                    )
+                : ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ChangePsw(),
+                          ));
+                    },
+                    child: Image.asset('assets/images/reload.png',
+                        height: 25, width: 25),
+                    // const Text(
+                    //   'Change Password',
+                    //   style: TextStyle(color: Colors.black),
+                    // ),
+                  ),
+            // GestureDetector(
+            //     onTap: () {
+            //       if (userDetail == null) {
+            //         Navigator.pushReplacement(
+            //             context,
+            //             MaterialPageRoute(
+            //               builder: (context) => const LoginPage(),//
+            //             ));
+            //       } else {
+            //         Navigator.push(//here only used push because if i backed the
+            //             context,
+            //             MaterialPageRoute(
+            //               builder: (context) => const ChangePsw(),
+            //             ));
+            //       }
+            //     },
+            //     child:
+            //     const Icon(
+            //       Icons.lock,
+            //     ),
+            //     ),
           ],
         ),
       ),
@@ -160,16 +252,23 @@ class _ViewProfileState extends State<ViewProfile> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        FullCoverPic(detail: userDetail!),
+                                    builder: (context) => FullCoverPic(
+                                        detail:
+                                            userDetail!), //here i passed the userdetail used to display the current logged profile detail
                                   ));
                             },
-                            child: Image.network(
-                              userDetail!.coverImage!.imagepath!,
-                              fit: BoxFit.cover,
-                            ),
+                            child: cover != null
+                                ? Image.file(
+                                    cover!,
+                                    fit: BoxFit.fill,
+                                  )
+                                : userDetail!.coverImage!.isNetworkUrl!
+                                    ? Image.network(
+                                        userDetail!.coverImage!.imagepath!,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : const SizedBox(),
                           ),
-                          // Image.asset('assets/images/test.jpg', fit: BoxFit.cover),
                         ),
                         Positioned(
                           left: 16,
@@ -186,9 +285,7 @@ class _ViewProfileState extends State<ViewProfile> {
                             },
                             child: CircleAvatar(
                               radius: 70,
-                              backgroundImage: NetworkImage(
-                                  userDetail!.profileImage!.imagePath!),
-                              // AssetImage('assets/images/test.jpg'),
+                              backgroundImage: _getprofileimage(),
                             ),
                           ),
                         ),
@@ -205,38 +302,29 @@ class _ViewProfileState extends State<ViewProfile> {
                                     title: const Text('Choose profile Picture'),
                                     actions: [
                                       TextButton(
-                                          onPressed: () async {
-                                            XFile? camera =
-                                                await picker.pickImage(
-                                                    source: ImageSource.camera);
-                                            if (camera != null) {
-                                              profile = File(camera.path);
-                                              List<int> bytes =
-                                                  await profile!.readAsBytes();
-                                              profielbase64 =
-                                                  base64Encode(bytes);
-                                              setState(() {});
-                                              // if (userDetail != null) {
-                                              //   userDetail!.profileImage =
-                                              //       ProfileImage(
-                                              //     isNetworkUrl: false,
-                                              //     imagePath: profielbase64,
-                                              //   );
-                                              // }
-                                            }
+                                          onPressed: () {
+                                            _updateProfileImage(
+                                                ImageSource.camera);
+                                            Navigator.pop(context);
                                           },
+                                          // XFile? camera =
+                                          //     await picker.pickImage(
+                                          //         source: ImageSource.camera);
+                                          // if (camera != null) {
+                                          //   profile = File(camera.path);
+                                          //   List<int> bytes =
+                                          //       await profile!.readAsBytes();
+                                          //   profielbase64 =
+                                          //       base64Encode(bytes);
+                                          //   setState(() {});
+                                          //
+
                                           child: const Text('Take Picture')),
                                       TextButton(
-                                          onPressed: () async {
-                                            XFile? gallery =
-                                                await picker.pickImage(
-                                                    source:
-                                                        ImageSource.gallery);
-                                            if (gallery != null) {
-                                              setState(() {
-                                                profile = File(gallery.path);
-                                              });
-                                            }
+                                          onPressed: () {
+                                            _updateProfileImage(
+                                                ImageSource.gallery);
+                                            Navigator.pop(context);
                                           },
                                           child: const Text(
                                               'Choose from Gallery')),
@@ -267,29 +355,17 @@ class _ViewProfileState extends State<ViewProfile> {
                                       title: const Text('Choose cover Picture'),
                                       actions: [
                                         TextButton(
-                                            onPressed: () async {
-                                              XFile? camera =
-                                                  await picker.pickImage(
-                                                      source:
-                                                          ImageSource.camera);
-                                              if (camera != null) {
-                                                setState(() {
-                                                  cover = File(camera.path);
-                                                });
-                                              }
+                                            onPressed: () {
+                                              _updatecoverImage(
+                                                  ImageSource.camera);
+                                              Navigator.pop(context);
                                             },
                                             child: const Text('Take Picture')),
                                         TextButton(
-                                            onPressed: () async {
-                                              XFile? gallery =
-                                                  await picker.pickImage(
-                                                      source:
-                                                          ImageSource.gallery);
-                                              if (gallery != null) {
-                                                setState(() {
-                                                  cover = File(gallery.path);
-                                                });
-                                              }
+                                            onPressed: () {
+                                              _updatecoverImage(
+                                                  ImageSource.gallery);
+                                              Navigator.pop(context);
                                             },
                                             child: const Text(
                                                 'Choose from Gallery')),
@@ -355,7 +431,7 @@ class _ViewProfileState extends State<ViewProfile> {
                                 Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => const LoginPage(),
+                                      builder: (context) => const Home(),
                                     ));
                               },
                               child: const Icon(Icons.logout),

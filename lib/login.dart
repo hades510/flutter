@@ -62,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
           content: Text("Logged In"),
         ),
       );
-
+      // Navigator.pop(context);
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const Home()
@@ -241,7 +241,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                Navigator.push(
+                                Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
@@ -270,7 +270,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                Navigator.push(
+                                Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => const Signup(),

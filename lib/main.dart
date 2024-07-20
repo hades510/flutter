@@ -30,6 +30,8 @@ void main() async {
   // String? loggedInUser = prefs.getString(Auth.loggedin);
   //
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initializing shared preferences and checking login status
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? loggedInUser = prefs.getString(Auth.isUserloggedin);
   // Dataloader dataloader = Dataloader();
@@ -40,6 +42,7 @@ void main() async {
   // await dataloader.loaddetail();
   runApp(App(loggedInUser: loggedInUser));
 }
+
 
 class App extends StatelessWidget {
   // final UserDetail? loggedin;
@@ -55,16 +58,16 @@ class App extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      // home: const Splash(),
-      initialRoute: loggedInUser == null ? '/' : '/slpash',
-      routes: {
-        '/': (context) => const LoginPage(),
-        '/slpash': (context) => const Splash(),
+      home: const Splash(),
+      // initialRoute: loggedInUser == null ? '/' : '/slpash',
+      // routes: {
+      //   '/': (context) => const LoginPage(),
+      //   '/slpash': (context) => const Splash(),
         
-        // '/home': (context) => const Home(),
-        // '/profile': (context) => const ViewProfile(),
-        // '/change-password': (context) => const ChangePsw(),
-      },
+      //   // '/home': (context) => const Home(),
+      //   // '/profile': (context) => const ViewProfile(),
+      //   // '/change-password': (context) => const ChangePsw(),
+      // },
     );
   }
 }

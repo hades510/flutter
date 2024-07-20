@@ -123,19 +123,19 @@ class _HomeState extends State<Home> {
     super.initState();
     loadData();
 
-    service = Auth(dataloader);
+    service = Auth(dataloader); //after splash screen it is being called, it is again loaded when loffed in,again called when logged out
   }
 
   void loadData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isJsonLoaded = prefs.getBool("jsonData") ?? false; //here it load the fetched json data if there is not data in shared preferences
-    //send false  
-
-
+    bool isJsonLoaded = prefs.getBool("jsonData") ??
+        false; //here it load the fetched json data if there is not data in shared preferences
+    //send false
     if (!isJsonLoaded) {
       dataloader.loadalluserdatas();
       prefs.setBool("jsonData", true);
     }
+    
   }
 
   @override

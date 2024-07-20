@@ -2,15 +2,17 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/testing/test_dataloader.dart';
-import 'package:socialapp/testing/test_model_user.dart';
 import 'package:socialapp/testing/test_userdetail_model.dart';
 
+
+import '../models/user.dart';
+
 class Auth {
-  static String loggedin = 'Logged';
+  static String isUserloggedin = 'Logged';//use this key to save the data updated
+  
   Dataloader dataloader;
-
   Auth(this.dataloader);
-
+//login
   Future<bool> login(String email, String password) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userjson = prefs.getString(Dataloader.userkey);
@@ -19,11 +21,12 @@ class Auth {
       List<User> users = userlist.map((e) => User.fromJson(e)).toList();
       for (User e in users) {
         if (e.email == email && e.password == password) {
-          List<UserDetail> userdetails = await dataloader.getuserdetail();
-          UserDetail userDetailMatch =
-              userdetails.firstWhere((element) => element.id == e.id);
-          if (userDetailMatch != null) {
-            prefs.setString(loggedin, jsonEncode(userDetailMatch.toJson()));
+          List<UserDetail> userdetail = await dataloader.getuserdetail();
+          UserDetail userdetailmatch =
+              userdetail.firstWhere((element) => element.id == e.id);
+          if (userdetailmatch != null) {
+            prefs.setString(
+                isUserloggedin, jsonEncode(userdetailmatch.toJson()));
             return true;
           }
         }
@@ -32,55 +35,55 @@ class Auth {
     return false;
   }
 
-  Future<void> logout() async {
+//logout
+  Future logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove(loggedin);
+    prefs.remove(isUserloggedin);
   }
 
-  Future<UserDetail?> getLoggedInUser() async {
+//checking if user is logged in
+  Future<UserDetail?> getloggedinuser() async {
+    //used for fetching data in future builder if loggedin
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userString = prefs.getString(loggedin);
-    if (userString != null) {
-      return UserDetail.fromJson(jsonDecode(userString));
+    String? userstring = prefs.getString(isUserloggedin);
+    if (userstring != null) {
+      return UserDetail.fromJson(jsonDecode(userstring));
     }
+
     return null;
   }
 
-  Future<bool> changePassword(String oldPassword, String newPassword) async {
+//change the password
+  Future<bool> changepassword(
+    String oldpassword,
+    String newpassword,
+  ) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userJson = prefs.getString(Dataloader.userkey);
-    if (userJson != null) {
-      List userList = jsonDecode(userJson);
-      List<User> users = userList.map((e) => User.fromJson(e)).toList();
+    String? userjson = prefs.getString(Dataloader.userkey);
+    if (userjson != null) {
+      List userlist = jsonDecode(userjson);
+      List<User> users = userlist.map((e) => User.fromJson(e)).toList();
+
       for (User user in users) {
-        if (user.password == oldPassword ) {
-          user.password = newPassword;
-          String updatedUserJson = jsonEncode(user.toJson());
-          List updatedUsersList = users.map((e) => e.toJson()).toList();
-          prefs.setString(Dataloader.userkey, jsonEncode(updatedUsersList));
+        if (user.password == oldpassword) {
+          user.password = newpassword;
+
+          String updateduserJson = jsonEncode(user.toJson());
+          List updatedlist = users.map((e) => e.toJson()).toList();
+
+          prefs.setString(Dataloader.userkey, jsonEncode(updatedlist));
           return true;
         }
       }
     }
     return false;
   }
+  // Save user details
+  Future<void> saveUserDetail(UserDetail userDetail) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // Save the updated user details
+    prefs.setString(isUserloggedin, jsonEncode(userDetail.toJson()));
+  }
+  //
+//   
 }
-
-  // Future<bool> changePassword(String oldPassword, String newPassword) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? userString = prefs.getString(loggedin);
-  //   if (userString != null) {
-  //     UserDetail userDetail = UserDetail.fromJson(jsonDecode(userString));
-  //     List<User> users = await dataloader.getuser();
-  //     User? user = users.firstWhere((u) => u.id == userDetail.id && u.password == oldPassword, orElse: () => null);
-  //     if (user != null) {
-  //       user.password = newPassword;
-  //       List<User> updatedUsers = users.map((u) => u.id == user.id ? user : u).toList();
-  //       prefs.setString(Dataloader.userkey, jsonEncode(updatedUsers.map((u) => u.toJson()).toList()));
-  //       userDetail.basicInfo?.password = newPassword; // Assuming password is stored in BasicInfo
-  //       prefs.setString(loggedin, jsonEncode(userDetail.toJson()));
-  //       return true;
-  //     }
-  //   }
-  //   return false;
-  // }

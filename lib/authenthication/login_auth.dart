@@ -123,8 +123,30 @@ class Auth {
     }
     return false;
   }
+  // Save user details
+  Future<void> saveUserDetail(UserDetail userDetail) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // Save the updated user details
+    prefs.setString(isUserloggedin, jsonEncode(userDetail.toJson()));
+  }
   //
+//   
 }
+// Future<bool> changeProfileImage(String newImagePath) async {
+//   SharedPreferences prefs = await SharedPreferences.getInstance();
+//   String? userdetailJson = prefs.getString(isUserloggedin);
+
+//   if (userdetailJson != null) {
+//     UserDetail userDetail = UserDetail.fromJson(jsonDecode(userdetailJson));
+//     userDetail.profileImage!.imagePath = newImagePath;
+
+//     // Save updated user details
+//     prefs.setString(isUserloggedin, jsonEncode(userDetail.toJson()));
+//     return true;
+//   }
+//   return false;
+// }
+
 // Future<bool> changeprofiles(String newpic) async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
   //   String? userdetailjson = prefs.getString(
@@ -152,17 +174,3 @@ class Auth {
 
 
 //Copy code
-// Future<bool> changeProfileImage(String newImagePath) async {
-//   SharedPreferences prefs = await SharedPreferences.getInstance();
-//   String? userdetailJson = prefs.getString(isUserloggedin);
-
-//   if (userdetailJson != null) {
-//     UserDetail userDetail = UserDetail.fromJson(jsonDecode(userdetailJson));
-//     userDetail.profileImage?.imagePath = newImagePath;
-
-//     // Save updated user details
-//     prefs.setString(isUserloggedin, jsonEncode(userDetail.toJson()));
-//     return true;
-//   }
-//   return false;
-// }
