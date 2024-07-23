@@ -40,7 +40,6 @@ class UserDetail {
         ? ProfileImage.fromJson(json['ProfileImage'])
         : null;
     coverImage = json['CoverImage'] != null
-    
         ? CoverImage.fromJson(json['CoverImage'])
         : null;
     if (json['WorkExperience'] != null) {
@@ -274,6 +273,7 @@ class Languages {
 class Hobbies {
   int? id;
   String? title;
+  Hobbies({this.id, this.title});
   Hobbies.fromJson(Map<String, dynamic> json) {
     id = json['Id'];
     title = json['Title'];

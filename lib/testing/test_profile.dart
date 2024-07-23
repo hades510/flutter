@@ -471,11 +471,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/testing/test_auth.dart';
-import 'package:socialapp/testing/test_changepsw.dart';
 import 'package:socialapp/testing/test_dataloader.dart';
 import 'package:socialapp/testing/test_login.dart';
 import 'package:socialapp/testing/test_userdetail_model.dart';
@@ -502,14 +503,17 @@ class _ProfilePageState extends State<ProfilePage> {
   String? startdate;
   String? enddate;
 
+  //for skills
+  TextEditingController skills = TextEditingController();
+
   @override
   void initState() {
     super.initState();
     auth = Auth(Dataloader());
     _loadUserDetail();
     _loadProfileImage();
-    _loadname();
     _loadWorkExperience();
+    _loadskills();
   }
 
   void _loadUserDetail() async {
@@ -547,38 +551,6 @@ class _ProfilePageState extends State<ProfilePage> {
       if (imagePath != null) {
         setState(() {
           _imageFile = File(imagePath);
-        });
-      }
-    }
-  }
-
-  Future<void> _updatename(String newname) async {
-    final prefs = await SharedPreferences.getInstance();
-
-    if (userDetail != null) {
-      final userid = userDetail!.id;
-      final namekey = 'name_$userid';
-      await prefs.setString(namekey, newname);
-
-      setState(() {
-        updatename = newname;
-        userDetail!.basicInfo!.name = newname;
-      });
-      await auth.saveUserDetail(userDetail!);
-    }
-  }
-
-  Future<void> _loadname() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (userDetail != null) {
-      final userid = userDetail!.id;
-      final namekey = 'name_$userid';
-      final uname = prefs.getString(namekey);
-
-      if (uname != null) {
-        setState(() {
-          updatename = uname;
-          userDetail!.basicInfo!.name = uname;
         });
       }
     }
@@ -681,49 +653,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       title: Text(sdate == null
                           ? 'Select a date'
                           : 'Startdate $startdate'),
-                      onTap: () async {
-                        DateTime? picker = await showDatePicker(
-                            context: context,
-                            firstDate: DateTime(1990),
-                            lastDate: DateTime.now());
-                        if (picker != null && picker != sdate) {
-                          setState(() {
-                            sdate = picker;
-                            startdate = DateFormat('y-MM-dd').format(sdate!);
-                            if (edate != null && edate!.isBefore(sdate!)) {
-                              edate = null;
-                            }
-                          });
-                        }
-                      },
+                      onTap: _selectstartdate,
                     ),
                     ListTile(
                       title: Text(edate == null
                           ? 'Select a date'
                           : 'Enddate ${DateFormat('y-MM-dd').format(edate!)}'),
-                      onTap: () async {
-                        if (sdate == null) {
-                          return;
-                        }
-                        DateTime? picker = await showDatePicker(
-                            context: context,
-                            initialDate: edate ??
-                                (sdate != null
-                                    ? sdate!.add(
-                                        const Duration(days: 1),
-                                      )
-                                    : DateTime.now()),
-                            firstDate: sdate?.add(const Duration(days: 1)) ??
-                                DateTime.now(),
-                            lastDate: DateTime.now());
-                        if (picker != null && picker != sdate) {
-                          setState(() {
-                            edate = picker;
-
-                            enddate = DateFormat('y-MM-dd').format(edate!);
-                          });
-                        }
-                      },
+                      onTap: _selectenddate,
                     ),
                     ElevatedButton(
                         onPressed: () {
@@ -739,6 +675,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   userDetail!.workExperience ?? []);
                               updatedList.add(workexp);
                               _updateworkexp(updatedList);
+                              //use setstate to clear the fields.
                               Navigator.pop(context);
                             }
                           }
@@ -753,6 +690,13 @@ class _ProfilePageState extends State<ProfilePage> {
       },
     );
   }
+  /* ...userDetail!.skills!.map(
+                    (skill) => _buildContainer(
+                      ListTile(
+                        title: Text(skill.title ?? ''),
+                        trailing: IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () => _removeSkill(skill), */
 
   void _removeWorkExperience(WorkExperience work) {
     if (userDetail != null) {
@@ -760,6 +704,96 @@ class _ProfilePageState extends State<ProfilePage> {
           List<WorkExperience>.from(userDetail!.workExperience ?? []);
       updatedList.remove(work);
       _updateworkexp(updatedList);
+    }
+  }
+
+  Future<void> _updateskills(List<Skills> skills) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (userDetail != null) {
+      final userid = userDetail!.id;
+      final skillkey = 'skill_$userid';
+      final skilljson = skills.map((e) => e.toJson()).toList();
+
+      await prefs.setString(skillkey, jsonEncode(skilljson));
+
+      setState(() {
+        userDetail!.skills = skills;
+      });
+      await auth.saveUserDetail(userDetail!);
+    }
+  }
+
+  Future<void> _loadskills() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (userDetail != null) {
+      final userid = userDetail!.id;
+      final skillkey = 'skill_$userid';
+      final skilljson = prefs.getString(skillkey);
+      if (skilljson != null) {
+        final List jsonlist = jsonDecode(skilljson);
+        final skillslist = jsonlist.map((e) => Skills.fromJson(e)).toList();
+
+        setState(() {
+          userDetail!.skills = skillslist;
+        });
+      }
+    }
+  }
+
+  void _removeskills(Skills skill) async {
+    if (userDetail != null) {
+      final updatedlist = List<Skills>.from(userDetail!.skills ?? []);
+      updatedlist.remove(skill);
+      _updateskills(updatedlist);
+    }
+  }
+
+  /*if (skillController.text.isNotEmpty) {
+                final newSkill = Skill(title: skillController.text);
+                final updatedSkills = List<Skill>.from(userDetail!.skills ?? []);
+                updatedSkills.add(newSkill);
+                _updateSkills(updatedSkills);
+                Navigator.pop(context);
+              } */
+
+  Future<void> _selectstartdate() async {
+    DateTime? picker = await showDatePicker(
+        context: context, firstDate: DateTime(1990), lastDate: DateTime.now());
+    if (picker != null && picker != sdate) {
+      setState(
+        () {
+          sdate = picker;
+          startdate = DateFormat('y-MM-dd').format(sdate!);
+          if (edate != null && edate!.isBefore(sdate!)) {
+            edate = null;
+            enddate = null;
+          }
+        },
+      );
+    }
+  }
+
+  Future<void> _selectenddate() async {
+    if (sdate == null) {
+      return;
+    }
+    DateTime? picker = await showDatePicker(
+        context: context,
+        initialDate: edate ??
+            (sdate != null
+                ? sdate!.add(
+                    const Duration(days: 1),
+                  )
+                : DateTime.now()),
+        firstDate: sdate!.add(const Duration(days: 1)) ?? DateTime.now(),
+        lastDate: DateTime.now());
+    if (picker != null && picker != sdate) {
+      setState(() {
+        edate = picker;
+        enddate = DateFormat('y-MM-dd').format(edate!);
+      });
     }
   }
 
@@ -803,50 +837,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: Text('Change Profile Image'),
                     ),
                     SizedBox(height: 16),
-                    Text('Name: ${userDetail!.basicInfo!.name}'),
-                    ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Text('Change Name'),
-                              content: TextField(
-                                controller: namechange,
-                                decoration:
-                                    InputDecoration(labelText: 'New Name'),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('Cancel'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    _updatename(namechange.text);
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('Update'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      child: Text('Update Name'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ChangePasswordPage(),
-                            ));
-                      },
-                      child: Text("Change Password"),
-                    ),
                     SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () async {
@@ -864,7 +854,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       onPressed: _addworkexp,
                       child: Text('Add Work Experience'),
                     ),
-                    ...?userDetail!.workExperience?.map(
+                    ...userDetail!.workExperience!.map(
                       (work) => _buildContainer(
                         ListTile(
                           title: Text(work.jobTitle ?? ''),
@@ -880,15 +870,70 @@ class _ProfilePageState extends State<ProfilePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         _buildSectionTitle('Skills'),
-                        const Icon(
-                          Icons.edit_outlined,
-                          size: 30,
+                        GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text('Add Skills'),
+                                  content: TextFormField(
+                                    controller: skills,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(
+                                        RegExp(r'[A-za-z _]'),
+                                      ),
+                                    ],
+                                    maxLength: 20,
+                                    decoration: const InputDecoration(
+                                      enabledBorder: OutlineInputBorder(),
+                                      focusedBorder: OutlineInputBorder(),
+                                      labelText: 'Skills',
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please provide skills';
+                                      }
+                                    },
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: Text('Cancel')),
+                                    TextButton(
+                                        onPressed: () {
+                                          if (skills.text.isNotEmpty) {
+                                            final newskill =
+                                                Skills(title: skills.text);
+                                            final updatelist =
+                                                List<Skills>.from(
+                                                    userDetail!.skills ?? []);
+                                            updatelist.add(newskill);
+                                            _updateskills(updatelist);
+                                            Navigator.pop(context);
+                                          }
+                                        },
+                                        child: Text('Submit'))
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          child: const Icon(
+                            Icons.edit_outlined,
+                            size: 30,
+                          ),
                         )
                       ],
                     ),
-                    _buildChips(userDetail!.skills!
-                        .map((skill) => skill.title!)
-                        .toList()),
+                    Row(
+                      children: [
+                        ...userDetail!.skills!.map((skil) => _buildskills(skil))
+                      ],
+                    )
+                    // _buildChips(userDetail!.skills!
+                    //     .map((skill) => skill.title!)
+                    //     .toList()),
                     // Expanded(
                     //   child: ListView(
                     //     children: userDetail!.workExperience
@@ -951,6 +996,29 @@ class _ProfilePageState extends State<ProfilePage> {
           backgroundColor: Colors.black,
         );
       }).toList(),
+    );
+  }
+
+  Widget _buildskills(Skills skill) {
+    return Wrap(
+      direction: Axis.horizontal,
+      spacing: 8,
+      runSpacing: 4,
+      children: [
+        Chip(
+          deleteIcon: Icon(
+            Icons.cancel,
+            size: 15,
+            color: Colors.white,
+          ),
+          backgroundColor: Colors.black,
+          deleteButtonTooltipMessage: 'Delete',
+          label:
+              Text(skill.title!, style: const TextStyle(color: Colors.white)),
+          onDeleted: () => _removeskills(skill),
+        )
+        //
+      ],
     );
   }
 }

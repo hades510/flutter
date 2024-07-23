@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:socialapp/authenthication/dddart.dart';
 import 'package:socialapp/change_psw.dart';
@@ -68,7 +66,14 @@ class _ViewProfileState extends State<ViewProfile> {
   final socialkey = GlobalKey<FormState>();
   TextEditingController platform = TextEditingController();
   TextEditingController link = TextEditingController();
-  //image
+  //for skills
+  TextEditingController skills = TextEditingController();
+  //for hobbies
+  TextEditingController hobbies = TextEditingController();
+  //Languages
+  TextEditingController lang = TextEditingController();
+
+  //images
   File? profile;
   File? cover;
   Uint8List? coveriamge;
@@ -90,6 +95,9 @@ class _ViewProfileState extends State<ViewProfile> {
     _loadeducation();
     _loadAccomplishment();
     _loadsocial();
+    _loadskill();
+    _loadshobbies();
+    _loadlanguages();
   }
 
   void _loaduserDetail() async {
@@ -376,93 +384,84 @@ class _ViewProfileState extends State<ViewProfile> {
                 padding: const EdgeInsets.all(22),
                 child: Column(
                   children: [
-                    TextFormField(
-                      controller: job,
-                      decoration: const InputDecoration(
-                        labelText: 'Job Title',
-                        enabledBorder: OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(),
-                        errorBorder: OutlineInputBorder(),
-                      ),
-                      validator: (value) =>
-                          value!.isEmpty ? 'Please enter a job title' : null,
-                    ),
+                    _texformfield(
+                        job, 'Please provide your job title', 'Job Title'),
                     const SizedBox(
                       height: 15,
                     ),
-                    TextFormField(
-                      controller: jobsummary,
-                      decoration: const InputDecoration(
-                        labelText: 'Summary',
-                        enabledBorder: OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(),
-                        errorBorder: OutlineInputBorder(),
-                      ),
-                      validator: (value) =>
-                          value!.isEmpty ? 'Please enter a jobsummary' : null,
-                    ),
+                    _texformfield(jobsummary, 'Please provide your experience',
+                        'Summary'),
                     const SizedBox(
                       height: 15,
                     ),
-                    TextFormField(
-                      controller: organization,
-                      decoration: const InputDecoration(
-                        labelText: 'Organization',
-                        enabledBorder: OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(),
-                        errorBorder: OutlineInputBorder(),
+                    _texformfield(organization,
+                        'Please provide your comapny name', 'Company name'),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Container(
+                      height: 60,
+                      decoration: BoxDecoration(
+                        border: Border.all(),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      validator: (value) => value!.isEmpty
-                          ? 'Please enter the organization name'
-                          : null,
+                      child: ListTile(
+                        trailing: const Icon(Icons.calendar_month_outlined),
+                        title: Text(sdate == null
+                            ? 'Select a date'
+                            : 'Startdate $startdate'),
+                        onTap: () async {
+                          DateTime? picker = await showDatePicker(
+                              context: context,
+                              firstDate: DateTime(1990),
+                              lastDate: DateTime.now());
+                          if (picker != null && picker != sdate) {
+                            setState(() {
+                              sdate = picker;
+                              startdate = DateFormat('y-MM-dd').format(sdate!);
+                              if (edate != null && edate!.isBefore(sdate!)) {
+                                edate = null;
+                              }
+                            });
+                          }
+                        },
+                      ),
                     ),
-                    ListTile(
-                      title: Text(sdate == null
-                          ? 'Select a date'
-                          : 'Startdate $startdate'),
-                      onTap: () async {
-                        DateTime? picker = await showDatePicker(
-                            context: context,
-                            firstDate: DateTime(1990),
-                            lastDate: DateTime.now());
-                        if (picker != null && picker != sdate) {
-                          setState(() {
-                            sdate = picker;
-                            startdate = DateFormat('y-MM-dd').format(sdate!);
-                            if (edate != null && edate!.isBefore(sdate!)) {
-                              edate = null;
-                            }
-                          });
-                        }
-                      },
-                    ),
-                    ListTile(
-                      title: Text(edate == null
-                          ? 'Select a date'
-                          : 'Enddate ${DateFormat('y-MM-dd').format(edate!)}'),
-                      onTap: () async {
-                        if (sdate == null) {
-                          return;
-                        }
-                        DateTime? picker = await showDatePicker(
-                            context: context,
-                            initialDate: edate ??
-                                (sdate != null
-                                    ? sdate!.add(
-                                        const Duration(days: 1),
-                                      )
-                                    : DateTime.now()),
-                            firstDate: sdate?.add(const Duration(days: 1)) ??
-                                DateTime.now(),
-                            lastDate: DateTime.now());
-                        if (picker != null && picker != sdate) {
-                          setState(() {
-                            edate = picker;
+                    Container(
+                      height: 60,
+                      decoration: BoxDecoration(
+                        border: Border.all(),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: ListTile(
+                        title: Text(edate == null
+                            ? 'Select a date'
+                            : 'Enddate ${DateFormat('y-MM-dd').format(edate!)}'),
+                        trailing: const Icon(Icons.calendar_month_outlined),
+                        onTap: () async {
+                          if (sdate == null) {
+                            return;
+                          }
+                          DateTime? picker = await showDatePicker(
+                              context: context,
+                              initialDate: edate ??
+                                  (sdate != null
+                                      ? sdate!.add(
+                                          const Duration(days: 1),
+                                        )
+                                      : DateTime.now()),
+                              firstDate: sdate?.add(const Duration(days: 1)) ??
+                                  DateTime.now(),
+                              lastDate: DateTime.now());
+                          if (picker != null && picker != sdate) {
+                            setState(() {
+                              edate = picker;
 
-                            enddate = DateFormat('y-MM-dd').format(edate!);
-                          });
-                        }
-                      },
+                              enddate = DateFormat('y-MM-dd').format(edate!);
+                            });
+                          }
+                        },
+                      ),
                     ),
                     ElevatedButton(
                         onPressed: () {
@@ -478,6 +477,9 @@ class _ViewProfileState extends State<ViewProfile> {
                                   userDetail!.workExperience ?? []);
                               updatedList.add(workexp);
                               _updateworkexp(updatedList);
+                              job.clear();
+                              jobsummary.clear();
+                              organization.clear();
                               Navigator.pop(context);
                             }
                           }
@@ -553,95 +555,87 @@ class _ViewProfileState extends State<ViewProfile> {
                 padding: const EdgeInsets.all(22),
                 child: Column(
                   children: [
-                    TextFormField(
-                      controller: edulevel,
-                      decoration: const InputDecoration(
-                        labelText: 'Level',
-                        enabledBorder: OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(),
-                        errorBorder: OutlineInputBorder(),
-                      ),
-                      validator: (value) =>
-                          value!.isEmpty ? 'Please enter a Level' : null,
-                    ),
+                    _texformfield(
+                        edulevel, 'Please enter your gradelevel', 'Level'),
                     const SizedBox(
                       height: 15,
                     ),
-                    TextFormField(
-                      controller: edusummary,
-                      decoration: const InputDecoration(
-                        labelText: 'Summary',
-                        enabledBorder: OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(),
-                        errorBorder: OutlineInputBorder(),
-                      ),
-                      validator: (value) =>
-                          value!.isEmpty ? 'Please enter a Summary' : null,
-                    ),
+                    _texformfield(edusummary, 'Please provide us with summary',
+                        'Summary'),
                     const SizedBox(
                       height: 15,
                     ),
-                    TextFormField(
-                      controller: eduorganization,
-                      decoration: const InputDecoration(
-                        labelText: 'Organization',
-                        enabledBorder: OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(),
-                        errorBorder: OutlineInputBorder(),
+                    _texformfield(
+                        eduorganization,
+                        'Please Provide institution name',
+                        'College/School name'),
+                    Container(
+                      height: 60,
+                      decoration: BoxDecoration(
+                        border: Border.all(),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      validator: (value) =>
-                          value!.isEmpty ? 'Please enter Institution' : null,
+                      child: ListTile(
+                        trailing: const Icon(Icons.calendar_month_outlined),
+                        title: Text(edusdate == null
+                            ? 'Select a date'
+                            : 'Startdate ${DateFormat('y-MM-dd').format(edusdate!)}'),
+                        onTap: () async {
+                          DateTime? picker = await showDatePicker(
+                              context: context,
+                              firstDate: DateTime(1990),
+                              lastDate: DateTime.now());
+                          if (picker != null && picker != edusdate) {
+                            setState(() {
+                              edusdate = picker;
+                              edustartdate =
+                                  DateFormat('y-MM-dd').format(edusdate!);
+                              if (eduedate != null &&
+                                  eduedate!.isBefore(edusdate!)) {
+                                eduedate = null;
+                              }
+                            });
+                          }
+                        },
+                      ),
                     ),
-                    ListTile(
-                      title: Text(edusdate == null
-                          ? 'Select a date'
-                          : 'Startdate ${DateFormat('y-MM-dd').format(edusdate!)}'),
-                      onTap: () async {
-                        DateTime? picker = await showDatePicker(
-                            context: context,
-                            firstDate: DateTime(1990),
-                            lastDate: DateTime.now());
-                        if (picker != null && picker != edusdate) {
-                          setState(() {
-                            edusdate = picker;
-                            edustartdate =
-                                DateFormat('y-MM-dd').format(edusdate!);
-                            if (eduedate != null &&
-                                eduedate!.isBefore(edusdate!)) {
-                              eduedate = null;
-                            }
-                          });
-                        }
-                      },
-                    ),
-                    ListTile(
-                      title: Text(eduedate == null
-                          ? 'Select a date'
-                          : 'Enddate ${DateFormat('y-MM-dd').format(eduedate!)}'),
-                      onTap: () async {
-                        if (edusdate == null) {
-                          return;
-                        }
-                        DateTime? picker = await showDatePicker(
-                            context: context,
-                            initialDate: eduedate ??
-                                (edusdate != null
-                                    ? edusdate!.add(
-                                        const Duration(days: 1),
-                                      )
-                                    : DateTime.now()),
-                            firstDate: edusdate?.add(const Duration(days: 1)) ??
-                                DateTime.now(),
-                            lastDate: DateTime.now());
-                        if (picker != null && picker != edusdate) {
-                          setState(() {
-                            eduedate = picker;
+                    Container(
+                      height: 60,
+                      decoration: BoxDecoration(
+                        border: Border.all(),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: ListTile(
+                        trailing: const Icon(Icons.calendar_month_outlined),
+                        title: Text(eduedate == null
+                            ? 'Select a date'
+                            : 'Enddate ${DateFormat('y-MM-dd').format(eduedate!)}'),
+                        onTap: () async {
+                          if (edusdate == null) {
+                            return;
+                          }
+                          DateTime? picker = await showDatePicker(
+                              context: context,
+                              initialDate: eduedate ??
+                                  (edusdate != null
+                                      ? edusdate!.add(
+                                          const Duration(days: 1),
+                                        )
+                                      : DateTime.now()),
+                              firstDate:
+                                  edusdate?.add(const Duration(days: 1)) ??
+                                      DateTime.now(),
+                              lastDate: DateTime.now());
+                          if (picker != null && picker != edusdate) {
+                            setState(() {
+                              eduedate = picker;
 
-                            eduenddate =
-                                DateFormat('y-MM-dd').format(eduedate!);
-                          });
-                        }
-                      },
+                              eduenddate =
+                                  DateFormat('y-MM-dd').format(eduedate!);
+                            });
+                          }
+                        },
+                      ),
                     ),
                     ElevatedButton(
                         onPressed: () {
@@ -658,6 +652,10 @@ class _ViewProfileState extends State<ViewProfile> {
                                   userDetail!.education ?? []);
                               updatedList.add(eduform);
                               _updateeducation(updatedList);
+                              edulevel.clear();
+                              eduorganization.clear();
+                              edusummary.clear();
+                              //left
                               Navigator.pop(context);
                             }
                           }
@@ -733,31 +731,15 @@ class _ViewProfileState extends State<ViewProfile> {
                 padding: const EdgeInsets.all(22),
                 child: Column(
                   children: [
-                    TextFormField(
-                      controller: accomtitle,
-                      decoration: const InputDecoration(
-                        labelText: ' Title',
-                        enabledBorder: OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(),
-                        errorBorder: OutlineInputBorder(),
-                      ),
-                      validator: (value) =>
-                          value!.isEmpty ? 'Please enter a title' : null,
-                    ),
+                    _texformfield(accomtitle,
+                        'Please mention your Accoplishment', 'Accomplishment'),
                     const SizedBox(
                       height: 15,
                     ),
-                    TextFormField(
-                      controller: accomdescrip,
-                      decoration: const InputDecoration(
-                        labelText: ' Description',
-                        enabledBorder: OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(),
-                        errorBorder: OutlineInputBorder(),
-                      ),
-                      validator: (value) =>
-                          value!.isEmpty ? 'Please enter description' : null,
-                    ),
+                    _texformfield(
+                        accomdescrip,
+                        'Provide details about of the Accomplishment',
+                        'Description'),
                     const SizedBox(
                       height: 15,
                     ),
@@ -773,6 +755,7 @@ class _ViewProfileState extends State<ViewProfile> {
                                   userDetail!.accomplishments ?? []);
                               updatelist.add(accomform);
                               _updateAccomplishment(updatelist);
+
                               Navigator.pop(context);
                             }
                           }
@@ -820,9 +803,9 @@ class _ViewProfileState extends State<ViewProfile> {
 
     if (userDetail != null) {
       final userid = userDetail!.id;
-      final key = 'social_$userid';
+      final mediakey = 'media_$userid';
 
-      final mediajson = prefs.getString(key);
+      final mediajson = prefs.getString(mediakey);
 
       if (mediajson != null) {
         final List jsonlist = jsonDecode(mediajson);
@@ -841,34 +824,16 @@ class _ViewProfileState extends State<ViewProfile> {
       builder: (context) {
         return SingleChildScrollView(
           child: AlertDialog(
-            title: Text('Add Social media'),
+            title: const Text('Add Social media'),
             content: Form(
               key: socialkey,
               child: Column(
                 children: [
-                  TextFormField(
-                    controller: platform,
-                    decoration: const InputDecoration(
-                      labelText: 'Platform',
-                      enabledBorder: OutlineInputBorder(),
-                      focusedBorder: OutlineInputBorder(),
-                      errorBorder: OutlineInputBorder(),
-                    ),
-                    validator: (value) =>
-                        value!.isEmpty ? 'Please provide platform' : null,
+                  _texformfield(platform, 'Provide platform', 'Platform'),
+                  const SizedBox(
+                    height: 15,
                   ),
-                  TextFormField(
-                    controller: link,
-                    decoration: const InputDecoration(
-                      labelText: 'Link',
-                      enabledBorder: OutlineInputBorder(),
-                      focusedBorder: OutlineInputBorder(),
-                      errorBorder: OutlineInputBorder(),
-                    ),
-                    validator: (value) => value!.isEmpty
-                        ? 'Please provide link to Social Media'
-                        : null,
-                  ),
+                  _texformfield(link, 'Provide link ', 'Link'),
                   const SizedBox(
                     height: 15,
                   ),
@@ -884,6 +849,8 @@ class _ViewProfileState extends State<ViewProfile> {
                                 userDetail!.contactInfo!.socialMedia ?? []);
                             updatelist.add(socialmedia);
                             _updatesocial(updatelist);
+                            platform.clear();
+                            link.clear();
                             Navigator.pop(context);
                           }
                         }
@@ -907,7 +874,134 @@ class _ViewProfileState extends State<ViewProfile> {
     }
   }
 
-  Future<void> _updateskills() async {}
+  Future<void> _updateskills(List<Skills> skill) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (userDetail != null) {
+      final userid = userDetail!.id;
+      final skillkey = 'skill_$userid';
+      final skilljson = skill.map((e) => e.toJson()).toList();
+
+      await prefs.setString(skillkey, jsonEncode(skilljson));
+
+      setState(() {
+        userDetail!.skills = skill;
+      });
+      await auth.saveUserDetail(userDetail!);
+    }
+  }
+
+  Future<void> _loadskill() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (userDetail != null) {
+      final userid = userDetail!.id;
+      final skillkey = 'skill_$userid';
+      final skilljson = prefs.getString(skillkey);
+
+      if (skilljson != null) {
+        final List jsonlist = jsonDecode(skilljson);
+        final skillist = jsonlist.map((e) => Skills.fromJson(e)).toList();
+
+        setState(() {
+          userDetail!.skills = skillist;
+        });
+      }
+    }
+  }
+
+  void _removeskill(Skills skill) async {
+    if (userDetail != null) {
+      final updatelist = List<Skills>.from(userDetail!.skills ?? []);
+      updatelist.remove(skill);
+      _updateskills(updatelist);
+    }
+  }
+
+  Future<void> _updatehobbies(List<Hobbies> hobby) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (userDetail != null) {
+      final userid = userDetail!.id;
+      final hobbykey = 'hobby_$userid';
+      final hobbyjson = hobby.map((e) => e.toJson()).toList();
+
+      await prefs.setString(hobbykey, jsonEncode(hobbyjson));
+
+      setState(() {
+        userDetail!.hobbies = hobby;
+      });
+      await auth.saveUserDetail(userDetail!);
+    }
+  }
+
+  Future<void> _loadshobbies() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (userDetail != null) {
+      final userid = userDetail!.id;
+      final hobbykey = 'hobby_$userid';
+      final hobbyjson = prefs.getString(hobbykey);
+
+      if (hobbyjson != null) {
+        final List jsonlist = jsonDecode(hobbyjson);
+        final hobbylist = jsonlist.map((e) => Hobbies.fromJson(e)).toList();
+
+        setState(() {
+          userDetail!.hobbies = hobbylist;
+        });
+      }
+    }
+  }
+
+  void _removeshobbies(Hobbies hobby) async {
+    if (userDetail != null) {
+      final updatelist = List<Hobbies>.from(userDetail!.hobbies ?? []);
+      updatelist.remove(hobby);
+      _updatehobbies(updatelist);
+    }
+  }
+
+  Future<void> _updateLanguages(List<Languages> lang) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (userDetail != null) {
+      final userid = userDetail!.id;
+      final langkey = 'lang_$userid';
+      final langjson = lang.map((e) => e.toJson()).toList();
+
+      await prefs.setString(langkey, jsonEncode(langjson));
+
+      setState(() {
+        userDetail!.languages = lang;
+      });
+      await auth.saveUserDetail(userDetail!);
+    }
+  }
+
+  Future<void> _loadlanguages() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (userDetail != null) {
+      final userid = userDetail!.id;
+      final langkey = 'lang_$userid';
+      final langjson = prefs.getString(langkey);
+
+      if (langjson != null) {
+        final List jsonlist = jsonDecode(langjson);
+        final langlist = jsonlist.map((e) => Languages.fromJson(e)).toList();
+
+        setState(() {
+          userDetail!.languages = langlist;
+        });
+      }
+    }
+  }
+
+  void _removelanguages(Languages lang) async {
+    if (userDetail != null) {
+      final updatelist = List<Languages>.from(userDetail!.languages ?? []);
+      updatelist.remove(lang);
+      _updateLanguages(updatelist);
+    }
+  }
 
   //created this imageprovider fn cause ternary operator in background image did't work
   //kept show error The argument type 'Object' can't be assigned to the parameter type 'ImageProvider<Object>?'
@@ -1181,73 +1275,51 @@ class _ViewProfileState extends State<ViewProfile> {
                                 showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
-                                    title: const Text('Your name'),
+                                    title: const Text('Your Detail'),
                                     content: Form(
                                       key: basicinfokey,
-                                      child: Column(
-                                        children: [
-                                          TextFormField(
-                                            // onChanged: (value) {
-                                            //   updatename.text = value;
-                                            // },
-                                            controller: updatename,
-                                            decoration: InputDecoration(
-                                              labelText: 'Your name',
-                                              prefixIcon:
-                                                  const Icon(Icons.person),
-                                              enabledBorder: OutlineInputBorder(
-                                                borderSide: const BorderSide(
-                                                    color: Colors.white),
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                              focusedBorder: OutlineInputBorder(
-                                                borderSide: const BorderSide(
-                                                    color: Colors.white),
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                              filled: true,
-                                              fillColor: const Color.fromARGB(
-                                                  255, 241, 240, 240),
+                                      child: SizedBox(
+                                        height: 200,
+                                        child: Column(
+                                          children: [
+                                            _texformfield(
+                                                updatename,
+                                                'Please enter your name',
+                                                'Your name'),
+                                            const SizedBox(
+                                              height: 15,
                                             ),
-                                            maxLength: 40,
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'Please enter Your name';
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                          TextFormField(
-                                            // onChanged: (value) {
-                                            //   updatesumary.text = value;
-                                            // },
-                                            controller: updatesumary,
-                                            decoration: InputDecoration(
-                                              labelText: 'Your summary',
-                                              prefixIcon:
-                                                  const Icon(Icons.person),
-                                              enabledBorder: OutlineInputBorder(
-                                                borderSide: const BorderSide(
-                                                    color: Colors.white),
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
+                                            TextFormField(
+                                              // onChanged: (value) {
+                                              //   updatesumary.text = value;
+                                              // },
+                                              controller: updatesumary,
+                                              decoration: InputDecoration(
+                                                labelText: 'Your summary',
+                                                prefixIcon:
+                                                    const Icon(Icons.person),
+                                                enabledBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: const BorderSide(
+                                                      color: Colors.white),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: const BorderSide(
+                                                      color: Colors.white),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                filled: true,
+                                                fillColor: const Color.fromARGB(
+                                                    255, 241, 240, 240),
                                               ),
-                                              focusedBorder: OutlineInputBorder(
-                                                borderSide: const BorderSide(
-                                                    color: Colors.white),
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                              filled: true,
-                                              fillColor: const Color.fromARGB(
-                                                  255, 241, 240, 240),
+                                              maxLength: 40,
                                             ),
-                                            maxLength: 40,
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ),
                                     actions: [
@@ -1276,6 +1348,10 @@ class _ViewProfileState extends State<ViewProfile> {
                                               .validate()) {
                                             _updateBasicinfo(updatename.text,
                                                 updatesumary.text);
+                                            setState(() {
+                                              updatename.clear();
+                                              updatesumary.clear();
+                                            });
                                             Navigator.pop(context);
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
@@ -1344,8 +1420,8 @@ class _ViewProfileState extends State<ViewProfile> {
                                         context: context,
                                         builder: (context) {
                                           return AlertDialog(
-                                            title: const Text(
-                                                'Update your BasicInfo !'),
+                                            title: _buildSectionTitle(
+                                                'Update your BasicInfo!'),
                                             content: Form(
                                               key: statuskey,
                                               child: SizedBox(
@@ -1612,6 +1688,7 @@ class _ViewProfileState extends State<ViewProfile> {
                                   .map(
                                 (work) => Dismissible(
                                   key: Key(work.jobTitle ?? ''),
+                                  // key: Key(work.id.toString() ?? ''),
                                   direction: DismissDirection.endToStart,
                                   onDismissed: (direction) =>
                                       _removeworkexp(work),
@@ -1669,42 +1746,248 @@ class _ViewProfileState extends State<ViewProfile> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   _buildSectionTitle('Skills'),
-                                  const Icon(
-                                    Icons.edit_outlined,
-                                    size: 30,
+                                  GestureDetector(
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: const Text('Add Skills'),
+                                            content: TextFormField(
+                                              controller: skills,
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter
+                                                    .allow(
+                                                  RegExp(r'[A-za-z _]'),
+                                                ),
+                                              ],
+                                              maxLength: 20,
+                                              decoration: const InputDecoration(
+                                                enabledBorder:
+                                                    OutlineInputBorder(),
+                                                focusedBorder:
+                                                    OutlineInputBorder(),
+                                                labelText: 'Skills',
+                                              ),
+                                              validator: (value) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
+                                                  return 'Please provide skills';
+                                                }
+                                                return null;
+                                              },
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(context),
+                                                  child: const Text('Cancel')),
+                                              TextButton(
+                                                  onPressed: () {
+                                                    if (skills
+                                                        .text.isNotEmpty) {
+                                                      final newskill = Skills(
+                                                          title: skills.text);
+                                                      final updatelist =
+                                                          List<Skills>.from(
+                                                              userDetail!
+                                                                      .skills ??
+                                                                  []);
+                                                      updatelist.add(newskill);
+                                                      _updateskills(updatelist);
+                                                      setState(() {
+                                                        skills.clear();
+                                                      });
+                                                      Navigator.pop(context);
+                                                    }
+                                                  },
+                                                  child: const Text('Submit'))
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: const Icon(
+                                      Icons.edit_outlined,
+                                      size: 30,
+                                    ),
                                   )
                                 ],
                               ),
-                              _buildChips(userDetail!.skills!
-                                  .map((skill) => skill.title!)
-                                  .toList()),
+                              Wrap(
+                                children: [
+                                  ...userDetail!.skills!
+                                      .map((e) => _buildSkills(e))
+                                ],
+                              ),
+                              // const SizedBox(height: 16),
+
+                              // _buildChips(userDetail!.skills!
+                              //     .map((skill) => skill.title!)
+                              //     .toList()),
                               const SizedBox(height: 16),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   _buildSectionTitle('Hobbies'),
-                                  const Icon(
-                                    Icons.edit_outlined,
-                                    size: 30,
+                                  GestureDetector(
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: const Text('Add Hobbies'),
+                                            content: TextFormField(
+                                              controller: hobbies,
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter
+                                                    .allow(
+                                                  RegExp(r'[A-za-z _]'),
+                                                ),
+                                              ],
+                                              maxLength: 20,
+                                              decoration: const InputDecoration(
+                                                enabledBorder:
+                                                    OutlineInputBorder(),
+                                                focusedBorder:
+                                                    OutlineInputBorder(),
+                                                labelText: 'Hobbies',
+                                              ),
+                                              validator: (value) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
+                                                  return 'Please provide your Hobbies';
+                                                }
+                                                return null;
+                                              },
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(context),
+                                                  child: const Text('Cancel')),
+                                              TextButton(
+                                                  onPressed: () {
+                                                    if (hobbies
+                                                        .text.isNotEmpty) {
+                                                      final newhobby = Hobbies(
+                                                          title: hobbies.text);
+                                                      final updatelist = List<
+                                                              Hobbies>.from(
+                                                          userDetail!.hobbies ??
+                                                              []);
+                                                      updatelist.add(newhobby);
+                                                      _updatehobbies(
+                                                          updatelist);
+                                                      hobbies.clear();
+                                                      Navigator.pop(context);
+                                                    }
+                                                  },
+                                                  child: const Text('Submit'))
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: const Icon(
+                                      Icons.edit_outlined,
+                                      size: 30,
+                                    ),
                                   )
                                 ],
                               ),
-                              _buildChips(userDetail!.hobbies!
-                                  .map((hobby) => hobby.title!)
-                                  .toList()),
+                              Wrap(
+                                children: [
+                                  ...userDetail!.hobbies!
+                                      .map((e) => _buildHobbies(e))
+                                ],
+                              ),
+
+                              // _buildChips(userDetail!.hobbies!
+                              //     .map((hobby) => hobby.title!)
+                              //     .toList()),
                               const SizedBox(height: 16),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   _buildSectionTitle('Languages'),
-                                  const Icon(Icons.edit_outlined, size: 30)
+                                  GestureDetector(
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: const Text('Add Languages'),
+                                            content: TextFormField(
+                                              controller: lang,
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter
+                                                    .allow(
+                                                  RegExp(r'[A-za-z _]'),
+                                                ),
+                                              ],
+                                              maxLength: 20,
+                                              decoration: const InputDecoration(
+                                                enabledBorder:
+                                                    OutlineInputBorder(),
+                                                focusedBorder:
+                                                    OutlineInputBorder(),
+                                                labelText: 'Languages',
+                                              ),
+                                              validator: (value) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
+                                                  return 'Please provide Languages you speak';
+                                                }
+                                                return null;
+                                              },
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(context),
+                                                  child: const Text('Cancel')),
+                                              TextButton(
+                                                  onPressed: () {
+                                                    if (lang.text.isNotEmpty) {
+                                                      final newlang = Languages(
+                                                          title: lang.text);
+                                                      final updatelist = List<
+                                                              Languages>.from(
+                                                          userDetail!
+                                                                  .languages ??
+                                                              []);
+                                                      updatelist.add(newlang);
+                                                      _updateLanguages(
+                                                          updatelist);
+                                                      lang.clear();
+                                                      Navigator.pop(context);
+                                                    }
+                                                  },
+                                                  child: const Text('Submit'))
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: const Icon(
+                                      Icons.edit_outlined,
+                                      size: 30,
+                                    ),
+                                  )
                                 ],
                               ),
-                              _buildChips(userDetail!.languages!
-                                  .map((lang) => lang.title!)
-                                  .toList()),
+                              Wrap(
+                                children: [
+                                  ...userDetail!.languages!
+                                      .map((e) => _buildLanguages(e))
+                                ],
+                              ),
+                              // _buildChips(userDetail!.languages!
+                              //     .map((lang) => lang.title!)
+                              //     .toList()),
                             ],
                           ),
                         ),
@@ -2112,19 +2395,72 @@ class _ViewProfileState extends State<ViewProfile> {
     );
   }
 
-  Widget _buildChips(List<String> items) {
-    return Wrap(
-      spacing: 8.0,
-      runSpacing: 4.0,
-      children: items.map((item) {
-        return Chip(
-          label: Text(
-            item,
-            style: const TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.black,
-        );
-      }).toList(),
+  // Widget _buildChips(
+  //   List<String> items,
+  // ) {
+  //   return Wrap(
+  //     spacing: 8.0,
+  //     runSpacing: 4.0,
+  //     children: items.map((item) {
+  //       return Chip(
+  //         label: Text(
+  //           item,
+  //           style: const TextStyle(color: Colors.white),
+  //         ),
+  //         backgroundColor: Colors.black,
+  //       );
+  //     }).toList(),
+  //   );
+  // }
+
+  Widget _buildSkills(Skills skill) {
+    return Chip(
+      backgroundColor: Colors.black,
+      deleteIcon: const Icon(
+        Icons.cancel,
+        color: Colors.white,
+        size: 15,
+      ),
+      deleteButtonTooltipMessage: 'Delete',
+      label: Text(
+        skill.title!,
+        style: const TextStyle(color: Colors.white),
+      ),
+      onDeleted: () => _removeskill(skill),
+    );
+  }
+
+  Widget _buildHobbies(Hobbies hobby) {
+    return Chip(
+      backgroundColor: Colors.black,
+      deleteIcon: const Icon(
+        Icons.cancel,
+        color: Colors.white,
+        size: 15,
+      ),
+      deleteButtonTooltipMessage: 'Delete',
+      label: Text(
+        hobby.title!,
+        style: const TextStyle(color: Colors.white),
+      ),
+      onDeleted: () => _removeshobbies(hobby),
+    );
+  }
+
+  Widget _buildLanguages(Languages lang) {
+    return Chip(
+      backgroundColor: Colors.black,
+      deleteIcon: const Icon(
+        Icons.cancel,
+        color: Colors.white,
+        size: 15,
+      ),
+      deleteButtonTooltipMessage: 'Delete',
+      label: Text(
+        lang.title!,
+        style: const TextStyle(color: Colors.white),
+      ),
+      onDeleted: () => _removelanguages(lang),
     );
   }
 
@@ -2178,26 +2514,55 @@ class _ViewProfileState extends State<ViewProfile> {
 
   Widget _buildSocialMedia(SocialMedia social) {
     return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4.0),
-        child: SizedBox(
-          width: double.infinity,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // _buildSectionTitle("Social Media"),
-              GestureDetector(
-                onTap: () async {
-                  final Uri url = Uri.parse(social.url!);
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: SizedBox(
+        width: double.infinity,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // _buildSectionTitle("Social Media"),
+            GestureDetector(
+              onTap: () async {
+                final Uri url = Uri.parse(social.url!);
 
-                  await launchUrl(url);
-                },
-                child: Text(
-                  social.title!,
-                  style: const TextStyle(color: Colors.blue, fontSize: 16),
-                ),
-              )
-            ],
-          ),
-        ));
+                await launchUrl(url);
+              },
+              child: Text(
+                social.title!,
+                style: const TextStyle(color: Colors.blue, fontSize: 16),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _texformfield(TextEditingController control, String text, String label,
+      [int? length]) {
+    return TextFormField(
+      controller: control,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: const Icon(Icons.person),
+        enabledBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.white),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.white),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        filled: true,
+        fillColor: const Color.fromARGB(255, 241, 240, 240),
+      ),
+      maxLength: length,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return text;
+        }
+        return null;
+      },
+    );
   }
 }
