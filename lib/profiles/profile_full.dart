@@ -1,27 +1,47 @@
+// import 'dart:convert';
+// import 'dart:typed_data';
+
+// import 'package:flutter/material.dart';
+// import 'package:socialapp/models/user_detail.dart';
+
+// class FullProfilePic extends StatelessWidget {
+//   final UserDetail detail;
+//   const FullProfilePic({super.key, required this.detail});
+
+//   //decoding
+
+//   @override
+//   Widget build(BuildContext context) {
+//     Uint8List imagesbytes = base64Decode(detail.profileImage!.imagePath!);
+//     return Scaffold(
+//       backgroundColor: Colors.black,
+//       appBar: AppBar(
+//         title: const Text("Profile picture"),
+//       ),
+//       body: Center(
+//         child: Image.memory(imagesbytes),
+//       ),
+//     );
+//   }
+// }
+
+//file
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:socialapp/models/user_detail.dart';
 
-class FullProfilePic extends StatefulWidget {
-  final UserDetail detail;
-  const FullProfilePic({super.key, required this.detail});
+class FullProfilePic extends StatelessWidget {
+  final File imagefile;
+  const FullProfilePic({super.key, required this.imagefile});
 
-  @override
-  State<FullProfilePic> createState() => _FullProfilePicState();
-}
-
-class _FullProfilePicState extends State<FullProfilePic> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text("Profile picture"),
+        title:  const Text('Profile picture'),
       ),
-      body: Center(
-        child: Image.network(
-          widget.detail.profileImage!.imagePath!,
-        ),
-      ),
+      body: Center(child: Image.file(imagefile),),
     );
   }
 }

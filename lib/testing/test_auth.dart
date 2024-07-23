@@ -4,12 +4,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/testing/test_dataloader.dart';
 import 'package:socialapp/testing/test_userdetail_model.dart';
 
-
 import '../models/user.dart';
 
 class Auth {
-  static String isUserloggedin = 'Logged';//use this key to save the data updated
-  
+  static String isUserloggedin =
+      'Logged'; //use this key to save the data updated
+
   Dataloader dataloader;
   Auth(this.dataloader);
 //login
@@ -41,16 +41,21 @@ class Auth {
     prefs.remove(isUserloggedin);
   }
 
-//checking if user is logged in
+//retrives currently logged-in user detail from shared preferences
   Future<UserDetail?> getloggedinuser() async {
     //used for fetching data in future builder if loggedin
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userstring = prefs.getString(isUserloggedin);
+    String? userstring = prefs.getString(isUserloggedin);//fetches string value associated with isUserloggedin key
     if (userstring != null) {
-      return UserDetail.fromJson(jsonDecode(userstring));
+      return UserDetail.fromJson(jsonDecode(userstring));//decodes the json string into map  and then uses fromJson to convert to object
     }
 
     return null;
+  }
+  Future<void> saveUserDetail(UserDetail userDetail) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // Save the updated user details
+    prefs.setString(isUserloggedin, jsonEncode(userDetail.toJson()));
   }
 
 //change the password
@@ -65,6 +70,8 @@ class Auth {
       List<User> users = userlist.map((e) => User.fromJson(e)).toList();
 
       for (User user in users) {
+        print(user.password);
+        print(oldpassword);
         if (user.password == oldpassword) {
           user.password = newpassword;
 
@@ -78,12 +85,9 @@ class Auth {
     }
     return false;
   }
+
   // Save user details
-  Future<void> saveUserDetail(UserDetail userDetail) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    // Save the updated user details
-    prefs.setString(isUserloggedin, jsonEncode(userDetail.toJson()));
-  }
+  
   //
-//   
+//
 }

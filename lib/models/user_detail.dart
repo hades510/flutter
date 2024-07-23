@@ -196,15 +196,6 @@ class CoverImage {
     data['image_path'] = imagepath;
     return data;
   }
-
-  // ImageProvider getcoverImage() {
-  //   if (imagepath != null) {
-  //     Uint8List bytes = base64Decode(imagepath!);
-  //     return MemoryImage(bytes);
-  //   } else {
-  //     return const AssetImage('assets/images/test.jpg');
-  //   }
-  // }
 }
 
 class WorkExperience {

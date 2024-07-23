@@ -53,8 +53,9 @@ import 'package:socialapp/models/user_detail.dart';
 import '../models/user.dart';
 
 class Auth {
-  static String isUserloggedin = 'Logged';//use this key to save the data updated
-  
+  static String isUserloggedin =
+      'Logged'; //use this key to save the data updated
+
   Dataloader dataloader;
   Auth(this.dataloader);
 //login
@@ -97,6 +98,12 @@ class Auth {
 
     return null;
   }
+   Future<void> saveUserDetail(UserDetail userDetail) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // Save the updated user details
+    prefs.setString(isUserloggedin, jsonEncode(userDetail.toJson()));
+  }
+  
 
 //change the password
   Future<bool> changepassword(
@@ -123,48 +130,22 @@ class Auth {
     }
     return false;
   }
-  // Save user details
-  Future<void> saveUserDetail(UserDetail userDetail) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    // Save the updated user details
-    prefs.setString(isUserloggedin, jsonEncode(userDetail.toJson()));
-  }
-  //
-//   
-}
-// Future<bool> changeProfileImage(String newImagePath) async {
-//   SharedPreferences prefs = await SharedPreferences.getInstance();
-//   String? userdetailJson = prefs.getString(isUserloggedin);
-
-//   if (userdetailJson != null) {
-//     UserDetail userDetail = UserDetail.fromJson(jsonDecode(userdetailJson));
-//     userDetail.profileImage!.imagePath = newImagePath;
-
-//     // Save updated user details
-//     prefs.setString(isUserloggedin, jsonEncode(userDetail.toJson()));
-//     return true;
-//   }
-//   return false;
-// }
-
-// Future<bool> changeprofiles(String newpic) async {
+  // Future<bool> changename(String oldname, String newname) async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? userdetailjson = prefs.getString(
-  //       Dataloader.userdetailkey); //load the key value// that is userdetail
-  //   if (userdetailjson != null) {
-  //     List detaillist = jsonDecode(userdetailjson);
+  //   String? userjson = prefs.getString(Dataloader.userdetailkey);
+  //   if (userjson != null) {
+  //     List userdetaillist = jsonDecode(userjson);
   //     List<UserDetail> details =
-  //         detaillist.map((e) => UserDetail.fromJson(e)).toList();
+  //         userdetaillist.map((e) => UserDetail.fromJson(e)).toList();
 
   //     for (UserDetail detail in details) {
-  //       if (detail.profileImage!.imagePath == newpic) {
-  //         detail.profileImage!.imagePath = newpic;
+  //       if (detail.basicInfo!.name == oldname) {//name is saved as rojesh
+  //         detail.basicInfo!.name = newname;
 
-  //         String updatedpic = jsonEncode(detail.toJson());
-  //         List updatelist = details.map((e) => e.toJson()).toList();
+  //         String updatedjson = jsonEncode(detail.toJson());
+  //         List updatedlist = details.map((e) => e.toJson()).toList();
 
-  //          save updated user detail
-  //         prefs.setString(Dataloader.userdetailkey, jsonEncode(updatelist));
+  //         prefs.setString(Dataloader.userdetailkey, jsonEncode(updatedlist));
   //         return true;
   //       }
   //     }
@@ -172,5 +153,38 @@ class Auth {
   //   return false;
   // }
 
+  // 
+
+  //
+
+  // Save user details
+ 
+//
+}
+
+// Future<bool> changeprofiles(String newpic) async {
+//   SharedPreferences prefs = await SharedPreferences.getInstance();
+//   String? userdetailjson = prefs.getString(
+//       Dataloader.userdetailkey); //load the key value// that is userdetail
+//   if (userdetailjson != null) {
+//     List detaillist = jsonDecode(userdetailjson);
+//     List<UserDetail> details =
+//         detaillist.map((e) => UserDetail.fromJson(e)).toList();
+
+//     for (UserDetail detail in details) {
+//       if (detail.profileImage!.imagePath == newpic) {
+//         detail.profileImage!.imagePath = newpic;
+
+//         String updatedpic = jsonEncode(detail.toJson());
+//         List updatelist = details.map((e) => e.toJson()).toList();
+
+//          save updated user detail
+//         prefs.setString(Dataloader.userdetailkey, jsonEncode(updatelist));
+//         return true;
+//       }
+//     }
+//   }
+//   return false;
+// }
 
 //Copy code

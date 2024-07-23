@@ -46,11 +46,11 @@ class _ChangePswState extends State<ChangePsw> {
         await auth.changepassword(oldpsw.text, newpsw.text);
     if (isSuccess) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Password Changed')));
+          .showSnackBar(const SnackBar(content: Text('Password Changed')));
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to change the password')));
+          const SnackBar(content: Text('Failed to change the password')));
     }
   }
 
