@@ -1,9 +1,7 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:socialapp/authenthication/dddart.dart';
 import 'package:socialapp/authenthication/login_auth.dart';
-import 'package:socialapp/change_psw.dart';
 import 'package:socialapp/dataloader.dart';
 // import 'package:socialapp/datastorage.dart';
 // import 'package:socialapp/feeds/newsfeed.dart';
@@ -54,6 +52,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void _login() async {
     bool isSuccess = await auth.login(email.text, password.text);
+      
 
     if (isSuccess) {
       ScaffoldMessenger.of(context).showSnackBar(

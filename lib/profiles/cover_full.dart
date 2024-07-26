@@ -1,9 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:socialapp/models/user_detail.dart';
 
 class FullCoverPic extends StatelessWidget {
   final File imagepath;
@@ -17,7 +14,7 @@ class FullCoverPic extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Cover picture"),
       ),
-      body: Center(child: Image.file(imagepath)),
+      body: Center(child: InteractiveViewer(child: Image.file(imagepath))),
     );
   }
 }

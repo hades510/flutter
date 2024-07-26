@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:socialapp/authenthication/login_auth.dart';
-// import 'package:socialapp/models/user.dart';
-// import 'package:socialapp/models/user_detail.dart';
-// import 'package:socialapp/dataloader.dart';
 import 'package:socialapp/testing/test_auth.dart';
 import 'package:socialapp/testing/test_dataloader.dart';
 import 'package:socialapp/testing/test_profile.dart';
-// import 'package:socialapp/auth.dart';
-// import 'package:socialapp/profile_page.dart'; // Import profile page
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

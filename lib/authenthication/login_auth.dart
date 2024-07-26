@@ -1,49 +1,3 @@
-// import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:socialapp/dataloader.dart';
-// import 'package:socialapp/datastorage.dart';
-// import 'package:socialapp/models/user.dart';
-// import 'package:socialapp/models/user_detail.dart';
-
-// class Auth {
-//  /// The code snippet you provided is a Dart class named `Auth` that handles user authentication. Here's
-//  /// an explanation of the relevant parts:
-//   Dataloader dataloader = Dataloader(); // for loading the parsed data
-//   // DataStorage dataStorage = DataStorage();
-//   Future login(String email, String password) async {
-//     List<User> users = await dataloader.loaduser();//loaded the parsed user data
-//     // List<User> users = await dataStorage.getuser(); //saved from shared preferences
-//     // List<UserDetail> userdetails = await dataloader.loaddetail();
-//     User? authenUser; //user class object
-//     UserDetail? detail; //userdetail class object
-
-//     for (User user in users) {
-//       //for in loop
-//       if (user.email == email && user.password == password) {
-//         authenUser =
-//             user; //here the user has the scope for this for loop only so,all the data of user is send to authenUser shose scope is greater.
-
-//         detail = await dataloader.loaddetail(user
-//             .id!); //loades the user's id which was stored with the clicked email and password
-//         break;
-//       }
-//     }
-
-//     /// This part of the code is checking if both `authenUser` and `detail` are not null. If they are
-//     /// both not null, it means that a user has been successfully authenticated and their details have
-//     /// been loaded.
-//     if (authenUser != null && detail != null) {
-//       SharedPreferences prefs = await SharedPreferences.getInstance();
-//       await prefs.setInt(
-//           'Id', authenUser.id!); //User id is stored in 'Id key for later use
-
-//       return {
-//         'user': authenUser,
-//         'userdetail': detail
-//       }; //after setting the details of authenUser and detail is stored inside the following keys
-//     }
-//     return null;
-//   }
-// }
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -53,16 +7,19 @@ import 'package:socialapp/models/user_detail.dart';
 import '../models/user.dart';
 
 class Auth {
-  static String isUserloggedin =
+  static String 
+  isUserloggedin =
       'Logged'; //use this key to save the data updated
 
   Dataloader dataloader;
   Auth(this.dataloader);
 //login
   Future<bool> login(String email, String password) async {
+    //retrived data to shared prefernces
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userjson = prefs.getString(Dataloader.userkey);
     if (userjson != null) {
+      //decoding json data to list of user obj
       List userlist = jsonDecode(userjson);
       List<User> users = userlist.map((e) => User.fromJson(e)).toList();
       for (User e in users) {
@@ -98,12 +55,39 @@ class Auth {
 
     return null;
   }
-   Future<void> saveUserDetail(UserDetail userDetail) async {
+  
+
+  /// The function `saveUserDetail` saves the user details to SharedPreferences after encoding them to
+  /// JSON.
+  ///
+  /// Args:
+  ///   userDetail (UserDetail): UserDetail object containing user details such as name, email, age,
+  /// etc.
+  Future<void> saveUserDetail(UserDetail userDetail) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // Save the updated user details
     prefs.setString(isUserloggedin, jsonEncode(userDetail.toJson()));
   }
-  
+
+  /// The function `saveUserDetail` saves a user's details in JSON format to SharedPreferences using a
+  /// unique key based on the user's ID.
+  ///
+  /// Args:
+  ///   userDetail (UserDetail): The `userDetail` parameter is an object of type `UserDetail` that
+  /// contains information about a user, such as their name, email, and other details.
+  // 
+  /*If you're using SharedPreferences to store user data, 
+  you should fetch the updated user details from SharedPreferences in the news feed page.
+ You can create a method in your Auth class to get the latest user details: */
+  Future<UserDetail?> getUserDetail(String userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userDetailJson = prefs.getString('user_detail_$userId');
+    if (userDetailJson != null) {
+      final userDetailMap = jsonDecode(userDetailJson);
+      return UserDetail.fromJson(userDetailMap);
+    }
+    return null;
+  }
 
 //change the password
   Future<bool> changepassword(
@@ -130,61 +114,57 @@ class Auth {
     }
     return false;
   }
-  // Future<bool> changename(String oldname, String newname) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? userjson = prefs.getString(Dataloader.userdetailkey);
-  //   if (userjson != null) {
-  //     List userdetaillist = jsonDecode(userjson);
-  //     List<UserDetail> details =
-  //         userdetaillist.map((e) => UserDetail.fromJson(e)).toList();
-
-  //     for (UserDetail detail in details) {
-  //       if (detail.basicInfo!.name == oldname) {//name is saved as rojesh
-  //         detail.basicInfo!.name = newname;
-
-  //         String updatedjson = jsonEncode(detail.toJson());
-  //         List updatedlist = details.map((e) => e.toJson()).toList();
-
-  //         prefs.setString(Dataloader.userdetailkey, jsonEncode(updatedlist));
-  //         return true;
-  //       }
-  //     }
-  //   }
-  //   return false;
-  // }
-
-  // 
-
-  //
-
-  // Save user details
- 
-//
 }
 
-// Future<bool> changeprofiles(String newpic) async {
-//   SharedPreferences prefs = await SharedPreferences.getInstance();
-//   String? userdetailjson = prefs.getString(
-//       Dataloader.userdetailkey); //load the key value// that is userdetail
-//   if (userdetailjson != null) {
-//     List detaillist = jsonDecode(userdetailjson);
-//     List<UserDetail> details =
-//         detaillist.map((e) => UserDetail.fromJson(e)).toList();
+/*
+class NewsFeedPage extends StatefulWidget {
+  @override
+  _NewsFeedPageState createState() => _NewsFeedPageState();
+}
 
-//     for (UserDetail detail in details) {
-//       if (detail.profileImage!.imagePath == newpic) {
-//         detail.profileImage!.imagePath = newpic;
+class _NewsFeedPageState extends State<NewsFeedPage> {
+  late Auth auth;
+  UserDetail? currentUserDetail;
 
-//         String updatedpic = jsonEncode(detail.toJson());
-//         List updatelist = details.map((e) => e.toJson()).toList();
+  @override
+  void initState() {
+    super.initState();
+    auth = Auth(Dataloader());
+    _loadUserDetail();
+  }
 
-//          save updated user detail
-//         prefs.setString(Dataloader.userdetailkey, jsonEncode(updatelist));
-//         return true;
-//       }
-//     }
-//   }
-//   return false;
-// }
+  Future<void> _loadUserDetail() async {
+    final userId = 'current_user_id'; // Get the logged-in user's ID
+    final detail = await auth.getUserDetail(userId);
+    setState(() {
+      currentUserDetail = detail;
+    });
+  }
 
-//Copy code
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('News Feed')),
+      body: currentUserDetail == null
+          ? Center(child: CircularProgressIndicator())
+          : ListView(
+              children: [
+                // Display user details
+                ListTile(
+                  leading: currentUserDetail!.profileImage != null
+                      ? Image.file(
+                          File(currentUserDetail!.profileImage!.imagePath!),
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                        )
+                      : Icon(Icons.account_circle, size: 50),
+                  title: Text(currentUserDetail!.name ?? 'No Name'),
+                ),
+                // Display posts and other news feed content
+              ],
+            ),
+    );
+  }
+}
+*/

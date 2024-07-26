@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:socialapp/dataloader.dart';
 import 'package:socialapp/models/course_categories.dart';
-import 'package:socialapp/models/courses.dart';
 import 'package:socialapp/models/instructor.dart';
 import 'package:socialapp/courses/view_courses.dart';
 
@@ -28,7 +27,8 @@ class _AvailableCoursesState extends State<AvailableCourses> {
             return Text('${snapshot.error}');
           } else {
             return AvailableScreen(
-                coursecategory: snapshot.data['coursescategory']);
+                coursecategory: snapshot.data['coursescategory'],
+                );
           }
         },
       ),
@@ -49,7 +49,8 @@ class _AvailableCoursesState extends State<AvailableCourses> {
 
 class AvailableScreen extends StatefulWidget {
   List<CoursesCategory> coursecategory;
-  AvailableScreen({super.key, required this.coursecategory});
+  AvailableScreen(
+      {super.key, required this.coursecategory, });
 
   @override
   State<AvailableScreen> createState() => _AvailableScreenState();
@@ -57,6 +58,8 @@ class AvailableScreen extends StatefulWidget {
 
 class _AvailableScreenState extends State<AvailableScreen> {
   Dataloader dataloader = Dataloader();
+
+  ///
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,7 +72,11 @@ class _AvailableScreenState extends State<AvailableScreen> {
     );
   }
 
+  
+
   Widget _builderccategory(CoursesCategory model, int index) {
+    //courses logo
+
     var images = [
       'https://c8.alamy.com/comp/2D72K34/program-code-vector-illustration-page-filled-outline-icon-2D72K34.jpg',
       'https://c8.alamy.com/comp/2AAJMBB/data-science-outline-icon-thin-line-style-from-big-data-icons-collection-pixel-perfect-simple-element-data-science-icon-for-web-design-apps-2AAJMBB.jpg',
@@ -94,7 +101,6 @@ class _AvailableScreenState extends State<AvailableScreen> {
     ];
     return ListTile(
       onTap: () {
-        
         Navigator.push(
             context,
             MaterialPageRoute(

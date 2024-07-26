@@ -1,110 +1,16 @@
-// // import 'package:flutter/material.dart';
-// // import 'package:socialapp/courses/available%20courses.dart';
-// // import 'package:socialapp/login.dart';
-// // import 'package:socialapp/models/user.dart';
-// // import 'package:socialapp/models/user_detail.dart';
-// // import 'package:socialapp/models/user_post.dart';
-// // // import 'package:socialapp/newsfeed.dart';
-// // import 'package:socialapp/signup.dart';
 
-// // import 'feeds/newsfeed.dart';
 
-// // class Home extends StatefulWidget {
-// //   // final UserPost post;
-// //   // final UserDetail userDetail;
-// //   // final User user;
-// //   const Home({
-// //     super.key,
-// //     // required this.post,
-// //     // required this.userDetail,
-// //     // required this.user
-// //   });
-
-// //   @override
-// //   State<Home> createState() => _HomeState();
-// // }
-
-// // class _HomeState extends State<Home> {
-// //   int selectedindex = 0;
-// //   final pages = [
-// //     const Newsfeed(),
-// //     const AvailableCourses(),
-// //     const LoginPage(),
-// //     // const Signup(),
-// //   ];
-// //   @override
-// //   Widget build(BuildContext context) {
-// //     // User user = User();
-// //     // UserPost post = UserPost();
-// //     // UserDetail detail = UserDetail();
-// //     return Scaffold(
-// //       appBar: AppBar(
-// //         title:const Text(
-// //           'Social App',
-// //           style: TextStyle(fontSize: 30, fontWeight: FontWeight.w800),
-// //         ),
-// //         actions: [
-// //           IconButton(
-// //             icon: Icon(Icons.person),
-// //             onPressed: () {
-// //               // Navigate to user profile page
-// //               // Navigator.push(context, MaterialPageRoute(builder: (context) => UserProfilePage()));
-// //             },
-// //           ),
-// //         ],
-// //       ),
-// //       body: pages[selectedindex],
-// //       bottomNavigationBar: SizedBox(
-// //         height: 50,
-// //         child: Row(
-// //           mainAxisAlignment: MainAxisAlignment.spaceAround,
-// //           children: [
-// //             IconButton(
-// //                 onPressed: () {
-// //                   setState(() {
-// //                     selectedindex = 0;
-// //                     const Newsfeed();
-// //                   });
-// //                 },
-// //                 icon: selectedindex == 0
-// //                     ? const Icon(Icons.home)
-// //                     : const Icon(Icons.home_outlined)),
-// //             IconButton(
-// //                 onPressed: () {
-// //                   setState(() {
-// //                     selectedindex = 1;
-// //                     const AvailableCourses();
-// //                   });
-// //                 },
-// //                 icon: selectedindex == 1
-// //                     ? const Icon(Icons.book)
-// //                     : const Icon(Icons.book_outlined)),
-// //             IconButton(
-// //                 onPressed: () {
-// //                   setState(() {
-// //                     selectedindex = 2;
-// //                     const LoginPage();
-// //                   });
-// //                 },
-// //                 icon: selectedindex == 2
-// //                     ? const Icon(Icons.login)
-// //                     : const Icon(Icons.login_outlined))
-// //           ],
-// //         ),
-// //       ),
-// //     );
-// //   }
-// // }
-import 'dart:developer';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/courses/available%20courses.dart';
 import 'package:socialapp/dataloader.dart';
-import 'package:socialapp/login.dart';
+import 'package:socialapp/friendlist/friendpage.dart';
 import 'package:socialapp/feeds/newsfeed.dart';
-import 'package:socialapp/courses/view_courses.dart';
-import 'package:socialapp/profiles/view_profile.dart';
+import 'package:socialapp/login.dart';
+import 'package:socialapp/models/user_detail.dart';
+import 'package:socialapp/profiles/surface_profile.dart';
 
 import 'authenthication/login_auth.dart';
 
@@ -117,13 +23,15 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   Dataloader dataloader = Dataloader();
-  late Auth service;
+  late Auth auth;
+  UserDetail? userDetail;
   @override
   void initState() {
+    auth = Auth(dataloader); //after splash screen it is being called, it is again loaded when loffed in,again called when logged out
     super.initState();
     loadData();
+    _loaduserDetail();
 
-    service = Auth(dataloader); //after splash screen it is being called, it is again loaded when loffed in,again called when logged out
   }
 
   void loadData() async {
@@ -135,23 +43,140 @@ class _HomeState extends State<Home> {
       dataloader.loadalluserdatas();
       prefs.setBool("jsonData", true);
     }
-    
+  }
+
+  void _loaduserDetail() async {
+    UserDetail? detail = await auth.getloggedinuser();
+    setState(() {
+      userDetail = detail;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: 3,
+        length: 4,
         child: Scaffold(
           appBar: AppBar(
-            toolbarHeight: 25,
-            title: const Text('Social App'),
+            // elevation: 15,
+            toolbarHeight: 40,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Social App',
+                  style: TextStyle(fontFamily: 'Title'),
+                ),
+                Container(
+                    width: 120,
+                    // color: Colors.black,
+                    child: Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LoginPage(),
+                              )),
+                          child: const CircleAvatar(
+                            radius: 15,
+                            backgroundColor: Colors.black,
+                            child: Icon(
+                              Icons.add,
+                              color: Colors.white,
+                              size: 25,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 15,
+                        ),
+                        const CircleAvatar(
+                          backgroundColor: Colors.black,
+                          radius: 15,
+                          child: Icon(
+                            Icons.search,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 15,
+                        ),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     showDialog(
+                        //       context: context,
+                        //       builder: (context) {
+                        //         return AlertDialog(
+                        //           title: const Text(
+                        //             'Logging Out',
+                        //             style: TextStyle(fontSize: 30),
+                        //           ),
+                        //           content: const Text('Are sure about it?'),
+                        //           actions: [
+                        //             Container(
+                        //               decoration: BoxDecoration(
+                        //                   borderRadius:
+                        //                       BorderRadius.circular(10),
+                        //                   color: Colors.black),
+                        //               child: TextButton(
+                        //                   onPressed: () =>
+                        //                       Navigator.pop(context),
+                        //                   child: const Text(
+                        //                     'Cancel',
+                        //                     style:
+                        //                         TextStyle(color: Colors.white),
+                        //                   )),
+                        //             ),
+                        //             Container(
+                        //               decoration: BoxDecoration(
+                        //                   borderRadius:
+                        //                       BorderRadius.circular(10),
+                        //                   color: Colors.black),
+                        //               child: TextButton(
+                        //                   onPressed: () async {
+                        //                     await auth.logout();
+                        //                     Navigator.pushReplacement(
+                        //                         context,
+                        //                         MaterialPageRoute(
+                        //                           builder: (context) =>
+                        //                               const Home(),
+                        //                         ));
+                        //                   },
+                        //                   child: const Text(
+                        //                     'Logout',
+                        //                     style:
+                        //                         TextStyle(color: Colors.white),
+                        //                   )),
+                        //             )
+                        //           ],
+                        //         );
+                        //       },
+                        //     );
+                        //   },
+                        //   child: const CircleAvatar(
+                        //     backgroundColor: Colors.black,
+                        //     radius: 15,
+                        //     child: Icon(
+                        //       Icons.logout,
+                        //       color: Colors.white,
+                        //       size: 20,
+                        //     ),
+                        //   ),
+                        // ),
+                      ],
+                    ))
+              ],
+            ),
             bottom: TabBar(
               tabs: [
                 const Icon(
                   Icons.home_outlined,
                   size: 30,
                 ),
+                const Icon(Icons.people_alt_outlined),
                 Image.asset(
                   'assets/images/courses.png',
                   cacheHeight: 30,
@@ -173,9 +198,9 @@ class _HomeState extends State<Home> {
           body: const TabBarView(
             children: [
               Newsfeed(),
+              FriendRequest(),
               AvailableCourses(),
-              // LoginPage(),
-              ViewProfile(),
+              SurfaceProfile(),
             ],
           ),
         ));

@@ -1,20 +1,16 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:socialapp/dataloader.dart';
-import 'package:socialapp/models/user.dart';
-import 'package:socialapp/models/user_detail.dart';
-import 'package:socialapp/models/user_post.dart';
-import 'package:socialapp/feeds/Albumscreen.dart';
+import 'package:socialapp/testing/test_album.dart';
+import 'package:socialapp/testing/test_auth.dart';
+import 'package:socialapp/testing/test_dataloader.dart';
+import 'package:socialapp/testing/test_login.dart';
+import 'package:socialapp/testing/test_model_user.dart';
+import 'package:socialapp/testing/test_profile.dart';
+import 'package:socialapp/testing/test_userdetail_model.dart';
+import 'package:socialapp/testing/test_userpost.dart';
 
 class Newsfeed extends StatefulWidget {
-  // final UserPost post;
-  // final UserDetail userDetail;
-  // final User user;
-  // final List<UserPost> userpost;
   const Newsfeed({
     super.key,
-    // required this.post, required this.userDetail, required this.user
   });
 
   @override
@@ -24,10 +20,6 @@ class Newsfeed extends StatefulWidget {
 class _HomeState extends State<Newsfeed> {
   @override
   Widget build(BuildContext context) {
-    // User user = User();
-    // UserDetail userDetail = UserDetail();
-    // UserPost post = UserPost();
-
     return Scaffold(
       body: FutureBuilder(
         future: _fetchuserpost(),
@@ -45,10 +37,6 @@ class _HomeState extends State<Newsfeed> {
               post: snapshot.data!['posts'], //(fetched the data tin this key)
               user: snapshot.data!['users'],
               userdetail: snapshot.data!['userdetails'],
-              // category: snapshot.data!['categories'],
-              // friend: snapshot.data!['friends'],
-              // courses: snapshot.data!['courses'],
-              // instructor: snapshot.data!['instructors'],
             );
           }
         },
@@ -56,10 +44,10 @@ class _HomeState extends State<Newsfeed> {
     );
   }
 
-  Future _fetchuserpost() async {
+  Future<Map<String, dynamic>> _fetchuserpost() async {
     Dataloader dataloader = Dataloader();
-//this provides the initial data/updated data not loaded here,
-    List<UserPost> posts = await dataloader.getuserpost(); //loaded the data
+
+    List<UserPost> posts = await dataloader.getuserpost(); //loaded the data and
     List<UserDetail> userdetail = await dataloader.getuserdetail();
     List<User> user = await dataloader.getuser();
 
@@ -67,10 +55,6 @@ class _HomeState extends State<Newsfeed> {
       'users': user, //(passed the data to this keys)
       'userdetails': userdetail,
       'posts': posts,
-      // 'friends': friendlist,
-      // 'instructors': instructor,
-      // 'courses': courses,
-      // 'categories': coursescategory,
     };
   }
 }
@@ -79,21 +63,11 @@ class Newscreen extends StatefulWidget {
   List<UserPost> post;
   List<User> user;
   List<UserDetail> userdetail;
-  // List<UserFriendlist> friend;
-  // List<Instructor> instructor;
-  // List<Courses> courses;
-  // List<CourseBy> category;
-  // List<User> user;
-  // final UserPost userPost;
   Newscreen({
     super.key,
     required this.post,
     required this.user,
     required this.userdetail,
-    // required this.friend,
-    // required this.category,
-    // required this.courses,
-    // required this.instructor
   });
 
   @override
@@ -101,13 +75,33 @@ class Newscreen extends StatefulWidget {
 }
 
 class _NewscreenState extends State<Newscreen> {
-  // bool model.isDisliked = false;
-  // bool model.isDisliked = false;
-//for each post use this bools inside the user post model4
-
+  UserDetail? userDetail;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('NewsFeed'),
+            userDetail == null
+                ? GestureDetector(
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        )),
+                    child: const Icon(Icons.login))
+                : GestureDetector(
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfilePage(),
+                        )),
+                    child: const Icon(Icons.person))
+          ],
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListView.separated(
@@ -117,7 +111,7 @@ class _NewscreenState extends State<Newscreen> {
             return _builderpostscreen(widget.post[index]);
           },
           separatorBuilder: (context, index) {
-            return const Divider();
+            return Divider();
           },
         ),
       ),
@@ -141,17 +135,10 @@ class _NewscreenState extends State<Newscreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ListTile(
-          leading: (userDetail.profileImage?.isNetworkUrl ??
-                  false) //this place the value that can have a value false if it is null
-              ? CircleAvatar(
-                  backgroundImage:
-                      NetworkImage(userDetail.profileImage!.imagePath!),
-                )
-              : CircleAvatar(
-                  backgroundImage:
-                      FileImage(File(userDetail.profileImage?.imagePath ?? '')),
-                ),
-          title: Text(userDetail!.basicInfo!.name!),
+          leading: CircleAvatar(
+            backgroundImage: NetworkImage(userDetail.profileImage!.imagePath!),
+          ),
+          title: Text(users.name!),
           subtitle: Text(users.email!),
         ),
         // const SizedBox(
@@ -166,9 +153,7 @@ class _NewscreenState extends State<Newscreen> {
             userDetail,
             users,
           ),
-        ), //here with list<postedphot> i passed userdetail model also
-        // Text('${model.image!.length}'),
-        // for (var image in model.image!) _builderimage(image),
+        ),
 
         Container(
           height: 50,
@@ -219,7 +204,6 @@ class _NewscreenState extends State<Newscreen> {
   Widget _builderimage(List<Postedphoto> image, UserDetail detail, User user) {
     int remainimages =
         image.length - 3; //remaining after 3 images foe the stack
-        //if only one image
     if (image.length == 1) {
       return Image.network(
         image[0].url!,
@@ -229,28 +213,20 @@ class _NewscreenState extends State<Newscreen> {
       return Column(
         children: [
           //this is if there is 3 photo
-          GestureDetector(
-            onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => FullImageScreen(
-                      images: image, detail: detail, user: user),
-                )),
-            child: GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              mainAxisSpacing: 2,
-              crossAxisSpacing: 2,
-              children: [
-                Image.network(
-                  image[0].url!,
-                ),
-                Image.network(
-                  image[1].url!,
-                ),
-              ],
-            ),
+          GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            mainAxisSpacing: 2,
+            crossAxisSpacing: 2,
+            children: [
+              Image.network(
+                image[0].url!,
+              ),
+              Image.network(
+                image[1].url!,
+              ),
+            ],
           ),
           const SizedBox(
             height: 1,
@@ -262,28 +238,33 @@ class _NewscreenState extends State<Newscreen> {
       );
     }
 //if there are more than 3 photos
-    return GestureDetector(
-      onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                FullImageScreen(images: image, detail: detail, user: user),
-          )),
-      child: GridView.builder(
-        shrinkWrap: true, //allows widget to adjust it's size with content
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            // childAspectRatio: 1,
-            mainAxisSpacing: 2,
-            crossAxisSpacing: 2),
+    return GridView.builder(
+      shrinkWrap: true, //allows widget to adjust it's size with content
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          // childAspectRatio: 1,
+          mainAxisSpacing: 2,
+          crossAxisSpacing: 2),
 
-        itemCount: image.length > 3 ? 4 : image.length,
-        //if the image lenth is more than 3 the value is set to 4 , but if less then the vakue is set to image.length
-        itemBuilder: (context, index) {
-          if (index == 3 && remainimages > 0) {
-            //this condition makes the +X for image display
-            return Stack(
+      itemCount: image.length > 3 ? 4 : image.length,
+      //if the image lenth is more than 3 the value is set to 4 , but if less then the vakue is set to image.length
+      itemBuilder: (context, index) {
+        if (index == 3 && remainimages > 0) {
+          //this condition makes the +X for image display
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FullImageScreen(
+                      images: image,
+                      detail: detail,
+                      user: user,
+                    ),
+                  ));
+            },
+            child: Stack(
               fit: StackFit.expand,
               children: [
                 Image.network(
@@ -300,22 +281,16 @@ class _NewscreenState extends State<Newscreen> {
                   ),
                 )
               ],
-            );
-          } else {
-            return Image.network(
-              image[index].url!,
-              fit: BoxFit.cover,
-            );
-          }
-        },
-      ),
+            ),
+          );
+        } else {
+          return Image.network(
+            image[index].url!,
+            fit: BoxFit.cover,
+          );
+        }
+      },
     );
-    // return Image.network(
-    //   // width: 390,
-    //   image.url!,
-    //   // fit: BoxFit.fitWidth,
-    //   // cacheHeight: 200,
-    //   // cacheWidth: 200,
     // );
   }
 }

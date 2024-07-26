@@ -1,12 +1,9 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/dataloader.dart';
 // import 'package:socialapp/models/user_detail.dart';
 
 import 'authenthication/login_auth.dart';
-import 'models/user.dart';
 
 class ChangePsw extends StatefulWidget {
   const ChangePsw({super.key});

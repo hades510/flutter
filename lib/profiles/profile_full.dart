@@ -29,6 +29,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
 
 class FullProfilePic extends StatelessWidget {
   final File imagefile;
@@ -39,9 +40,14 @@ class FullProfilePic extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title:  const Text('Profile picture'),
+        title: const Text('Profile picture'),
       ),
-      body: Center(child: Image.file(imagefile),),
+      body: Center(
+        child: 
+            InteractiveViewer(
+              child: Image.file(imagefile))
+            
+      ),
     );
   }
 }

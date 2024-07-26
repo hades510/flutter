@@ -486,7 +486,8 @@ class CourseDetailPage extends StatelessWidget {
                 ])));
             // return Text('${snapshot.error}');// to show error
           } else {
-            final detail = snapshot.data as Courses;
+            final detail = snapshot.data;
+            // final teach = snapshot.data as Instructor;
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -501,7 +502,7 @@ class CourseDetailPage extends StatelessWidget {
                       children: [
                         Card(
                           child: Image.network(
-                            detail!.image!,
+                            detail.image!,
                             cacheHeight: 400,
                             width: 200,
                           ),
@@ -609,8 +610,8 @@ class CourseDetailPage extends StatelessWidget {
                         //     backgroundImage: NetworkImage(teach!.image!),
                         //   ),
                         //   title: Text(teach!.name!),
-                        //   subtitle: Text('${teach!.field}'),
-                        //   trailing: Text('${teach!.workExperience} Years'),
+                        //   subtitle: Text('${teach.field}'),
+                        //   trailing: Text('${teach.workExperience} Years'),
                         // ),
                       ],
                     ),
@@ -631,3 +632,26 @@ class CourseDetailPage extends StatelessWidget {
     return courses.firstWhere((course) => course.id == courseId);
   }
 }
+
+// class CoursedetailScreen extends StatefulWidget {
+//   List<Instructor> instructor;
+//   List<Courses> courses;
+//   CoursedetailScreen(
+//       {super.key, required this.courses, required this.instructor});
+
+//   @override
+//   State<CoursedetailScreen> createState() => _CoursedetailScreenState();
+// }
+
+// class _CoursedetailScreenState extends State<CoursedetailScreen> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: _builddetailCourse(widget.courses as Courses),
+//     );
+//   }
+
+//   Widget _builddetailCourse(Courses model) {
+//     return Container();
+//   }
+// }

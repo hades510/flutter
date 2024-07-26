@@ -31,7 +31,7 @@ class App extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       // Decide which screen to show based on authentication status
-      home: loggedInUser == null ? LoginPage() : ProfilePage(),
+      home: loggedInUser == null ? const LoginPage() : ProfilePage(),
       routes: {
         // '/home': (context) => Home(),
         // '/profile': (context) => ViewProfile(),

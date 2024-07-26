@@ -76,7 +76,6 @@ class _ViewProfileState extends State<ViewProfile> {
   //images
   File? profile;
   File? cover;
-  Uint8List? coveriamge;
   TextEditingController updatename = TextEditingController();
   TextEditingController updatesumary = TextEditingController();
   TextEditingController mobilenumber = TextEditingController();
@@ -89,7 +88,7 @@ class _ViewProfileState extends State<ViewProfile> {
     _loadprofileImage();
     _loadcoverImage();
     _loadStatus();
-    _loadBasicInfo();
+    // _loadBasicInfo();
     _loadnumber();
     _loadworkexp();
     _loadeducation();
@@ -108,15 +107,66 @@ class _ViewProfileState extends State<ViewProfile> {
     });
   }
 
+  /// The function `_updateProfileImage` updates the profile image of a user in local storage and also
+  /// updates the user's profile image in the app state.
+  ///
+  /// Args:
+  ///   file (File): The `file` parameter in the `updateProfileImage` function is of type `File`, which
+  /// represents a file on the device. In this context, it is likely used to update the profile image of
+  /// a user. The function reads user details from a data loader, updates the profile image path in
   Future _updateProfileImage(File file) async {
+    //this does this
+    // Retrieves all user details using Dataloader,
+    //finds the user to update, and replaces the profile image in the list of user details.
+    // It then serializes and saves the updated list in SharedPreferences.
+
+    // Updates a list of user details,
+    // modifies the profile image of the matched user,
+    //and saves the entire list back to SharedPreferences.
+
+    //More complex due to fetching and updating the list of user details,
+    //which may involve more processing and potential for errors.
+
+    //Simpler and more focused approach,
+    //updating only the profile image path for the logged-in user.
+
+    //should use this method.
+
     final prefs = await SharedPreferences.getInstance();
+    Dataloader dataloader = Dataloader();
+    //Fetches a list of UserDetail objects, presumably from a local JSON file or another data source.
+    List<UserDetail> userdetail = await dataloader.getuserdetail();
+    //Searches for the UserDetail object in the list where the id matches the id of the current userDetail.
+    UserDetail? tempUser =
+        userdetail.firstWhere((element) => element.id == userDetail!.id);
+
+    if (tempUser != null) {
+      //firstly find the index of tempUser in userlst
+      int indexFinder =
+          userdetail.indexWhere((element) => element.id == userDetail!.id);
+
+      //after finding the index of the tempUser(userDetail)
+      // update the imagepath with the file path an turn the isnetworkurl to false
+      tempUser.profileImage =
+          ProfileImage(imagePath: file.path, isNetworkUrl: false);
+      //removes the old userdetail
+      userdetail.removeAt(indexFinder);
+      //inserts the new user detail
+      userdetail.insert(indexFinder, tempUser);
+      //converts the updated List<UserDetail> to jsonString by encoding
+      //and storing it to the shared preferences
+      String profilejson = json.encode(userdetail);
+      await prefs.setString(Dataloader.userdetailkey, profilejson);
+    }
 
     if (userDetail != null) {
-      final userid = userDetail!.id; //getting the id to that sp.user
-      final profilekey =
-          'profile_$userid'; //created a unique key to set the image path
-      prefs.setString(profilekey, file.path);
+      //did this to make the profile in full screen persist
+      //here the file path is saved at 2 keys on inside of the Dataloader.userdetailkey and other with profile key
 
+      final userid = userDetail!.id;
+      final profilekey = 'profile_$userid';
+      await prefs.setString(profilekey, file.path);
+      //the above code was to provide the image in ful screen
       setState(() {
         profile = file; //update the locaal state here
       });
@@ -129,8 +179,7 @@ class _ViewProfileState extends State<ViewProfile> {
     //initialized
     final prefs = await SharedPreferences.getInstance();
     if (userDetail != null) {
-      final userid = userDetail!.id; //get user id for updating specific profile
-      //create a unique key to set the image path
+      final userid = userDetail!.id;
       final profilekey = 'profile_$userid';
       final imagepath = prefs
           .getString(profilekey); //retriving image path (from updateprofile)
@@ -144,6 +193,7 @@ class _ViewProfileState extends State<ViewProfile> {
     }
   }
 
+//no for now no need to do like the userprofile picture for now
   Future<void> _updateCoverImage(File file) async {
     final prefs = await SharedPreferences.getInstance();
     if (userDetail != null) {
@@ -176,57 +226,55 @@ class _ViewProfileState extends State<ViewProfile> {
 
   Future<void> _updateBasicinfo(String name, [String? summary]) async {
     final prefs = await SharedPreferences.getInstance();
+    Dataloader dataLoader = Dataloader();
+    List<UserDetail> userdetail = await dataLoader.getuserdetail();
+    UserDetail? tempUser =
+        userdetail.firstWhere((element) => element.id == userDetail!.id);
+
+    if (tempUser != null) {
+      int indexFinder =
+          userdetail.indexWhere((element) => element.id == userDetail!.id);
+
+      tempUser.basicInfo = BasicInfo(name: name, summary: summary);
+      userdetail.removeAt(indexFinder);
+      userdetail.insert(indexFinder, tempUser);
+
+      String basicinfo = json.encode(userdetail);
+      await prefs.setString(Dataloader.userdetailkey, basicinfo);
+    }
+
     if (userDetail != null) {
-      final userid = userDetail!.id; //used for ccreating a unique key
-      final namekey = 'name_$userid';
-      final summarykey = 'summary_$userid';
-
-      await prefs.setString(namekey, name);
-      if (summary != null) {
-        await prefs.setString(summarykey, summary);
-      }
       setState(() {
-        newname = name;
-        userDetail!.basicInfo!.name = name;
-
-        if (summary != null) {
-          newsummary = summary;
-          userDetail!.basicInfo!.summary = summary;
-        }
+        userDetail!.basicInfo = BasicInfo(name: name, summary: summary);
       });
       await auth.saveUserDetail(userDetail!);
     }
   }
 
-  Future<void> _loadBasicInfo() async {
-    final prefs = await SharedPreferences.getInstance();
+  // Future<void> _loadBasicInfo() async {
+  //   final prefs = await SharedPreferences.getInstance();
 
-    if (userDetail != null) {
-      final userid = userDetail!.id;
-      final namekey = 'name_$userid';
-      final summarykey = 'summary_$userid';
+  //   if (userDetail != null) {
+  //     final userid = userDetail!.id;
+  //     final namekey = 'name_$userid';
+  //     final summarykey = 'summary_$userid';
 
-      final uname = prefs.getString(namekey);
-      final usummary = prefs.getString(summarykey);
+  //     final uname = prefs.getString(namekey);
+  //     final usummary = prefs.getString(summarykey);
 
-      if (uname != null) {
-        setState(() {
-          newname = uname;
-          userDetail!.basicInfo!.name = uname;
-        });
-        if (usummary != null) {
-          setState(() {
-            newsummary = usummary;
-            userDetail!.basicInfo!.summary = usummary;
-          });
-        }
-      }
-    }
-  }
-
-  //dob ??= userdetail.basicInfo!.dob;
-  //  if (dob == null) {
-  // dob = userDetail.basicInfo.dob;
+  //     if (uname != null) {
+  //       setState(() {
+  //         newname = uname;
+  //         userDetail!.basicInfo!.name = uname;
+  //       });
+  //       if (usummary != null) {
+  //         setState(() {
+  //           newsummary = usummary;
+  //           userDetail!.basicInfo!.summary = usummary;
+  //         });
+  //       }
+  //     }
+  //   }
   // }
 
   // userdetail.basicInfo!.gender = gender;
@@ -236,6 +284,7 @@ class _ViewProfileState extends State<ViewProfile> {
 
   //     await auth.saveUserDetail(userdetail);
 
+/*this method will only update the profile picture */
   Future _updateStatus(String matrialstatus,
       [String? dob, String? gender]) async {
     final prefs = await SharedPreferences.getInstance();
@@ -376,120 +425,127 @@ class _ViewProfileState extends State<ViewProfile> {
       context: context,
       builder: (context) {
         return SingleChildScrollView(
-          child: AlertDialog(
-            title: _buildSectionTitle('Add Work Experience'),
-            content: Form(
-              key: workformkey,
-              child: Container(
-                padding: const EdgeInsets.all(22),
-                child: Column(
-                  children: [
-                    _texformfield(
-                        job, 'Please provide your job title', 'Job Title'),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    _texformfield(jobsummary, 'Please provide your experience',
-                        'Summary'),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    _texformfield(organization,
-                        'Please provide your comapny name', 'Company name'),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Container(
-                      height: 60,
-                      decoration: BoxDecoration(
-                        border: Border.all(),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: ListTile(
-                        trailing: const Icon(Icons.calendar_month_outlined),
-                        title: Text(sdate == null
-                            ? 'Select a date'
-                            : 'Startdate $startdate'),
-                        onTap: () async {
-                          DateTime? picker = await showDatePicker(
-                              context: context,
-                              firstDate: DateTime(1990),
-                              lastDate: DateTime.now());
-                          if (picker != null && picker != sdate) {
-                            setState(() {
-                              sdate = picker;
-                              startdate = DateFormat('y-MM-dd').format(sdate!);
-                              if (edate != null && edate!.isBefore(sdate!)) {
-                                edate = null;
+          child: StatefulBuilder(builder: (context, setState) {
+            return StatefulBuilder(builder: (context, setState) {
+              return AlertDialog(
+                title: _buildSectionTitle('Add Work Experience'),
+                content: Form(
+                  key: workformkey,
+                  child: Container(
+                    padding: const EdgeInsets.all(22),
+                    child: Column(
+                      children: [
+                        _texformfield(
+                            job, 'Please provide your job title', 'Job Title'),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        _texformfield(jobsummary,
+                            'Please provide your experience', 'Summary'),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        _texformfield(organization,
+                            'Please provide your comapny name', 'Company name'),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        Container(
+                          height: 60,
+                          decoration: BoxDecoration(
+                            border: Border.all(),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: ListTile(
+                            trailing: const Icon(Icons.calendar_month_outlined),
+                            title: Text(sdate == null
+                                ? 'Select a date'
+                                : 'Startdate $startdate'),
+                            onTap: () async {
+                              DateTime? picker = await showDatePicker(
+                                  context: context,
+                                  firstDate: DateTime(1990),
+                                  lastDate: DateTime.now());
+                              if (picker != null && picker != sdate) {
+                                setState(() {
+                                  sdate = picker;
+                                  startdate =
+                                      DateFormat('y-MM-dd').format(sdate!);
+                                  if (edate != null &&
+                                      edate!.isBefore(sdate!)) {
+                                    edate = null;
+                                  }
+                                });
                               }
-                            });
-                          }
-                        },
-                      ),
+                            },
+                          ),
+                        ),
+                        Container(
+                          height: 60,
+                          decoration: BoxDecoration(
+                            border: Border.all(),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: ListTile(
+                            title: Text(edate == null
+                                ? 'Select a date'
+                                : 'Enddate ${DateFormat('y-MM-dd').format(edate!)}'),
+                            trailing: const Icon(Icons.calendar_month_outlined),
+                            onTap: () async {
+                              if (sdate == null) {
+                                return;
+                              }
+                              DateTime? picker = await showDatePicker(
+                                  context: context,
+                                  initialDate: edate ??
+                                      (sdate != null
+                                          ? sdate!.add(
+                                              const Duration(days: 1),
+                                            )
+                                          : DateTime.now()),
+                                  firstDate:
+                                      sdate?.add(const Duration(days: 1)) ??
+                                          DateTime.now(),
+                                  lastDate: DateTime.now());
+                              if (picker != null && picker != sdate) {
+                                setState(() {
+                                  edate = picker;
+                                  enddate =
+                                      DateFormat('y-MM-dd').format(edate!);
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                        ElevatedButton(
+                            onPressed: () {
+                              if (workformkey.currentState!.validate()) {
+                                if (userDetail != null) {
+                                  final workexp = WorkExperience(
+                                      jobTitle: job.text,
+                                      startDate: startdate,
+                                      endDate: enddate,
+                                      organizationName: organization.text,
+                                      summary: jobsummary.text);
+                                  final updatedList = List<WorkExperience>.from(
+                                      userDetail!.workExperience ?? []);
+                                  updatedList.add(workexp);
+                                  _updateworkexp(updatedList);
+                                  job.clear();
+                                  jobsummary.clear();
+                                  organization.clear();
+                                  Navigator.pop(context);
+                                }
+                              }
+                            },
+                            child: const Text('Submit')),
+                      ],
                     ),
-                    Container(
-                      height: 60,
-                      decoration: BoxDecoration(
-                        border: Border.all(),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: ListTile(
-                        title: Text(edate == null
-                            ? 'Select a date'
-                            : 'Enddate ${DateFormat('y-MM-dd').format(edate!)}'),
-                        trailing: const Icon(Icons.calendar_month_outlined),
-                        onTap: () async {
-                          if (sdate == null) {
-                            return;
-                          }
-                          DateTime? picker = await showDatePicker(
-                              context: context,
-                              initialDate: edate ??
-                                  (sdate != null
-                                      ? sdate!.add(
-                                          const Duration(days: 1),
-                                        )
-                                      : DateTime.now()),
-                              firstDate: sdate?.add(const Duration(days: 1)) ??
-                                  DateTime.now(),
-                              lastDate: DateTime.now());
-                          if (picker != null && picker != sdate) {
-                            setState(() {
-                              edate = picker;
-
-                              enddate = DateFormat('y-MM-dd').format(edate!);
-                            });
-                          }
-                        },
-                      ),
-                    ),
-                    ElevatedButton(
-                        onPressed: () {
-                          if (workformkey.currentState!.validate()) {
-                            if (userDetail != null) {
-                              final workexp = WorkExperience(
-                                  jobTitle: job.text,
-                                  startDate: startdate,
-                                  endDate: enddate,
-                                  organizationName: organization.text,
-                                  summary: jobsummary.text);
-                              final updatedList = List<WorkExperience>.from(
-                                  userDetail!.workExperience ?? []);
-                              updatedList.add(workexp);
-                              _updateworkexp(updatedList);
-                              job.clear();
-                              jobsummary.clear();
-                              organization.clear();
-                              Navigator.pop(context);
-                            }
-                          }
-                        },
-                        child: const Text('Submit')),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          ),
+              );
+            });
+          }),
         );
       },
     );
@@ -547,125 +603,127 @@ class _ViewProfileState extends State<ViewProfile> {
       context: context,
       builder: (context) {
         return SingleChildScrollView(
-          child: AlertDialog(
-            title: _buildSectionTitle('Add Education'),
-            content: Form(
-              key: eduformkey,
-              child: Container(
-                padding: const EdgeInsets.all(22),
-                child: Column(
-                  children: [
-                    _texformfield(
-                        edulevel, 'Please enter your gradelevel', 'Level'),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    _texformfield(edusummary, 'Please provide us with summary',
-                        'Summary'),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    _texformfield(
-                        eduorganization,
-                        'Please Provide institution name',
-                        'College/School name'),
-                    Container(
-                      height: 60,
-                      decoration: BoxDecoration(
-                        border: Border.all(),
-                        borderRadius: BorderRadius.circular(10),
+          child: StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              title: _buildSectionTitle('Add Education'),
+              content: Form(
+                key: eduformkey,
+                child: Container(
+                  padding: const EdgeInsets.all(22),
+                  child: Column(
+                    children: [
+                      _texformfield(
+                          edulevel, 'Please enter your gradelevel', 'Level'),
+                      const SizedBox(
+                        height: 15,
                       ),
-                      child: ListTile(
-                        trailing: const Icon(Icons.calendar_month_outlined),
-                        title: Text(edusdate == null
-                            ? 'Select a date'
-                            : 'Startdate ${DateFormat('y-MM-dd').format(edusdate!)}'),
-                        onTap: () async {
-                          DateTime? picker = await showDatePicker(
-                              context: context,
-                              firstDate: DateTime(1990),
-                              lastDate: DateTime.now());
-                          if (picker != null && picker != edusdate) {
-                            setState(() {
-                              edusdate = picker;
-                              edustartdate =
-                                  DateFormat('y-MM-dd').format(edusdate!);
-                              if (eduedate != null &&
-                                  eduedate!.isBefore(edusdate!)) {
-                                eduedate = null;
-                              }
-                            });
-                          }
-                        },
+                      _texformfield(edusummary,
+                          'Please provide us with summary', 'Summary'),
+                      const SizedBox(
+                        height: 15,
                       ),
-                    ),
-                    Container(
-                      height: 60,
-                      decoration: BoxDecoration(
-                        border: Border.all(),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: ListTile(
-                        trailing: const Icon(Icons.calendar_month_outlined),
-                        title: Text(eduedate == null
-                            ? 'Select a date'
-                            : 'Enddate ${DateFormat('y-MM-dd').format(eduedate!)}'),
-                        onTap: () async {
-                          if (edusdate == null) {
-                            return;
-                          }
-                          DateTime? picker = await showDatePicker(
-                              context: context,
-                              initialDate: eduedate ??
-                                  (edusdate != null
-                                      ? edusdate!.add(
-                                          const Duration(days: 1),
-                                        )
-                                      : DateTime.now()),
-                              firstDate:
-                                  edusdate?.add(const Duration(days: 1)) ??
-                                      DateTime.now(),
-                              lastDate: DateTime.now());
-                          if (picker != null && picker != edusdate) {
-                            setState(() {
-                              eduedate = picker;
-
-                              eduenddate =
-                                  DateFormat('y-MM-dd').format(eduedate!);
-                            });
-                          }
-                        },
-                      ),
-                    ),
-                    ElevatedButton(
-                        onPressed: () {
-                          if (eduformkey.currentState!.validate()) {
-                            if (userDetail != null) {
-                              final eduform = Education(
-                                level: edulevel.text,
-                                organizationName: eduorganization.text,
-                                summary: edusummary.text,
-                                startDate: edustartdate,
-                                endDate: eduenddate,
-                              );
-                              final updatedList = List<Education>.from(
-                                  userDetail!.education ?? []);
-                              updatedList.add(eduform);
-                              _updateeducation(updatedList);
-                              edulevel.clear();
-                              eduorganization.clear();
-                              edusummary.clear();
-                              //left
-                              Navigator.pop(context);
+                      _texformfield(
+                          eduorganization,
+                          'Please Provide institution name',
+                          'College/School name'),
+                      Container(
+                        height: 60,
+                        decoration: BoxDecoration(
+                          border: Border.all(),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: ListTile(
+                          trailing: const Icon(Icons.calendar_month_outlined),
+                          title: Text(edusdate == null
+                              ? 'Select a date'
+                              : 'Startdate ${DateFormat('y-MM-dd').format(edusdate!)}'),
+                          onTap: () async {
+                            DateTime? picker = await showDatePicker(
+                                context: context,
+                                firstDate: DateTime(1990),
+                                lastDate: DateTime.now());
+                            if (picker != null && picker != edusdate) {
+                              setState(() {
+                                edusdate = picker;
+                                edustartdate =
+                                    DateFormat('y-MM-dd').format(edusdate!);
+                                if (eduedate != null &&
+                                    eduedate!.isBefore(edusdate!)) {
+                                  eduedate = null;
+                                }
+                              });
                             }
-                          }
-                        },
-                        child: const Text('Submit')),
-                  ],
+                          },
+                        ),
+                      ),
+                      Container(
+                        height: 60,
+                        decoration: BoxDecoration(
+                          border: Border.all(),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: ListTile(
+                          trailing: const Icon(Icons.calendar_month_outlined),
+                          title: Text(eduedate == null
+                              ? 'Select a date'
+                              : 'Enddate ${DateFormat('y-MM-dd').format(eduedate!)}'),
+                          onTap: () async {
+                            if (edusdate == null) {
+                              return;
+                            }
+                            DateTime? picker = await showDatePicker(
+                                context: context,
+                                initialDate: eduedate ??
+                                    (edusdate != null
+                                        ? edusdate!.add(
+                                            const Duration(days: 1),
+                                          )
+                                        : DateTime.now()),
+                                firstDate:
+                                    edusdate?.add(const Duration(days: 1)) ??
+                                        DateTime.now(),
+                                lastDate: DateTime.now());
+                            if (picker != null && picker != edusdate) {
+                              setState(() {
+                                eduedate = picker;
+
+                                eduenddate =
+                                    DateFormat('y-MM-dd').format(eduedate!);
+                              });
+                            }
+                          },
+                        ),
+                      ),
+                      ElevatedButton(
+                          onPressed: () {
+                            if (eduformkey.currentState!.validate()) {
+                              if (userDetail != null) {
+                                final eduform = Education(
+                                  level: edulevel.text,
+                                  organizationName: eduorganization.text,
+                                  summary: edusummary.text,
+                                  startDate: edustartdate,
+                                  endDate: eduenddate,
+                                );
+                                final updatedList = List<Education>.from(
+                                    userDetail!.education ?? []);
+                                updatedList.add(eduform);
+                                _updateeducation(updatedList);
+                                edulevel.clear();
+                                eduorganization.clear();
+                                edusummary.clear();
+                                //left
+                                Navigator.pop(context);
+                              }
+                            }
+                          },
+                          child: const Text('Submit')),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          }),
         );
       },
     );
@@ -1003,23 +1061,6 @@ class _ViewProfileState extends State<ViewProfile> {
     }
   }
 
-  //created this imageprovider fn cause ternary operator in background image did't work
-  //kept show error The argument type 'Object' can't be assigned to the parameter type 'ImageProvider<Object>?'
-  ImageProvider<Object>? _getprofileimage() {
-    if (profile != null) {
-      //here FileImage was used instead of Image.file beacuse FileImage use imageprovider that takes imagepath to load the image
-      return FileImage(profile!);
-    } else if (userDetail != null && userDetail!.profileImage != null) {
-      if (userDetail!.profileImage!.isNetworkUrl!) {
-        return NetworkImage(userDetail!.profileImage!.imagePath!);
-      } else {
-        return null;
-      }
-    } else {
-      return null;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1062,7 +1103,8 @@ class _ViewProfileState extends State<ViewProfile> {
           ],
         ),
       ),
-      body: userDetail == null
+      body: userDetail == null //checked whether any user is logged
+
           ? const Center(
               child: Text('No user logged in'),
             )
@@ -1071,7 +1113,7 @@ class _ViewProfileState extends State<ViewProfile> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: 275,
+                    height: 230,
                     child: Stack(
                       /// The above code is setting the `clipBehavior` property of an object to `Clip.none`. This
                       /// means that clipping behavior is disabled for the object, allowing it to be drawn outside
@@ -1111,29 +1153,42 @@ class _ViewProfileState extends State<ViewProfile> {
                           ),
                         ),
                         Positioned(
-                          left: 16,
-                          bottom: 2,
+                          left: 5,
+                          bottom: 0,
                           child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => FullProfilePic(
-                                      imagefile: profile!,
-                                    ),
-                                  ));
-                            },
-                            child: CircleAvatar(
-                              radius: 70,
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => FullProfilePic(
+                                        imagefile: profile!,
+                                      ),
+                                    ));
+                              },
+                              child: (userDetail?.profileImage?.isNetworkUrl ??
+                                      false)
+                                  ? CircleAvatar(
+                                      radius: 80,
+                                      backgroundImage: NetworkImage(
+                                          userDetail!.profileImage!.imagePath!))
+                                  : CircleAvatar(
+                                      radius: 80,
+                                      backgroundImage: FileImage(File(
+                                          userDetail?.profileImage?.imagePath ??
+                                              '')),
+                                    )
 
-                              //here i created a fun only beacuse it was giving error for type
-                              // circlavatare's backgroundinage needs imageprovider
-                              backgroundImage: _getprofileimage(),
-                            ),
-                          ),
+                              // CircleAvatar(
+                              //   radius: 70,
+
+                              //   //here i created a fun only beacuse it was giving error for type
+                              //   // circlavatare's backgroundinage needs imageprovider
+                              //   backgroundImage: _getprofileimage(),
+                              // ),
+                              ),
                         ),
                         Positioned(
-                          right: 220,
+                          right: 235,
                           top: 185,
                           child: GestureDetector(
                             onTap: () {
@@ -1141,44 +1196,60 @@ class _ViewProfileState extends State<ViewProfile> {
                               showDialog(
                                 context: context,
                                 builder: (context) {
-                                  return AlertDialog(
-                                    title: const Text('Choose profile Picture'),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () async {
-                                            final picked =
-                                                await picker.pickImage(
-                                                    source: ImageSource.camera);
+                                  return StatefulBuilder(
+                                      builder: (context, setState) {
+                                    return AlertDialog(
+                                      title:
+                                          const Text('Choose profile Picture'),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () async {
+                                              final picked =
+                                                  await picker.pickImage(
+                                                      source:
+                                                          ImageSource.camera);
 
-                                            if (picked != null) {
-                                              final file = File(picked.path);
-                                              await _updateProfileImage(
-                                                  file); //update profile
-                                              Navigator.pop(context);
-                                            }
-                                          },
-                                          child: const Text('Take Picture')),
-                                      TextButton(
-                                          onPressed: () async {
-                                            final picked =
-                                                await picker.pickImage(
-                                                    source:
-                                                        ImageSource.gallery);
+                                              if (picked != null) {
+                                                /// The above Dart code is creating a `File` object using
+                                                /// the `File` constructor and passing the `path` property
+                                                /// of a variable named `picked` as an argument. This code
+                                                /// is typically used to work with files in Dart, allowing
+                                                /// you to perform operations such as reading, writing,
+                                                /// and manipulating files.
+                                                final file = File(picked.path);
 
-                                            if (picked != null) {
-                                              final file = File(picked.path);
-                                              await _updateProfileImage(file);
-                                              Navigator.pop(context);
-                                            }
-                                          },
-                                          child: const Text(
-                                              'Choose from Gallery ')),
-                                    ],
-                                  );
+                                                /// The above Dart code snippet is assigning the value of
+                                                /// `picked.path` to the variable `path`.
+                                                final path = picked.path;
+                                                await _updateProfileImage(
+                                                    file); //update profile
+                                                Navigator.pop(context);
+                                              }
+                                            },
+                                            child: const Text('Take Picture')),
+                                        TextButton(
+                                            onPressed: () async {
+                                              final picked =
+                                                  await picker.pickImage(
+                                                      source:
+                                                          ImageSource.gallery);
+
+                                              if (picked != null) {
+                                                final file = File(picked.path);
+                                                await _updateProfileImage(file);
+                                                Navigator.pop(context);
+                                              }
+                                            },
+                                            child: const Text(
+                                                'Choose from Gallery ')),
+                                      ],
+                                    );
+                                  });
                                 },
                               );
                             },
                             child: const CircleAvatar(
+                              radius: 16,
                               backgroundColor: Colors.black,
                               child: Icon(
                                 Icons.camera_alt_outlined,
@@ -1189,48 +1260,53 @@ class _ViewProfileState extends State<ViewProfile> {
                         ),
                         Positioned(
                             right: 16,
-                            top: 150,
+                            top: 155,
                             child: GestureDetector(
                               onTap: () {
                                 print('Choose cover');
                                 showDialog(
                                   context: context,
                                   builder: (context) {
-                                    return AlertDialog(
-                                      title: const Text('Choose cover Picture'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () async {
-                                            final picked =
-                                                await picker.pickImage(
-                                                    source: ImageSource.camera);
+                                    return StatefulBuilder(
+                                        builder: (context, setState) {
+                                      return AlertDialog(
+                                        title:
+                                            const Text('Choose cover Picture'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () async {
+                                              final picked =
+                                                  await picker.pickImage(
+                                                      source:
+                                                          ImageSource.camera);
 
-                                            if (picked != null) {
-                                              final file = File(picked.path);
-                                              await _updateCoverImage(file);
-                                              Navigator.pop(context);
-                                            }
-                                          },
-                                          child: const Text('Take Picture'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () async {
-                                            final picked =
-                                                await picker.pickImage(
-                                                    source:
-                                                        ImageSource.gallery);
+                                              if (picked != null) {
+                                                final file = File(picked.path);
+                                                await _updateCoverImage(file);
+                                                Navigator.pop(context);
+                                              }
+                                            },
+                                            child: const Text('Take Picture'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              final picked =
+                                                  await picker.pickImage(
+                                                      source:
+                                                          ImageSource.gallery);
 
-                                            if (picked != null) {
-                                              final file = File(picked.path);
-                                              await _updateCoverImage(file);
-                                              Navigator.pop(context);
-                                            }
-                                          },
-                                          child:
-                                              const Text('Choose from Gallery'),
-                                        ),
-                                      ],
-                                    );
+                                              if (picked != null) {
+                                                final file = File(picked.path);
+                                                await _updateCoverImage(file);
+                                                Navigator.pop(context);
+                                              }
+                                            },
+                                            child: const Text(
+                                                'Choose from Gallery'),
+                                          ),
+                                        ],
+                                      );
+                                    });
                                   },
                                 );
                               },
@@ -1326,6 +1402,8 @@ class _ViewProfileState extends State<ViewProfile> {
                                       GestureDetector(
                                         onTap: () {
                                           Navigator.pop(context);
+                                          updatename.clear();
+                                          updatesumary.clear();
                                         },
                                         child: Container(
                                           padding: const EdgeInsets.all(10),
@@ -1419,143 +1497,166 @@ class _ViewProfileState extends State<ViewProfile> {
                                       showDialog(
                                         context: context,
                                         builder: (context) {
-                                          return AlertDialog(
-                                            title: _buildSectionTitle(
-                                                'Update your BasicInfo!'),
-                                            content: Form(
-                                              key: statuskey,
-                                              child: SizedBox(
-                                                height: 250,
-                                                child: Column(
-                                                  children: [
-                                                    DropdownButtonFormField(
-                                                      decoration:
-                                                          InputDecoration(
-                                                        enabledBorder:
-                                                            OutlineInputBorder(
-                                                          borderSide:
-                                                              const BorderSide(
-                                                                  color: Colors
-                                                                      .white),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(10),
+                                          return StatefulBuilder(
+                                            builder: (context, setState) {
+                                              return AlertDialog(
+                                                title: _buildSectionTitle(
+                                                    'Update your BasicInfo!'),
+                                                content: Form(
+                                                  key: statuskey,
+                                                  child: SizedBox(
+                                                    height: 250,
+                                                    child: Column(
+                                                      children: [
+                                                        DropdownButtonFormField(
+                                                          decoration:
+                                                              InputDecoration(
+                                                            enabledBorder:
+                                                                OutlineInputBorder(
+                                                              borderSide:
+                                                                  const BorderSide(
+                                                                      color: Colors
+                                                                          .white),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                            ),
+                                                            focusedBorder:
+                                                                OutlineInputBorder(
+                                                              borderSide:
+                                                                  const BorderSide(
+                                                                      color: Colors
+                                                                          .white),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                            ),
+                                                            filled: true,
+                                                            fillColor:
+                                                                const Color
+                                                                    .fromARGB(
+                                                                    255,
+                                                                    241,
+                                                                    240,
+                                                                    240),
+                                                          ),
+                                                          hint: const Text(
+                                                              'Gender'),
+                                                          value: newgender,
+                                                          items: const [
+                                                            DropdownMenuItem(
+                                                              value: 'Male',
+                                                              child:
+                                                                  Text('Male'),
+                                                            ),
+                                                            DropdownMenuItem(
+                                                              value: 'Female',
+                                                              child: Text(
+                                                                  'Female'),
+                                                            )
+                                                          ],
+                                                          onChanged: (value) {
+                                                            setState(() {
+                                                              newgender = value;
+                                                            });
+                                                          },
                                                         ),
-                                                        focusedBorder:
-                                                            OutlineInputBorder(
-                                                          borderSide:
-                                                              const BorderSide(
-                                                                  color: Colors
-                                                                      .white),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(10),
+                                                        const SizedBox(
+                                                            height: 10),
+                                                        DropdownButtonFormField(
+                                                          decoration:
+                                                              InputDecoration(
+                                                            enabledBorder:
+                                                                OutlineInputBorder(
+                                                              borderSide:
+                                                                  const BorderSide(
+                                                                      color: Colors
+                                                                          .white),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                            ),
+                                                            focusedBorder:
+                                                                OutlineInputBorder(
+                                                              borderSide:
+                                                                  const BorderSide(
+                                                                      color: Colors
+                                                                          .white),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                            ),
+                                                            filled: true,
+                                                            fillColor:
+                                                                const Color
+                                                                    .fromARGB(
+                                                                    255,
+                                                                    241,
+                                                                    240,
+                                                                    240),
+                                                          ),
+                                                          hint: const Text(
+                                                              'Marital Status'),
+                                                          value:
+                                                              newmaritalstatus,
+                                                          items: const [
+                                                            DropdownMenuItem(
+                                                              value: 'Single',
+                                                              child: Text(
+                                                                  'Single'),
+                                                            ),
+                                                            DropdownMenuItem(
+                                                              value: 'Married',
+                                                              child: Text(
+                                                                  'Married'),
+                                                            ),
+                                                            DropdownMenuItem(
+                                                              value: 'Divorce',
+                                                              child: Text(
+                                                                  'Divorce'),
+                                                            ),
+                                                          ],
+                                                          onChanged: (value) {
+                                                            setState(() {
+                                                              newmaritalstatus =
+                                                                  value;
+                                                            });
+                                                          },
+                                                          validator: (value) {
+                                                            if (value == null ||
+                                                                value.isEmpty) {
+                                                              return 'Please enter your status';
+                                                            }
+                                                          },
                                                         ),
-                                                        filled: true,
-                                                        fillColor: const Color
-                                                            .fromARGB(
-                                                            255, 241, 240, 240),
-                                                      ),
-                                                      hint:
-                                                          const Text('Gender'),
-                                                      value: newgender,
-                                                      items: const [
-                                                        DropdownMenuItem(
-                                                          value: 'Male',
-                                                          child: Text('Male'),
+                                                        const SizedBox(
+                                                          height: 10,
                                                         ),
-                                                        DropdownMenuItem(
-                                                          value: 'Female',
-                                                          child: Text('Female'),
-                                                        )
-                                                      ],
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          newgender = value;
-                                                        });
-                                                      },
-                                                    ),
-                                                    const SizedBox(height: 10),
-                                                    DropdownButtonFormField(
-                                                      decoration:
-                                                          InputDecoration(
-                                                        enabledBorder:
-                                                            OutlineInputBorder(
-                                                          borderSide:
-                                                              const BorderSide(
-                                                                  color: Colors
-                                                                      .white),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(10),
-                                                        ),
-                                                        focusedBorder:
-                                                            OutlineInputBorder(
-                                                          borderSide:
-                                                              const BorderSide(
-                                                                  color: Colors
-                                                                      .white),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(10),
-                                                        ),
-                                                        filled: true,
-                                                        fillColor: const Color
-                                                            .fromARGB(
-                                                            255, 241, 240, 240),
-                                                      ),
-                                                      hint: const Text(
-                                                          'Marital Status'),
-                                                      value: newmaritalstatus,
-                                                      items: const [
-                                                        DropdownMenuItem(
-                                                          value: 'Single',
-                                                          child: Text('Single'),
-                                                        ),
-                                                        DropdownMenuItem(
-                                                          value: 'Married',
-                                                          child:
-                                                              Text('Married'),
-                                                        ),
-                                                        DropdownMenuItem(
-                                                          value: 'Divorce',
-                                                          child:
-                                                              Text('Divorce'),
-                                                        ),
-                                                      ],
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          newmaritalstatus =
-                                                              value;
-                                                        });
-                                                      },
-                                                      validator: (value) {
-                                                        if (value == null ||
-                                                            value.isEmpty) {
-                                                          return 'Please enter your status';
-                                                        }
-                                                      },
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                    Container(
-                                                      height: 60,
-                                                      decoration: BoxDecoration(
-                                                        border: Border.all(),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                      ),
-                                                      child: ListTile(
-                                                        trailing: const Icon(Icons
-                                                            .calendar_month_outlined),
-                                                        title: Text(dob == null
-                                                            ? "Select Date of Birth"
-                                                            : 'DOB: ${DateFormat('y-MM-dd').format(dob!)}'),
-                                                        onTap: () async {
-                                                          DateTime? picked =
-                                                              await showDatePicker(
+                                                        Container(
+                                                          height: 60,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            border:
+                                                                Border.all(),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                          ),
+                                                          child: ListTile(
+                                                            trailing:
+                                                                const Icon(Icons
+                                                                    .calendar_month_outlined),
+                                                            title: Text(dob ==
+                                                                    null
+                                                                ? "Select Date of Birth"
+                                                                : 'DOB: ${DateFormat('y-MM-dd').format(dob!)}'),
+                                                            onTap: () async {
+                                                              DateTime? picked = await showDatePicker(
                                                                   context:
                                                                       context,
                                                                   firstDate:
@@ -1564,79 +1665,94 @@ class _ViewProfileState extends State<ViewProfile> {
                                                                   lastDate:
                                                                       DateTime
                                                                           .now());
-                                                          if (picked != null &&
-                                                              picked != dob) {
-                                                            setState(() {
-                                                              dob = picked;
-                                                              newdate = DateFormat(
-                                                                      'y-MM-dd')
-                                                                  .format(dob!);
-                                                            });
-                                                          }
-                                                        },
+                                                              if (picked !=
+                                                                      null &&
+                                                                  picked !=
+                                                                      dob) {
+                                                                setState(() {
+                                                                  dob = picked;
+                                                                  newdate = DateFormat(
+                                                                          'y-MM-dd')
+                                                                      .format(
+                                                                          dob!);
+                                                                });
+                                                              }
+                                                            },
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                actions: [
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              10),
+                                                      decoration: BoxDecoration(
+                                                          color: Colors.black,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                            10,
+                                                          )),
+                                                      child: const Text(
+                                                        'Cancel',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white),
                                                       ),
                                                     ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            actions: [
-                                              GestureDetector(
-                                                onTap: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Container(
-                                                  padding:
-                                                      const EdgeInsets.all(10),
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.black,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                        10,
-                                                      )),
-                                                  child: const Text(
-                                                    'Cancel',
-                                                    style: TextStyle(
-                                                        color: Colors.white),
                                                   ),
-                                                ),
-                                              ),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  if (statuskey.currentState!
-                                                      .validate()) {
-                                                    _updateStatus(
-                                                        newmaritalstatus!,
-                                                        newdate,
-                                                        newgender!);
-                                                    Navigator.pop(context);
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                      const SnackBar(
-                                                        content: Text(
-                                                            'Basic info updated'),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      if (statuskey
+                                                          .currentState!
+                                                          .validate()) {
+                                                        setState(() {
+                                                          _updateStatus(
+                                                              newmaritalstatus!,
+                                                              newdate,
+                                                              newgender!);
+                                                        });
+
+                                                        Navigator.pop(context);
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                          const SnackBar(
+                                                            content: Text(
+                                                                'Basic info updated'),
+                                                          ),
+                                                        );
+                                                      }
+                                                    },
+                                                    child: Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              10),
+                                                      decoration: BoxDecoration(
+                                                          color: Colors.black,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                            10,
+                                                          )),
+                                                      child: const Text(
+                                                        'Save',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white),
                                                       ),
-                                                    );
-                                                  }
-                                                },
-                                                child: Container(
-                                                  padding:
-                                                      const EdgeInsets.all(10),
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.black,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                        10,
-                                                      )),
-                                                  child: const Text(
-                                                    'Save',
-                                                    style: TextStyle(
-                                                        color: Colors.white),
+                                                    ),
                                                   ),
-                                                ),
-                                              ),
-                                            ],
+                                                ],
+                                              );
+                                            },
                                           );
                                         },
                                       );

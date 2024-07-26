@@ -52,6 +52,7 @@ class Auth {
 
     return null;
   }
+  //saves current user deatil
   Future<void> saveUserDetail(UserDetail userDetail) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // Save the updated user details
