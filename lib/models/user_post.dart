@@ -65,7 +65,11 @@ class Postedphoto {
   bool isLiked = false;
   bool isDisliked = false;
 
-  Postedphoto({this.id, this.url,required this.isDisliked, required this.isLiked});
+  Postedphoto(
+      {this.id,
+      this.url,
+      required this.isDisliked,
+      required this.isLiked});
 
   Postedphoto.fromJson(Map<String, dynamic> json) {
     id = json['Id'];
@@ -76,6 +80,7 @@ class Postedphoto {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['Id'] = id;
     data['Url'] = url;
+
     return data;
   }
 }

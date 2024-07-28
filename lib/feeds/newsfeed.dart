@@ -6,6 +6,7 @@ import 'package:socialapp/models/user.dart';
 import 'package:socialapp/models/user_detail.dart';
 import 'package:socialapp/models/user_post.dart';
 import 'package:socialapp/feeds/Albumscreen.dart';
+import 'package:socialapp/profiles/addpost.dart';
 
 class Newsfeed extends StatefulWidget {
   // final UserPost post;
@@ -22,6 +23,22 @@ class Newsfeed extends StatefulWidget {
 }
 
 class _HomeState extends State<Newsfeed> {
+  List<UserPost> post = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loaduserpost();
+  }
+
+  void _loaduserpost() async {
+    Dataloader dataloader = Dataloader();
+    List<UserPost> posts = await dataloader.getuserpost();
+    setState(() {
+      post = posts;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // User user = User();
@@ -101,6 +118,19 @@ class Newscreen extends StatefulWidget {
 }
 
 class _NewscreenState extends State<Newscreen> {
+  @override
+  void initState() {
+    super.initState();
+    _loaduserpost();
+  }
+
+  void _loaduserpost() async {
+    Dataloader dataloader = Dataloader();
+    List<UserPost> posts = await dataloader.getuserpost();
+    setState(() {
+      widget.post = posts;
+    });
+  }
   // bool model.isDisliked = false;
   // bool model.isDisliked = false;
 //for each post use this bools inside the user post model4
@@ -161,11 +191,7 @@ class _NewscreenState extends State<Newscreen> {
         Text(model.description!),
         Card(
           elevation: 5,
-          child: _builderimage(
-            model.image!,
-            userDetail,
-            users,
-          ),
+          child: _builderimage(model.image!, userDetail, model, users),
         ), //here with list<postedphot> i passed userdetail model also
         // Text('${model.image!.length}'),
         // for (var image in model.image!) _builderimage(image),
@@ -216,26 +242,274 @@ class _NewscreenState extends State<Newscreen> {
     );
   }
 
-  Widget _builderimage(List<Postedphoto> image, UserDetail detail, User user) {
+//   Widget _builderimage(List<Postedphoto> image, UserDetail detail, User user) {
+//     int remainimages =
+//         image.length - 3; //remaining after 3 images foe the stack
+//     //if only one image
+//     if (image.length == 1) {
+//       return Image.network(
+//         image[0].url!,
+//         // width: double.infinity,
+//       );
+//     } else if (image.length == 3) {
+//       return Column(
+//         children: [
+//           //this is if there is 3 photo
+//           GestureDetector(
+//             onTap: () => Navigator.push(
+//                 context,
+//                 MaterialPageRoute(
+//                   builder: (context) => FullImageScreen(
+//                       images: image, detail: detail, user: user),
+//                 )),
+//             child: GridView.count(
+//               shrinkWrap: true,
+//               physics: const NeverScrollableScrollPhysics(),
+//               crossAxisCount: 2,
+//               mainAxisSpacing: 2,
+//               crossAxisSpacing: 2,
+//               children: [
+//                 Image.network(
+//                   image[0].url!,
+//                 ),
+//                 Image.network(
+//                   image[1].url!,
+//                 ),
+//               ],
+//             ),
+//           ),
+//           const SizedBox(
+//             height: 1,
+//           ),
+//           Image.network(
+//             image[2].url!,
+//           )
+//         ],
+//       );
+//     }
+// //if there are more than 3 photos
+//     return GestureDetector(
+//       onTap: () => Navigator.push(
+//           context,
+//           MaterialPageRoute(
+//             builder: (context) =>
+//                 FullImageScreen(images: image, detail: detail, user: user),
+//           )),
+//       child: GridView.builder(
+//         shrinkWrap: true, //allows widget to adjust it's size with content
+//         physics: const NeverScrollableScrollPhysics(),
+//         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+//             crossAxisCount: 2,
+//             // childAspectRatio: 1,
+//             mainAxisSpacing: 2,
+//             crossAxisSpacing: 2),
+
+//         itemCount: image.length > 3 ? 4 : image.length,
+//         //if the image lenth is more than 3 the value is set to 4 , but if less then the vakue is set to image.length
+//         itemBuilder: (context, index) {
+//           if (index == 3 && remainimages > 0) {
+//             //this condition makes the +X for image display
+//             return Stack(
+//               fit: StackFit.expand,
+//               children: [
+//                 Image.network(
+//                   image[index].url!,
+//                   fit: BoxFit.cover,
+//                 ),
+//                 Container(
+//                   color: Colors.black.withOpacity(0.5),
+//                   child: Center(
+//                     child: Text(
+//                       '+$remainimages',
+//                       style: const TextStyle(color: Colors.grey, fontSize: 25),
+//                     ),
+//                   ),
+//                 )
+//               ],
+//             );
+//           } else {
+//             return Image.network(
+//               image[index].url!,
+//               fit: BoxFit.cover,
+//             );
+//           }
+//         },
+//       ),
+//     );
+//     // return Image.network(
+//     //   // width: 390,
+//     //   image.url!,
+//     //   // fit: BoxFit.fitWidth,
+//     //   // cacheHeight: 200,
+//     //   // cacheWidth: 200,
+//     // );
+//   }
+//   Widget _builderimage(List<Postedphoto> image, UserDetail detail, User user,
+//       UserPost userpost) {
+//     int remainimages =
+//         image.length - 3; //remaining after 3 images foe the stack
+//     //if only one image
+//     if (image.length == 1) {
+//       return (image[0].isNetworkurl ?? false)
+//           ? Image.network(image[0].url!)
+//           : Image.file(
+//               File(image[0].url!),
+//               height: 400,
+//               width: double.infinity,
+//               fit: BoxFit.fill,
+//             );
+//       // return Image.network(
+//       //   image[0].url!,
+//       //   // width: double.infinity,
+//       // );
+//     } else if (image.length == 3) {
+//       return Column(
+//         children: [
+//           //this is if there is 3 photo
+//           GestureDetector(
+//             onTap: () => Navigator.push(
+//                 context,
+//                 MaterialPageRoute(
+//                   builder: (context) => FullImageScreen(
+//                       images: image, detail: detail, user: user),
+//                 )),
+//             child: GridView.count(
+//               shrinkWrap: true,
+//               physics: const NeverScrollableScrollPhysics(),
+//               crossAxisCount: 2,
+//               mainAxisSpacing: 2,
+//               crossAxisSpacing: 2,
+//               children: [
+//                 (image[0].isNetworkurl ?? false)
+//                     ? Image.network(
+//                         image[0].url!,
+//                       )
+//                     : Image.file(
+//                         File(image[0].url!),
+//                         fit: BoxFit.fill,
+//                       ),
+//                 (image[1].isNetworkurl ?? false)
+//                     ? Image.network(image[1].url!)
+//                     : Image.file(
+//                         File(image[1].url!),
+//                         fit: BoxFit.fill,
+//                       ),
+//                 // Image.network(
+//                 //   image[1].url!,
+//                 // ),
+//               ],
+//             ),
+//           ),
+//           const SizedBox(
+//             height: 10,
+//           ),
+//           (image[2].isNetworkurl ?? false)
+//               ? Image.network(image[2].url!)
+//               : Image.file(
+//                   (File(image[2].url!)),
+//                   height: 200,
+//                   width: double.infinity,
+//                   fit: BoxFit.fill,
+//                 ),
+//           // Image.network(
+//           //   image[2].url!,
+//           // )
+//         ],
+//       );
+//     }
+// //if there are more than 3 photos
+//     return GestureDetector(
+//       onTap: () => Navigator.push(
+//           context,
+//           MaterialPageRoute(
+//             builder: (context) =>
+//                 FullImageScreen(images: image, detail: detail, user: user),
+//           )),
+//       child: GridView.builder(
+//         shrinkWrap: true, //allows widget to adjust it's size with content
+//         physics: const NeverScrollableScrollPhysics(),
+//         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+//             crossAxisCount: 2,
+//             // childAspectRatio: 1,
+//             mainAxisSpacing: 2,
+//             crossAxisSpacing: 2),
+
+//         itemCount: image.length > 3 ? 4 : image.length,
+//         //if the image lenth is more than 3 the value is set to 4 , but if less then the vakue is set to image.length
+//         itemBuilder: (context, index) {
+//           if (index == 3 && remainimages > 0) {
+//             //this condition makes the +X for image display
+//             return Stack(
+//               fit: StackFit.expand,
+//               children: [
+//                 image[index].isNetworkurl == true
+//                     ? Image.network(image[index].url!)
+//                     : Image.file(File(image[index].url!)),
+//                 // Image.network(
+//                 //   image[index].url!,
+//                 //   fit: BoxFit.cover,
+//                 // ),
+//                 Container(
+//                   color: Colors.black.withOpacity(0.5),
+//                   child: Center(
+//                     child: Text(
+//                       '+$remainimages',
+//                       style: const TextStyle(color: Colors.grey, fontSize: 25),
+//                     ),
+//                   ),
+//                 )
+//               ],
+//             );
+//           } else {
+//             return (image[index].isNetworkurl ?? false)
+//                 ? Image.network(image[index].url!)
+//                 : Image.file(File(image[index].url!));
+//           }
+//         },
+//       ),
+//     );
+//     // return Image.network(
+//     //   // width: 390,
+//     //   image.url!,
+//     //   // fit: BoxFit.fitWidth,
+//     //   // cacheHeight: 200,
+//     //   // cacheWidth: 200,
+//     // );
+//   }
+  Widget _builderimage(List<Postedphoto> image, UserDetail detail,
+      UserPost userpost, User user) {
     int remainimages =
         image.length - 3; //remaining after 3 images foe the stack
-        //if only one image
+    //if only one image
     if (image.length == 1) {
-      return Image.network(
-        image[0].url!,
-        // width: double.infinity,
-      );
+      if (userpost.postId! > 10) {
+        return Image.file(File(image[0].url!));
+      } else {
+        return Image.network(image[0].url!);
+      }
+      // return (image[0].isNetworkurl = false)
+      //     ? Image.network(image[0].url!)
+      //     : Image.file(
+      //         File(image[0].url!),
+      //         height: 400,
+      //         width: double.infinity,
+      //         fit: BoxFit.fill,
+      //       );
+      // return Image.network(
+      //   image[0].url!,
+      //   // width: double.infinity,
+      // );
     } else if (image.length == 3) {
       return Column(
         children: [
           //this is if there is 3 photo
           GestureDetector(
-            onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => FullImageScreen(
-                      images: image, detail: detail, user: user),
-                )),
+            // onTap: () => Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //       builder: (context) => FullImageScreen(
+            //           images: image, detail: detail, user: user),
+            //     )),
             child: GridView.count(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -243,32 +517,58 @@ class _NewscreenState extends State<Newscreen> {
               mainAxisSpacing: 2,
               crossAxisSpacing: 2,
               children: [
-                Image.network(
-                  image[0].url!,
-                ),
-                Image.network(
-                  image[1].url!,
-                ),
+                (userpost.postId! > 10)
+                    ? Image.file(
+                        File(image[0].url!),
+                        fit: BoxFit.fill,
+                      )
+                    : Image.network(image[0].url!),
+                //
+                (userpost.postId! > 10)
+                    ? Image.file(
+                        File(image[1].url!),
+                        fit: BoxFit.fill,
+                      )
+                    : Image.network(image[1].url!),
+                // (image[0].isNetworkurl)
+                //     ? Image.network(
+                //         image[0].url!,
+                //       )
+                //
+                // (image[1].isNetworkurl ?? false)
+                //     ? Image.network(image[1].url!)
+                //     : Image.file(
+                //         File(image[1].url!),
+                //         fit: BoxFit.fill,
+                //       ),
               ],
             ),
           ),
           const SizedBox(
-            height: 1,
+            height: 10,
           ),
-          Image.network(
-            image[2].url!,
-          )
+          (userpost.postId! > 10) //bool comes null
+              ? Image.file(
+                  (File(image[2].url!)),
+                  height: 200,
+                  width: double.infinity,
+                  fit: BoxFit.fill,
+                )
+              : Image.network(image[2].url!)
+          // Image.network(
+          //   image[2].url!,
+          // )
         ],
       );
     }
 //if there are more than 3 photos
     return GestureDetector(
-      onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                FullImageScreen(images: image, detail: detail, user: user),
-          )),
+      // onTap: () => Navigator.push(
+      //     context,
+      //     MaterialPageRoute(
+      //       builder: (context) =>
+      //           FullImageScreen(images: image, detail: detail, user: user),
+      //     )),
       child: GridView.builder(
         shrinkWrap: true, //allows widget to adjust it's size with content
         physics: const NeverScrollableScrollPhysics(),
@@ -286,10 +586,13 @@ class _NewscreenState extends State<Newscreen> {
             return Stack(
               fit: StackFit.expand,
               children: [
-                Image.network(
-                  image[index].url!,
-                  fit: BoxFit.cover,
-                ),
+                (userpost.postId! > 10)
+                    ? Image.file(File(image[index].url!))
+                    : Image.network(image[index].url!),
+                // Image.network(
+                //   image[index].url!,
+                //   fit: BoxFit.cover,
+                // ),
                 Container(
                   color: Colors.black.withOpacity(0.5),
                   child: Center(
@@ -302,10 +605,9 @@ class _NewscreenState extends State<Newscreen> {
               ],
             );
           } else {
-            return Image.network(
-              image[index].url!,
-              fit: BoxFit.cover,
-            );
+            return (userpost.postId! > 10)
+                ? Image.file(File(image[index].url!))
+                : Image.network(image[index].url!);
           }
         },
       ),
@@ -316,6 +618,5 @@ class _NewscreenState extends State<Newscreen> {
     //   // fit: BoxFit.fitWidth,
     //   // cacheHeight: 200,
     //   // cacheWidth: 200,
-    // );
   }
 }

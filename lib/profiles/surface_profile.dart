@@ -36,7 +36,7 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
     super.initState();
     //loading
     auth = Auth(Dataloader());
-    _loaduserDetail();
+    _loaduserDetail(); //holds info about currently logged users
     _loadcover();
     _loadprofile();
     _loaduserPost();
@@ -64,13 +64,39 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
   }
 
   void _loaduserDetail() async {
+    //This method fetches the logged-in user's details and updates userDetail.
+    //After setting userDetail, it proceeds to call _loaduserPost() and _loadusers().
     UserDetail? detail = await auth.getloggedinuser();
     setState(() {
       userDetail = detail;
     });
+    //You need to call _loaduserPost() and _loadusers()
+    // after fetching userDetail to ensure these methods have the necessary data
+    //(i.e., the userDetail object) to fetch user-specific posts and users.
     await _loaduserPost();
     await _loadusers();
+    //Since _loaduserPost() and _loadusers() are dependent on userDetail,
+    // i must first ensure userDetail is loaded.
+    // By calling these methods within _loaduserDetail(),
+    // you ensure that the data is fetched in the right order.
   }
+
+  // Future<void> _loaduserDetail() async {
+  //   // Fetch user detail and posts
+  //   final auth = Auth(Dataloader());
+  //   UserDetail? detail = await auth.getloggedinuser();
+  //   final prefs = await SharedPreferences.getInstance();
+  //   String? postJson = prefs.getString(Dataloader.userpostkey);
+  //   List<UserPost> posts = postJson != null
+  //       ? (json.decode(postJson) as List)
+  //           .map((e) => UserPost.fromJson(e))
+  //           .toList()
+  //       : [];
+  //   setState(() {
+  //     userDetail = detail;
+  //     userPost = posts.where((post) => post.userId == detail?.id).toList();
+  //   });
+  // }
 
   Future<void> _updatecover(File file) async {
     final prefs = await SharedPreferences.getInstance();
@@ -222,25 +248,8 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "${userDetail!.basicInfo!.name}'s Profile",
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.w100),
-                      ),
-                      // IconButton(
-                      //     onPressed: () async {
-                      //       await auth.logout();
-                      //       Navigator.pushReplacement(
-                      //           context,
-                      //           MaterialPageRoute(
-                      //             builder: (context) => const Splash(),
-                      //           ));
-                      //     },
-                      //     icon: const Icon(Icons.logout)),
-                    ],
+                  const SizedBox(
+                    height: 20,
                   ),
                   const SizedBox(
                     height: 10,
@@ -506,8 +515,12 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                     height: 25,
                   ),
                   const Divider(),
+
                   //still no when update, remember not chnages for SP
-                  ListView.builder(
+                  ListView.separated(
+                    separatorBuilder: (context, index) {
+                      return const Divider();
+                    },
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: userpost.length,
@@ -528,7 +541,7 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                                             '')),
                                   ),
                             title: Text(userDetail!.basicInfo!.name!),
-                            subtitle: Text(userlist[index].email!),
+                            // subtitle: Text(userlist[index].email!),
                           ),
                           // const SizedBox(
                           //   height: 8,
@@ -540,7 +553,8 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                             child: _builderimage(
                               userpost[index].image!,
                               userDetail!,
-                              userlist[index],
+                              userpost[index],
+                              // userlist[index],
                             ),
                           ), //here with list<postedphot> i passed userdetail userpost[index] also
                           // Text('${userpost[index].image!.length}'),
@@ -605,26 +619,42 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
     );
   }
 
-  Widget _builderimage(List<Postedphoto> image, UserDetail detail, User user) {
+  Widget _builderimage(
+      List<Postedphoto> image, UserDetail detail, UserPost userpost
+      // User user
+      ) {
     int remainimages =
         image.length - 3; //remaining after 3 images foe the stack
     //if only one image
     if (image.length == 1) {
-      return Image.network(
-        image[0].url!,
-        // width: double.infinity,
-      );
+      if (userpost.postId! > 10) {
+        return Image.file(File(image[0].url!));
+      } else {
+        return Image.network(image[0].url!);
+      }
+      // return (image[0].isNetworkurl = false)
+      //     ? Image.network(image[0].url!)
+      //     : Image.file(
+      //         File(image[0].url!),
+      //         height: 400,
+      //         width: double.infinity,
+      //         fit: BoxFit.fill,
+      //       );
+      // return Image.network(
+      //   image[0].url!,
+      //   // width: double.infinity,
+      // );
     } else if (image.length == 3) {
       return Column(
         children: [
           //this is if there is 3 photo
           GestureDetector(
-            onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => FullImageScreen(
-                      images: image, detail: detail, user: user),
-                )),
+            // onTap: () => Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //       builder: (context) => FullImageScreen(
+            //           images: image, detail: detail, user: user),
+            //     )),
             child: GridView.count(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -632,32 +662,58 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
               mainAxisSpacing: 2,
               crossAxisSpacing: 2,
               children: [
-                Image.network(
-                  image[0].url!,
-                ),
-                Image.network(
-                  image[1].url!,
-                ),
+                (userpost.postId! > 10)
+                    ? Image.file(
+                        File(image[0].url!),
+                        fit: BoxFit.fill,
+                      )
+                    : Image.network(image[0].url!),
+                //
+                (userpost.postId! > 10)
+                    ? Image.file(
+                        File(image[1].url!),
+                        fit: BoxFit.fill,
+                      )
+                    : Image.network(image[1].url!),
+                // (image[0].isNetworkurl)
+                //     ? Image.network(
+                //         image[0].url!,
+                //       )
+                //
+                // (image[1].isNetworkurl ?? false)
+                //     ? Image.network(image[1].url!)
+                //     : Image.file(
+                //         File(image[1].url!),
+                //         fit: BoxFit.fill,
+                //       ),
               ],
             ),
           ),
           const SizedBox(
-            height: 1,
+            height: 10,
           ),
-          Image.network(
-            image[2].url!,
-          )
+          (userpost.postId! > 10) //bool comes null
+              ? Image.file(
+                  (File(image[2].url!)),
+                  height: 200,
+                  width: double.infinity,
+                  fit: BoxFit.fill,
+                )
+              : Image.network(image[2].url!)
+          // Image.network(
+          //   image[2].url!,
+          // )
         ],
       );
     }
 //if there are more than 3 photos
     return GestureDetector(
-      onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                FullImageScreen(images: image, detail: detail, user: user),
-          )),
+      // onTap: () => Navigator.push(
+      //     context,
+      //     MaterialPageRoute(
+      //       builder: (context) =>
+      //           FullImageScreen(images: image, detail: detail, user: user),
+      //     )),
       child: GridView.builder(
         shrinkWrap: true, //allows widget to adjust it's size with content
         physics: const NeverScrollableScrollPhysics(),
@@ -675,10 +731,13 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
             return Stack(
               fit: StackFit.expand,
               children: [
-                Image.network(
-                  image[index].url!,
-                  fit: BoxFit.cover,
-                ),
+                (userpost.postId! > 10)
+                    ? Image.file(File(image[index].url!))
+                    : Image.network(image[index].url!),
+                // Image.network(
+                //   image[index].url!,
+                //   fit: BoxFit.cover,
+                // ),
                 Container(
                   color: Colors.black.withOpacity(0.5),
                   child: Center(
@@ -691,10 +750,9 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
               ],
             );
           } else {
-            return Image.network(
-              image[index].url!,
-              fit: BoxFit.cover,
-            );
+            return (userpost.postId! > 10)
+                ? Image.file(File(image[index].url!))
+                : Image.network(image[index].url!);
           }
         },
       ),

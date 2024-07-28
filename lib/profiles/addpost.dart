@@ -1,14 +1,16 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/authenthication/login_auth.dart';
 import 'package:socialapp/dataloader.dart';
+import 'package:socialapp/home.dart';
 import 'package:socialapp/models/user.dart';
 import 'package:socialapp/models/user_detail.dart';
+import 'package:socialapp/models/user_post.dart';
 
 class AddPost extends StatefulWidget {
   const AddPost({
@@ -21,9 +23,11 @@ class AddPost extends StatefulWidget {
 
 UserDetail? userDetail;
 User? user;
+// UserPost? userPost;
 final ImagePicker picker = ImagePicker();
 List<File> media = []; // list to store the selected media
 File? camera_image;
+// List<UserPost> userPost = [];
 
 late Auth auth;
 //for images/video
@@ -35,6 +39,7 @@ class _AddPostState extends State<AddPost> {
     super.initState();
     auth = Auth(Dataloader());
     _loaduserDetail(); //to get the data of from the user detail always load tha da
+    // _loaduserPost();
   }
 
   void _loaduserDetail() async {
@@ -46,33 +51,90 @@ class _AddPostState extends State<AddPost> {
   }
 
   TextEditingController writepost = TextEditingController();
-
   Future<bool> _onWillPop() async {
     // Show a dialog or pop-up when the user tries to navigate back
-    return (await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Discard Changes?'),
-            content:
-                const Text('Are you sure you want to discard your changes?'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context)
-                      .pop(false); // User does not want to go back
-                },
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(true); // User wants to go back
-                },
-                child: const Text('Discard'),
-              ),
-            ],
+    if (media.isNotEmpty || camera_image != null) {
+      final bool? discard = await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Confirm Discard?'),
+          content:
+              const Text('Are you sure wou want to discard your changes? '),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .pop(false); // User does not want to go back
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true); // User wants to go back
+              },
+              child: const Text('Discard'),
+            ),
+          ],
+        ),
+      );
+      discard ?? false; //if dialog is dismissed(giving default value)
+    }
+    return true; //no need for showing the dialog box
+  }
+
+  void _submitPost() async {
+    if (userDetail != null) {
+      final newPost = UserPost(
+        postId: DateTime.now()
+            .millisecondsSinceEpoch, // Use current timestamp or generate ID
+        userId: userDetail!.id,
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+        title: writepost.text,
+        description: 'This is a description', // Customize as needed
+        image: media
+            .map((file) => Postedphoto(
+                url: file.path,
+                isDisliked: false,
+                isLiked: false,
+))
+            .toList(),
+        postLikedBy: [], // Initial empty list
+        isliked: false,
+        isDisliked: false,
+      );
+      print(newPost);
+
+      await addNewPost(newPost);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Post Added')));
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const Home(),
           ),
-        )) ??
-        false; // Default to not pop if dialog is dismissed
+          (route) => false);
+    }
+  }
+
+  Future<void> addNewPost(UserPost newPost) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Retrieve existing posts
+    String? postsString = prefs.getString(Dataloader.userpostkey);
+    List<UserPost> postsList = [];
+
+    if (postsString != null) {
+      List jsonList = json.decode(postsString);
+      postsList = jsonList.map((json) => UserPost.fromJson(json)).toList();
+    }
+
+    // Add new post
+    postsList.add(newPost);
+
+    // Save updated list back to SharedPreferences
+    List<Map<String, dynamic>> jsonList =
+        postsList.map((post) => post.toJson()).toList();
+    await prefs.setString(Dataloader.userpostkey, json.encode(jsonList));
   }
 
   @override
@@ -85,7 +147,7 @@ class _AddPostState extends State<AddPost> {
             const Text('Create Post'),
             TextButton(
               style: TextButton.styleFrom(backgroundColor: Colors.black),
-              onPressed: () {},
+              onPressed: _submitPost,
               child: const Text(
                 'Submit',
                 style: TextStyle(color: Colors.white),
@@ -95,16 +157,15 @@ class _AddPostState extends State<AddPost> {
         ),
       ),
       body: PopScope(
-        canPop: false,
+        canPop: false, //if false cannot pop
         onPopInvoked: (didPop) async {
-          if (didPop) {
-            return;
-          }
-          final bool shouldpop = await _onWillPop() ?? false;
-          if (context.mounted && shouldpop) {
-            Navigator.pop(context);
-            media.clear();
-            camera_image = null;
+          if (!didPop) {
+            final bool shouldpop = await _onWillPop();
+            if (shouldpop) {
+              Navigator.pop(context);
+              media.clear();
+              camera_image = null;
+            }
           }
         },
         child: SingleChildScrollView(
@@ -198,15 +259,6 @@ class _AddPostState extends State<AddPost> {
               const Divider(
                 height: 0,
               ),
-              Container(
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(10)),
-                child: ListTile(
-                  onTap: () {},
-                  leading: const Icon(Icons.videocam_outlined),
-                  title: const Text('Videos'),
-                ),
-              )
             ],
           ),
         ),
