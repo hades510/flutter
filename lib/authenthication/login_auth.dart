@@ -1,36 +1,68 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/dataloader.dart';
 import 'package:socialapp/models/user_detail.dart';
+import 'package:socialapp/models/user_post.dart';
+import 'package:socialapp/profiles/addpost.dart';
 
 import '../models/user.dart';
 
 class Auth {
-  static String 
-  isUserloggedin =
+  static String isUserloggedin =
       'Logged'; //use this key to save the data updated
 
   Dataloader dataloader;
   Auth(this.dataloader);
 //login
+  // Future<bool> login(String email, String password) async {
+  //   //retrived data to shared prefernces
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? userjson = prefs.getString(Dataloader.userkey);
+  //   if (userjson != null) {
+  //     //decoding json data to list of user obj
+  //     List userlist = jsonDecode(userjson);
+  //     List<User> users = userlist.map((e) => User.fromJson(e)).toList();
+  //     for (User e in users) {
+  //       if (e.email == email && e.password == password) {
+  //         List<UserDetail> userdetail = await dataloader.getuserdetail();
+  //         UserDetail userdetailmatch =
+  //             userdetail.firstWhere((element) => element.id == e.id);
+  //         if (userdetailmatch != null) {
+  //           prefs.setString(
+  //               isUserloggedin, jsonEncode(userdetailmatch.toJson()));
+  //           return true;
+  //         }
+  //       }
+  //     }
+  //   }
+  //   return false;
+  // }
   Future<bool> login(String email, String password) async {
-    //retrived data to shared prefernces
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     String? userjson = prefs.getString(Dataloader.userkey);
     if (userjson != null) {
-      //decoding json data to list of user obj
-      List userlist = jsonDecode(userjson);
+      List userlist = json.decode(userjson);
       List<User> users = userlist.map((e) => User.fromJson(e)).toList();
+
       for (User e in users) {
         if (e.email == email && e.password == password) {
-          List<UserDetail> userdetail = await dataloader.getuserdetail();
-          UserDetail userdetailmatch =
-              userdetail.firstWhere((element) => element.id == e.id);
-          if (userdetailmatch != null) {
-            prefs.setString(
-                isUserloggedin, jsonEncode(userdetailmatch.toJson()));
-            return true;
+          String? userdetailjson = prefs.getString(Dataloader.userdetailkey);
+
+          if (userdetailjson != null) {
+            List detaillist = json.decode(userdetailjson);
+            List<UserDetail> details =
+                detaillist.map((e) => UserDetail.fromJson(e)).toList();
+
+            UserDetail userdetailmatch =
+                details.firstWhere((element) => element.id == e.id);
+
+            if (userdetailmatch != null) {
+              prefs.setString(
+                  isUserloggedin, jsonEncode(userdetailmatch.toJson()));
+              return true;
+            }
           }
         }
       }
@@ -55,7 +87,6 @@ class Auth {
 
     return null;
   }
-  
 
   /// The function `saveUserDetail` saves the user details to SharedPreferences after encoding them to
   /// JSON.
@@ -75,7 +106,7 @@ class Auth {
   /// Args:
   ///   userDetail (UserDetail): The `userDetail` parameter is an object of type `UserDetail` that
   /// contains information about a user, such as their name, email, and other details.
-  // 
+  //
   /*If you're using SharedPreferences to store user data, 
   you should fetch the updated user details from SharedPreferences in the news feed page.
  You can create a method in your Auth class to get the latest user details: */
@@ -114,57 +145,84 @@ class Auth {
     }
     return false;
   }
+
+  Future<void> deletePost(int postId) async {
+    List<UserPost> posts = await dataloader.getuserpost();
+    posts.removeWhere((post) => post.postId == postId);
+
+    // Save updated posts back to SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(Dataloader.userpostkey,
+        json.encode(posts.map((post) => post.toJson()).toList()));
+  }
+
+  //for adding user
+  Future<void> adduser(User user) async {
+    //getting existing data
+    final prefs = await SharedPreferences.getInstance();
+    String? userJson = prefs.getString(Dataloader.userkey);
+    List<User> userslist = [];
+
+    if (userJson != null) {
+      List jsonList = json.decode(userJson);
+      userslist = jsonList.map((e) => User.fromJson(e)).toList();
+    }
+    userslist.add(user);
+
+    List<Map<String, dynamic>> jsonList =
+        userslist.map((e) => e.toJson()).toList();
+    String updatedList = json.encode(jsonList);
+
+    //thus saving the updated endcoded values to the key of user
+    await prefs.setString(Dataloader.userkey, updatedList);
+  }
+
+  Future<void> adduserdetail(UserDetail detail) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? detailjson = prefs.getString(Dataloader.userdetailkey);
+    List<UserDetail> detaillist = [];
+
+    if (detailjson != null) {
+      List jsonList = jsonDecode(detailjson);
+      detaillist = jsonList.map((e) => UserDetail.fromJson(e)).toList();
+    }
+    detaillist.add(detail);
+
+    List<Map<String, dynamic>> jsonList =
+        detaillist.map((e) => e.toJson()).toList();
+    String updatedList = json.encode(jsonList);
+
+    await prefs.setString(Dataloader.userdetailkey, updatedList);
+  }
 }
 
 /*
-class NewsFeedPage extends StatefulWidget {
-  @override
-  _NewsFeedPageState createState() => _NewsFeedPageState();
-}
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socialapp/models/user.dart'; // Import your User model class
 
-class _NewsFeedPageState extends State<NewsFeedPage> {
-  late Auth auth;
-  UserDetail? currentUserDetail;
+class Auth {
+  final Dataloader dataloader;
 
-  @override
-  void initState() {
-    super.initState();
-    auth = Auth(Dataloader());
-    _loadUserDetail();
-  }
+  Auth(this.dataloader);
 
-  Future<void> _loadUserDetail() async {
-    final userId = 'current_user_id'; // Get the logged-in user's ID
-    final detail = await auth.getUserDetail(userId);
-    setState(() {
-      currentUserDetail = detail;
-    });
-  }
+  Future<void> addUser(User user) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userJson = prefs.getString('users');
+    List<User> userList = [];
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('News Feed')),
-      body: currentUserDetail == null
-          ? Center(child: CircularProgressIndicator())
-          : ListView(
-              children: [
-                // Display user details
-                ListTile(
-                  leading: currentUserDetail!.profileImage != null
-                      ? Image.file(
-                          File(currentUserDetail!.profileImage!.imagePath!),
-                          width: 50,
-                          height: 50,
-                          fit: BoxFit.cover,
-                        )
-                      : Icon(Icons.account_circle, size: 50),
-                  title: Text(currentUserDetail!.name ?? 'No Name'),
-                ),
-                // Display posts and other news feed content
-              ],
-            ),
-    );
+    if (userJson != null) {
+      List<dynamic> jsonList = json.decode(userJson);
+      userList = jsonList.map((e) => User.fromJson(e)).toList();
+    }
+
+    userList.add(user);
+
+    List<Map<String, dynamic>> jsonList = userList.map((e) => e.toJson()).toList();
+    String updatedUserJson = json.encode(jsonList);
+
+    await prefs.setString('users', updatedUserJson);
   }
 }
+
 */

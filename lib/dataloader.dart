@@ -84,8 +84,6 @@ class Dataloader {
   Future<List<User>> getuser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? user = prefs.getString(userkey); //also get password new
-    // print('$prefs');
-    // print('$user');
     if (user != null) {
       /// The line `List userlist = json.decode(user);` is decoding a JSON string stored in the variable
       /// `user` into a Dart object.

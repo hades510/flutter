@@ -1,8 +1,4 @@
-
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/courses/available%20courses.dart';
 import 'package:socialapp/dataloader.dart';
@@ -11,6 +7,7 @@ import 'package:socialapp/feeds/newsfeed.dart';
 import 'package:socialapp/login.dart';
 import 'package:socialapp/models/user_detail.dart';
 import 'package:socialapp/profiles/surface_profile.dart';
+import 'package:socialapp/signup.dart';
 
 import 'authenthication/login_auth.dart';
 
@@ -27,11 +24,11 @@ class _HomeState extends State<Home> {
   UserDetail? userDetail;
   @override
   void initState() {
-    auth = Auth(dataloader); //after splash screen it is being called, it is again loaded when loffed in,again called when logged out
+    auth = Auth(
+        dataloader); //after splash screen it is being called, it is again loaded when loffed in,again called when logged out
     super.initState();
     loadData();
     _loaduserDetail();
-
   }
 
   void loadData() async {
@@ -77,7 +74,7 @@ class _HomeState extends State<Home> {
                           onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const LoginPage(),
+                                builder: (context) => const Signup(),
                               )),
                           child: const CircleAvatar(
                             radius: 15,

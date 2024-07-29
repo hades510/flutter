@@ -70,6 +70,8 @@ class _AddPostState extends State<AddPost> {
             ),
             TextButton(
               onPressed: () {
+                media.clear();
+                camera_image = null;
                 Navigator.of(context).pop(true); // User wants to go back
               },
               child: const Text('Discard'),
@@ -93,10 +95,10 @@ class _AddPostState extends State<AddPost> {
         description: 'This is a description', // Customize as needed
         image: media
             .map((file) => Postedphoto(
-                url: file.path,
-                isDisliked: false,
-                isLiked: false,
-))
+                  url: file.path,
+                  isDisliked: false,
+                  isLiked: false,
+                ))
             .toList(),
         postLikedBy: [], // Initial empty list
         isliked: false,
@@ -113,6 +115,8 @@ class _AddPostState extends State<AddPost> {
             builder: (context) => const Home(),
           ),
           (route) => false);
+      media.clear();
+      camera_image = null;
     }
   }
 
@@ -276,23 +280,50 @@ class _AddPostState extends State<AddPost> {
       //
     } else if (media.length == 3) {
       return Column(children: [
-        GridView.builder(
-          itemCount: media.length - 1,
+        // GridView.builder(
+        //   itemCount: media.length - 1,
+        //   shrinkWrap: true,
+        //   physics: const NeverScrollableScrollPhysics(),
+        //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        //     crossAxisCount: 2,
+        //     mainAxisSpacing: 5,
+        //     crossAxisSpacing: 2,
+        //   ),
+        //   itemBuilder: (context, index) {
+        //     return Container(
+        //       decoration: const BoxDecoration(
+        //           border: Border(right: BorderSide(width: 0))),
+        //       child: Row(
+        //         children: [
+        //           Image.file(
+        //             media[index],
+        //             fit: BoxFit.fill,
+        //           ),
+        //         ],
+        //       ),
+        //     );
+        //   },
+        // ),
+        GridView.count(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 5,
-            crossAxisSpacing: 2,
-          ),
-          itemBuilder: (context, index) {
-            return Container(
-                decoration: const BoxDecoration(
-                    border: Border(right: BorderSide(width: 0))),
-                child: Image.file(media[index]));
-          },
+          crossAxisCount: 2,
+          mainAxisSpacing: 2,
+          crossAxisSpacing: 2,
+          children: [
+            Image.file(
+              media[0],
+              fit: BoxFit.fill,
+            ),
+            Image.file(
+              media[1],
+              fit: BoxFit.fill,
+            ),
+          ],
         ),
-        const Divider(),
+        const Divider(
+          color: Colors.black,
+        ),
         Image.file(
           media[2],
         )

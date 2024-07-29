@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:socialapp/authenthication/login_auth.dart';
+import 'package:socialapp/dataloader.dart';
+import 'package:socialapp/home.dart';
 import 'package:socialapp/login.dart';
+import 'package:socialapp/models/user.dart';
+import 'package:socialapp/models/user_detail.dart';
+import 'package:socialapp/profiles/addpost.dart';
 
 class Signup extends StatefulWidget {
   // final Function()? onTap;
@@ -14,11 +20,30 @@ class Signup extends StatefulWidget {
 
 class _LoginPageState extends State<Signup> {
   final formKey = GlobalKey<FormState>();
+
   final TextEditingController email = TextEditingController();
+  final TextEditingController name = TextEditingController();
   final TextEditingController password = TextEditingController();
   final TextEditingController confirmpassword = TextEditingController();
   bool obscure = false;
   bool obscureconfirm = false;
+
+  late Auth auth;
+
+  @override
+  void initState() {
+    super.initState();
+    auth = Auth(Dataloader());
+  }
+
+  @override
+  void dispose() {
+    email.dispose();
+    password.dispose();
+    confirmpassword.dispose();
+    name.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +92,39 @@ class _LoginPageState extends State<Signup> {
                         const SizedBox(
                           height: 30,
                         ),
-
+                        TextFormField(
+                          controller: name,
+                          keyboardType: TextInputType.name,
+                          decoration: InputDecoration(
+                            contentPadding:
+                                const EdgeInsets.symmetric(vertical: 25),
+                            labelText: 'Name',
+                            prefixIcon: const Icon(Icons.person_4_outlined),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.white),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.white),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            filled: true,
+                            fillColor: const Color.fromARGB(255, 241, 240, 240),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please enter your name";
+                            }
+                            if (!RegExp(r'[A-Za-z _]').hasMatch(value)) {
+                              return "Enter a valid name";
+                            } else {
+                              return null;
+                            }
+                          },
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        ),
                         TextFormField(
                           controller: email,
                           keyboardType: TextInputType.emailAddress,
@@ -89,7 +146,7 @@ class _LoginPageState extends State<Signup> {
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return "Please enter your email";
+                              return "Please enter your Email";
                             }
                             if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
                                 .hasMatch(value)) {
@@ -99,6 +156,7 @@ class _LoginPageState extends State<Signup> {
                             }
                           },
                         ),
+
                         const SizedBox(
                           height: 8,
                         ),
@@ -183,10 +241,48 @@ class _LoginPageState extends State<Signup> {
                           height: 10,
                         ),
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             if (formKey.currentState!.validate()) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Data Saved')));
+                              if (confirmpassword.text == password.text) {
+                                final emailadd = email.text;
+                                final psw = password.text;
+                                final username = name.text;
+
+                                User user = User(
+                                  id: DateTime.now()
+                                      .millisecondsSinceEpoch, //gives unique value to the user id
+                                  email: emailadd,
+                                  name: username,
+                                  password: psw,
+                                );
+                                UserDetail detail = UserDetail(
+                                  id: user.id,
+                                  basicInfo: BasicInfo(name: user.name),
+                                );
+                                await auth.adduser(user);
+                                await auth.adduserdetail(detail);
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Data Saved'),
+                                  ),
+                                );
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const Home(),
+                                    ),
+                                    (route) => false);
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content:
+                                        Text('Confirm password are not Same!'),
+                                  ),
+                                );
+                              }
+
+                              //create new user
                             }
                           },
                           child: Container(
@@ -209,7 +305,7 @@ class _LoginPageState extends State<Signup> {
                         const SizedBox(
                           height: 20,
                         ),
-                        const Text('Already have an account? '),
+                        const Text('Already have an account?'),
                         const SizedBox(
                           width: 4,
                         ),

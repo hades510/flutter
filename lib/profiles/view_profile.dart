@@ -11,8 +11,7 @@ import 'package:socialapp/home.dart';
 import 'package:socialapp/login.dart';
 // import 'package:socialapp/models/user.dart';
 import 'package:socialapp/models/user_detail.dart';
-import 'package:socialapp/profiles/cover_full.dart';
-import 'package:socialapp/profiles/profile_full.dart';
+import 'package:socialapp/profiles/image_full.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -1061,6 +1060,8 @@ class _ViewProfileState extends State<ViewProfile> {
 
   @override
   Widget build(BuildContext context) {
+    final experience = userDetail?.workExperience ?? [];
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -1129,8 +1130,9 @@ class _ViewProfileState extends State<ViewProfile> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => FullCoverPic(
-                                    imagepath: cover!,
+                                  builder: (context) => ImageFull(
+                                    imagefile: cover ?? File(''),
+                                    text: 'Cover Picture',
                                   ), //here i passed the userdetail used to display the current logged profile detail
                                 ),
                               );
@@ -1142,9 +1144,11 @@ class _ViewProfileState extends State<ViewProfile> {
                                         cover!,
                                         fit: BoxFit.fill,
                                       )
-                                    : userDetail!.coverImage!.isNetworkUrl!
+                                    : (userDetail?.coverImage?.isNetworkUrl ??
+                                            true)
                                         ? Image.network(
-                                            userDetail!.coverImage!.imagepath!,
+                                            userDetail?.coverImage?.imagepath ??
+                                                'https://images.stockcake.com/public/8/d/7/8d7ad827-243c-4c0f-912e-aef97670a14f_large/workshop-safety-gear-stockcake.jpg',
                                             fit: BoxFit.cover,
                                           )
                                         : const SizedBox(),
@@ -1158,23 +1162,38 @@ class _ViewProfileState extends State<ViewProfile> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => FullProfilePic(
-                                        imagefile: profile!,
+                                      builder: (context) => ImageFull(
+                                        imagefile: profile ?? File(''),
+                                        text: 'Profile',
                                       ),
                                     ));
                               },
-                              child: (userDetail?.profileImage?.isNetworkUrl ??
-                                      false)
+                              child: profile != null
                                   ? CircleAvatar(
                                       radius: 80,
-                                      backgroundImage: NetworkImage(
-                                          userDetail!.profileImage!.imagePath!))
-                                  : CircleAvatar(
-                                      radius: 80,
-                                      backgroundImage: FileImage(File(
-                                          userDetail?.profileImage?.imagePath ??
-                                              '')),
+                                      backgroundImage: FileImage(profile!),
                                     )
+                                  : (userDetail?.profileImage?.isNetworkUrl ??
+                                          true)
+                                      ? CircleAvatar(
+                                          radius: 80,
+                                          backgroundImage: NetworkImage(userDetail
+                                                  ?.profileImage?.imagePath ??
+                                              'https://images.stockcake.com/public/8/d/7/8d7ad827-243c-4c0f-912e-aef97670a14f_large/workshop-safety-gear-stockcake.jpg'),
+                                        )
+                                      : const SizedBox()
+                              //  (userDetail?.profileImage?.isNetworkUrl ??
+                              //         false)
+                              //     ? CircleAvatar(
+                              //         radius: 80,
+                              //         backgroundImage: NetworkImage(
+                              //             userDetail!.profileImage!.imagePath!))
+                              //     : CircleAvatar(
+                              //         radius: 80,
+                              //         backgroundImage: FileImage(File(
+                              //             userDetail?.profileImage?.imagePath ??
+                              //                 '')),
+                              //       )
 
                               // CircleAvatar(
                               //   radius: 70,
@@ -1330,7 +1349,7 @@ class _ViewProfileState extends State<ViewProfile> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  userDetail!.basicInfo?.name ?? '',
+                                  userDetail!.basicInfo?.name ?? ' ',
                                   style: const TextStyle(
                                       fontSize: 28,
                                       fontWeight: FontWeight.bold),
@@ -1338,7 +1357,7 @@ class _ViewProfileState extends State<ViewProfile> {
                                 // Text('${userDetail!.id}'),
                                 const SizedBox(height: 8),
                                 Text(
-                                  userDetail!.basicInfo?.summary ?? '',
+                                  userDetail!.basicInfo?.summary ?? ' ',
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.grey[700]),
                                 ),
@@ -1465,11 +1484,17 @@ class _ViewProfileState extends State<ViewProfile> {
                                     const SnackBar(
                                         duration: Duration(seconds: 1),
                                         content: Text('Logged out')));
-                                Navigator.pushReplacement(
+                                Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => const Home(),
-                                    ));
+                                    ),
+                                    (route) => false);
+                                // Navigator.pushReplacement(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //       builder: (context) => const Home(),
+                                //     ));
                               },
                               child: const Icon(Icons.logout),
                             )
@@ -1766,11 +1791,11 @@ class _ViewProfileState extends State<ViewProfile> {
                                 height: 20,
                               ),
                               _buildInfoRow('Gender',
-                                  userDetail!.basicInfo?.gender ?? ''),
+                                  userDetail!.basicInfo?.gender ?? ' '),
                               _buildInfoRow('Date of Birth',
-                                  userDetail!.basicInfo?.dob ?? ''),
+                                  userDetail!.basicInfo?.dob ?? ' '),
                               _buildInfoRow('Marital Status',
-                                  userDetail!.basicInfo?.maritalStatus ?? ''),
+                                  userDetail!.basicInfo?.maritalStatus ?? ' '),
                             ],
                           ),
                         ),
@@ -1797,56 +1822,63 @@ class _ViewProfileState extends State<ViewProfile> {
                                   ),
                                 ],
                               ),
-                              ...userDetail!
-                                  .workExperience! //here spread operator is used to insert all the elements to another collection
-                                  .map(
-                                (work) => Dismissible(
-                                  key: Key(work.jobTitle ?? ''),
-                                  // key: Key(work.id.toString() ?? ''),
-                                  direction: DismissDirection.endToStart,
-                                  onDismissed: (direction) =>
-                                      _removeworkexp(work),
-                                  confirmDismiss:
-                                      (DismissDirection direction) async {
-                                    return await showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: const Text("Confirm"),
-                                          content: const Text(
-                                              "Are you sure you wish to delete this item?"),
-                                          actions: <Widget>[
-                                            TextButton(
+
+                              /// The above code snippet is using the spread operator (...) to insert
+                              /// all the elements from the `workExperience` collection into another
+                              /// collection. This allows for easily combining or copying elements from
+                              /// one collection to another in Dart.
+                              ///
+
+                              ///The element type 'Iterable<Dismissible>' can't be assigned to the list type 'Widget'. showing this error if
+                              if (userDetail!.workExperience != null)
+                                ...userDetail!.workExperience!.map(
+                                  (work) => Dismissible(
+                                    key: Key(work.jobTitle ?? ''),
+                                    // key: Key(work.id.toString() ?? ''),
+                                    direction: DismissDirection.endToStart,
+                                    onDismissed: (direction) =>
+                                        _removeworkexp(work),
+                                    confirmDismiss:
+                                        (DismissDirection direction) async {
+                                      return await showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: const Text("Confirm"),
+                                            content: const Text(
+                                                "Are you sure you wish to delete this item?"),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.of(context)
+                                                          .pop(true),
+                                                  child: const Text("DELETE")),
+                                              TextButton(
                                                 onPressed: () =>
                                                     Navigator.of(context)
-                                                        .pop(true),
-                                                child: const Text("DELETE")),
-                                            TextButton(
-                                              onPressed: () =>
-                                                  Navigator.of(context)
-                                                      .pop(false),
-                                              child: const Text("CANCEL"),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                  background: Container(
-                                    padding: const EdgeInsets.only(right: 20),
-                                    alignment: Alignment.centerRight,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Colors.black,
+                                                        .pop(false),
+                                                child: const Text("CANCEL"),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    background: Container(
+                                      padding: const EdgeInsets.only(right: 20),
+                                      alignment: Alignment.centerRight,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Colors.black,
+                                      ),
+                                      child: const Icon(
+                                        Icons.delete,
+                                        color: Colors.white,
+                                      ),
                                     ),
-                                    child: const Icon(
-                                      Icons.delete,
-                                      color: Colors.white,
-                                    ),
+                                    child: _buildWorkExperience(work),
                                   ),
-                                  child: _buildWorkExperience(work),
-                                ),
-                              ), //_buildWorkExperience(work)
+                                ), //_buildWorkExperience(work)
                             ],
                           ),
                         ),
@@ -1930,8 +1962,9 @@ class _ViewProfileState extends State<ViewProfile> {
                               ),
                               Wrap(
                                 children: [
-                                  ...userDetail!.skills!
-                                      .map((e) => _buildSkills(e))
+                                  if (userDetail?.skills != null)
+                                    ...userDetail!.skills!
+                                        .map((e) => _buildSkills(e))
                                 ],
                               ),
                               // const SizedBox(height: 16),
@@ -2013,8 +2046,9 @@ class _ViewProfileState extends State<ViewProfile> {
                               ),
                               Wrap(
                                 children: [
-                                  ...userDetail!.hobbies!
-                                      .map((e) => _buildHobbies(e))
+                                  if (userDetail!.hobbies != null)
+                                    ...userDetail!.hobbies!
+                                        .map((e) => _buildHobbies(e))
                                 ],
                               ),
 
@@ -2095,8 +2129,9 @@ class _ViewProfileState extends State<ViewProfile> {
                               ),
                               Wrap(
                                 children: [
-                                  ...userDetail!.languages!
-                                      .map((e) => _buildLanguages(e))
+                                  if (userDetail!.languages != null)
+                                    ...userDetail!.languages!
+                                        .map((e) => _buildLanguages(e))
                                 ],
                               ),
                               // _buildChips(userDetail!.languages!
@@ -2124,12 +2159,81 @@ class _ViewProfileState extends State<ViewProfile> {
                                   )
                                 ],
                               ),
-                              ...userDetail!.education!.map(
-                                (education) => Dismissible(
-                                  key: Key(education.level ?? ''),
+                              if (userDetail!.education != null)
+                                ...userDetail!.education!.map(
+                                  (education) => Dismissible(
+                                    key: Key(education.level ?? ''),
+                                    direction: DismissDirection.endToStart,
+                                    onDismissed: (direction) =>
+                                        _removeedu(education),
+                                    confirmDismiss:
+                                        (DismissDirection direction) async {
+                                      return await showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: const Text("Confirm"),
+                                            content: const Text(
+                                                "Are you sure you wish to delete this item?"),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.of(context)
+                                                          .pop(true),
+                                                  child: const Text("DELETE")),
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.of(context)
+                                                        .pop(false),
+                                                child: const Text("CANCEL"),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    background: Container(
+                                      padding: const EdgeInsets.only(right: 20),
+                                      alignment: Alignment.centerRight,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Colors.black,
+                                      ),
+                                      child: const Icon(
+                                        Icons.delete,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    child: _buildEducation(education),
+                                  ),
+                                  //  _buildEducation(education),
+                                ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        _buildcontainer(Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _buildSectionTitle('Accomplishments'),
+                                GestureDetector(
+                                  onTap: _addaccom,
+                                  child: const Icon(
+                                    Icons.add,
+                                    size: 30,
+                                  ),
+                                )
+                              ],
+                            ),
+                            if (userDetail!.accomplishments != null)
+                              ...userDetail!.accomplishments!.map(
+                                (acc) => Dismissible(
+                                  key: Key(acc.title ?? ''),
                                   direction: DismissDirection.endToStart,
-                                  onDismissed: (direction) =>
-                                      _removeedu(education),
+                                  onDismissed: (direction) => _removeaccom(acc),
                                   confirmDismiss:
                                       (DismissDirection direction) async {
                                     return await showDialog(
@@ -2168,77 +2272,10 @@ class _ViewProfileState extends State<ViewProfile> {
                                       color: Colors.white,
                                     ),
                                   ),
-                                  child: _buildEducation(education),
+                                  child: _buildAccomplishment(acc),
                                 ),
-                                //  _buildEducation(education),
+                                // _buildAccomplishment(acc),
                               ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        _buildcontainer(Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                _buildSectionTitle('Accomplishments'),
-                                GestureDetector(
-                                  onTap: _addaccom,
-                                  child: const Icon(
-                                    Icons.add,
-                                    size: 30,
-                                  ),
-                                )
-                              ],
-                            ),
-                            ...userDetail!.accomplishments!.map(
-                              (acc) => Dismissible(
-                                key: Key(acc.title ?? ''),
-                                direction: DismissDirection.endToStart,
-                                onDismissed: (direction) => _removeaccom(acc),
-                                confirmDismiss:
-                                    (DismissDirection direction) async {
-                                  return await showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: const Text("Confirm"),
-                                        content: const Text(
-                                            "Are you sure you wish to delete this item?"),
-                                        actions: <Widget>[
-                                          TextButton(
-                                              onPressed: () =>
-                                                  Navigator.of(context)
-                                                      .pop(true),
-                                              child: const Text("DELETE")),
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.of(context)
-                                                    .pop(false),
-                                            child: const Text("CANCEL"),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                                background: Container(
-                                  padding: const EdgeInsets.only(right: 20),
-                                  alignment: Alignment.centerRight,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.black,
-                                  ),
-                                  child: const Icon(
-                                    Icons.delete,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                child: _buildAccomplishment(acc),
-                              ),
-                              // _buildAccomplishment(acc),
-                            ),
                           ],
                         )),
                         const SizedBox(height: 16),
@@ -2380,57 +2417,59 @@ class _ViewProfileState extends State<ViewProfile> {
                                 ),
                               ],
                             ),
-                            ...userDetail!.contactInfo!.socialMedia!.map(
-                                (social) => Dismissible(
-                                      key: Key(social.title ?? ''),
-                                      direction: DismissDirection.endToStart,
-                                      onDismissed: (direction) =>
-                                          _removedocial(social),
-                                      confirmDismiss:
-                                          (DismissDirection direction) async {
-                                        return await showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: const Text("Confirm"),
-                                              content: const Text(
-                                                  "Are you sure you wish to delete this item?"),
-                                              actions: <Widget>[
-                                                TextButton(
+
+                            if (userDetail!.contactInfo?.socialMedia != null)
+                              ...userDetail!.contactInfo!.socialMedia!.map(
+                                  (social) => Dismissible(
+                                        key: Key(social.title ?? ''),
+                                        direction: DismissDirection.endToStart,
+                                        onDismissed: (direction) =>
+                                            _removedocial(social),
+                                        confirmDismiss:
+                                            (DismissDirection direction) async {
+                                          return await showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: const Text("Confirm"),
+                                                content: const Text(
+                                                    "Are you sure you wish to delete this item?"),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.of(context)
+                                                              .pop(true),
+                                                      child:
+                                                          const Text("DELETE")),
+                                                  TextButton(
                                                     onPressed: () =>
                                                         Navigator.of(context)
-                                                            .pop(true),
-                                                    child:
-                                                        const Text("DELETE")),
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.of(context)
-                                                          .pop(false),
-                                                  child: const Text("CANCEL"),
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      },
-                                      background: Container(
-                                        alignment: Alignment.centerRight,
-                                        padding:
-                                            const EdgeInsets.only(right: 20),
-                                        decoration: BoxDecoration(
-                                          color: Colors.black,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
+                                                            .pop(false),
+                                                    child: const Text("CANCEL"),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                        background: Container(
+                                          alignment: Alignment.centerRight,
+                                          padding:
+                                              const EdgeInsets.only(right: 20),
+                                          decoration: BoxDecoration(
+                                            color: Colors.black,
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child: const Icon(
+                                            Icons.delete,
+                                            color: Colors.white,
+                                          ),
                                         ),
-                                        child: const Icon(
-                                          Icons.delete,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      child: _buildSocialMedia(social),
-                                    )
-                                // _buildSocialMedia(social),
-                                ),
+                                        child: _buildSocialMedia(social),
+                                      )
+                                  // _buildSocialMedia(social),
+                                  ),
                           ],
                         )),
                       ],
@@ -2492,15 +2531,15 @@ class _ViewProfileState extends State<ViewProfile> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              work.jobTitle!,
+              work.jobTitle ?? '',
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             Text(
-              '${work.organizationName} (${work.startDate} - ${work.endDate})',
+              '${work.organizationName ?? ''} (${work.startDate ?? ''} - ${work.endDate ?? ''})',
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
             Text(
-              work.summary!,
+              work.summary ?? '',
               style: TextStyle(fontSize: 14, color: Colors.grey[700]),
             ),
           ],
@@ -2537,7 +2576,7 @@ class _ViewProfileState extends State<ViewProfile> {
       ),
       deleteButtonTooltipMessage: 'Delete',
       label: Text(
-        skill.title!,
+        skill.title ?? '',
         style: const TextStyle(color: Colors.white),
       ),
       onDeleted: () => _removeskill(skill),
@@ -2554,7 +2593,7 @@ class _ViewProfileState extends State<ViewProfile> {
       ),
       deleteButtonTooltipMessage: 'Delete',
       label: Text(
-        hobby.title!,
+        hobby.title ?? '',
         style: const TextStyle(color: Colors.white),
       ),
       onDeleted: () => _removeshobbies(hobby),
@@ -2571,7 +2610,7 @@ class _ViewProfileState extends State<ViewProfile> {
       ),
       deleteButtonTooltipMessage: 'Delete',
       label: Text(
-        lang.title!,
+        lang.title ?? '',
         style: const TextStyle(color: Colors.white),
       ),
       onDeleted: () => _removelanguages(lang),
@@ -2587,15 +2626,15 @@ class _ViewProfileState extends State<ViewProfile> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              education.level!,
+              education.level ?? '',
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             Text(
-              '${education.organizationName} (${education.startDate} - ${education.endDate})',
+              '${education.organizationName ?? ''} (${education.startDate ?? ''} - ${education.endDate ?? ''})',
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
             Text(
-              education.summary!,
+              education.summary ?? '',
               style: TextStyle(fontSize: 14, color: Colors.grey[700]),
             ),
           ],
@@ -2613,11 +2652,11 @@ class _ViewProfileState extends State<ViewProfile> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              accomplishment.title!,
+              accomplishment.title ?? '',
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             Text(
-              accomplishment.description!,
+              accomplishment.description ?? '',
               style: TextStyle(fontSize: 14, color: Colors.grey[700]),
             ),
           ],
@@ -2637,12 +2676,13 @@ class _ViewProfileState extends State<ViewProfile> {
             // _buildSectionTitle("Social Media"),
             GestureDetector(
               onTap: () async {
-                final Uri url = Uri.parse(social.url!);
+                final Uri url = Uri.parse(
+                    social.url ?? 'https://goldeneagle.ai/blog/tags/flutter/');
 
                 await launchUrl(url);
               },
               child: Text(
-                social.title!,
+                social.title ?? '',
                 style: const TextStyle(color: Colors.blue, fontSize: 16),
               ),
             )

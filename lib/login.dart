@@ -52,7 +52,6 @@ class _LoginPageState extends State<LoginPage> {
 
   void _login() async {
     bool isSuccess = await auth.login(email.text, password.text);
-      
 
     if (isSuccess) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -62,13 +61,19 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
       // Navigator.pop(context);
-      Navigator.pushReplacement(
+      Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const Home()
-              // ViewProfile(
-              //   auth: auth,
-              // ),
-              ));
+          MaterialPageRoute(
+            builder: (context) => const Home(),
+          ),
+          (route) => false);
+      // Navigator.pushReplacement(
+      //     context,
+      //     MaterialPageRoute(builder: (context) => const Home()
+      //         // ViewProfile(
+      //         //   auth: auth,
+      //         // ),
+      //         ));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Invalid email and password')));

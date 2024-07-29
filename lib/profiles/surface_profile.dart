@@ -2,18 +2,20 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/authenthication/login_auth.dart';
 import 'package:socialapp/dataloader.dart';
 import 'package:socialapp/feeds/Albumscreen.dart';
+import 'package:socialapp/home.dart';
 import 'package:socialapp/login.dart';
 import 'package:socialapp/models/user.dart';
 import 'package:socialapp/models/user_detail.dart';
 import 'package:socialapp/models/user_post.dart';
 import 'package:socialapp/profiles/addpost.dart';
-import 'package:socialapp/profiles/cover_full.dart';
-import 'package:socialapp/profiles/profile_full.dart';
+
+import 'package:socialapp/profiles/image_full.dart';
 import 'package:socialapp/profiles/view_profile.dart';
 
 class SurfaceProfile extends StatefulWidget {
@@ -26,6 +28,7 @@ class SurfaceProfile extends StatefulWidget {
 class _SurfaceProfileState extends State<SurfaceProfile> {
   late Auth auth;
   UserDetail? userDetail;
+  User? user;
   final ImagePicker picker = ImagePicker();
   File? profile;
   File? cover;
@@ -61,6 +64,20 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
         userlist = user;
       });
     }
+  }
+
+  Future<void> _deletePost(int postId) async {
+    // Delete post from storage
+    final auth = Auth(Dataloader());
+    //if done this it will delete all the data from here,and only the
+    // userpost.removeWhere((element) => element.postId == postId);
+    // final prefs = await SharedPreferences.getInstance();
+    // prefs.setString(Dataloader.userpostkey,
+    //     json.encode(userpost.map((e) => e.toJson()).toList()));
+    await auth.deletePost(postId);
+
+    // Refresh the list of posts
+    _loaduserPost();
   }
 
   void _loaduserDetail() async {
@@ -202,8 +219,12 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
 
   @override
   Widget build(BuildContext context) {
+    // user = userlist.firstWhere((element) => element.id == userDetail!.id);
+    int indexfinder = userlist.indexWhere(
+      (element) => element.id == userDetail!.id,
+    );
     return Scaffold(
-      body: userDetail == null
+      body: userDetail == null //just gives the details of the logged in user
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -224,11 +245,17 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                         borderRadius: BorderRadius.circular(10)),
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.push(
+                        Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
                               builder: (context) => const LoginPage(),
-                            ));
+                            ),
+                            (route) => false);
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (context) => const LoginPage(),
+                        //     ));
                       },
                       child: const Center(
                         child: Text(
@@ -251,9 +278,9 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                   const SizedBox(
                     height: 20,
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  // const SizedBox(
+                  //   height: 10,
+                  // ),
                   SizedBox(
                     height: 230,
                     child: Stack(
@@ -268,8 +295,9 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => FullCoverPic(
-                                    imagepath: cover!,
+                                  builder: (context) => ImageFull(
+                                    imagefile: cover ?? File(''),
+                                    text: 'Cover picture',
                                   ), //here i passed the userdetail used to display the current logged profile detail
                                 ),
                               );
@@ -279,9 +307,10 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                                     cover!,
                                     fit: BoxFit.fill,
                                   )
-                                : userDetail!.coverImage!.isNetworkUrl!
+                                : (userDetail?.coverImage?.isNetworkUrl ?? true)
                                     ? Image.network(
-                                        userDetail!.coverImage!.imagepath!,
+                                        userDetail?.coverImage?.imagepath ??
+                                            'https://images.stockcake.com/public/8/d/7/8d7ad827-243c-4c0f-912e-aef97670a14f_large/workshop-safety-gear-stockcake.jpg',
                                         fit: BoxFit.cover,
                                       )
                                     : const SizedBox(),
@@ -291,32 +320,47 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                           left: 5,
                           bottom: 0,
                           child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => FullProfilePic(
-                                    imagefile: profile!,
-                                  ),
-                                ),
-                              );
-                            },
-                            child: (userDetail?.profileImage?.isNetworkUrl ??
-                                    false)
-                                ? CircleAvatar(
-                                    radius: 80,
-                                    backgroundImage: NetworkImage(
-                                        userDetail!.profileImage!.imagePath!),
-                                  )
-                                : CircleAvatar(
-                                    radius: 80,
-                                    backgroundImage: FileImage(
-                                      File(
-                                          userDetail?.profileImage?.imagePath ??
-                                              ''),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ImageFull(
+                                      imagefile: profile ?? File(''),
+                                      text: 'Profile Picture',
                                     ),
                                   ),
-                          ),
+                                );
+                              },
+                              child: profile != null
+                                  ? CircleAvatar(
+                                      radius: 80,
+                                      backgroundImage: FileImage(profile!),
+                                    )
+                                  : (userDetail?.profileImage?.isNetworkUrl ??
+                                          true)
+                                      ? CircleAvatar(
+                                          radius: 80,
+                                          backgroundImage: NetworkImage(userDetail
+                                                  ?.profileImage?.imagePath ??
+                                              'https://images.stockcake.com/public/8/d/7/8d7ad827-243c-4c0f-912e-aef97670a14f_large/workshop-safety-gear-stockcake.jpg'),
+                                        )
+                                      : const SizedBox()
+                              // (userDetail?.profileImage?.isNetworkUrl ??
+                              //         false)
+                              //     ? CircleAvatar(
+                              //         radius: 80,
+                              //         backgroundImage: NetworkImage(userDetail
+                              //                 ?.profileImage?.imagePath ??
+                              //             'https://images.stockcake.com/public/8/d/7/8d7ad827-243c-4c0f-912e-aef97670a14f_large/workshop-safety-gear-stockcake.jpg'),
+                              //       )
+                              //     : CircleAvatar(
+                              //         radius: 80,
+                              //         backgroundImage: FileImage(
+                              //           File(
+                              //               userDetail!.profileImage!.imagePath!),
+                              //         ),
+                              //       ),
+                              ),
                         ),
                         Positioned(
                           right: 235,
@@ -442,14 +486,31 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          userDetail!.basicInfo?.name ?? '',
-                          style: const TextStyle(
-                              fontSize: 28, fontWeight: FontWeight.bold),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              userDetail?.basicInfo?.name ?? '',
+                              style: const TextStyle(
+                                  fontSize: 28, fontWeight: FontWeight.bold),
+                            ),
+                            GestureDetector(
+                                onTap: () async {
+                                  await auth.logout();
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const Home(),
+                                      ),
+                                      (route) => false);
+                                },
+                                child: const Icon(Icons.logout)),
+                          ],
                         ),
                         const SizedBox(),
                         Text(
-                          userDetail!.basicInfo?.summary ?? '',
+                          userDetail?.basicInfo?.summary ??
+                              'Just the demo summary ',
                           style:
                               TextStyle(fontSize: 16, color: Colors.grey[700]),
                         ),
@@ -508,6 +569,7 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                             ),
                           ],
                         ),
+                        //friendlist
                       ],
                     ),
                   ),
@@ -515,8 +577,6 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                     height: 25,
                   ),
                   const Divider(),
-
-                  //still no when update, remember not chnages for SP
                   ListView.separated(
                     separatorBuilder: (context, index) {
                       return const Divider();
@@ -529,25 +589,80 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ListTile(
-                            leading: (userDetail!.profileImage?.isNetworkUrl ??
-                                    false) //this place the value that can have a value false if it is null
-                                ? CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                        userDetail!.profileImage!.imagePath!),
-                                  )
-                                : CircleAvatar(
-                                    backgroundImage: FileImage(File(
-                                        userDetail!.profileImage?.imagePath ??
-                                            '')),
-                                  ),
-                            title: Text(userDetail!.basicInfo!.name!),
-                            // subtitle: Text(userlist[index].email!),
-                          ),
+                              leading: (userDetail!
+                                          .profileImage?.isNetworkUrl ??
+                                      false) //this place the value that can have a value false if it is null
+                                  ? CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          userDetail!.profileImage!.imagePath!),
+                                    )
+                                  : CircleAvatar(
+                                      backgroundImage: FileImage(File(
+                                          userDetail!.profileImage?.imagePath ??
+                                              '')),
+                                    ),
+                              title: Text(userDetail!.basicInfo!.name!),
+                              subtitle: Text(userlist[indexfinder].email!),
+                              trailing: IconButton(
+                                  onPressed: () async {
+                                    await showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text('Delete Post'),
+                                        content: const Text(
+                                            'Are you sure you want to delete this post?'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              _deletePost(
+                                                  userpost[index].postId!);
+                                              Navigator.pushAndRemoveUntil(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const Home(),
+                                                  ),
+                                                  (route) => false);
+                                              // Navigator.pushReplacement(
+                                              //     context,
+                                              //     MaterialPageRoute(
+                                              //       builder: (context) =>
+                                              //           const Home(),
+                                              //     ));
+                                            },
+                                            child: const Text('Delete'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: const Text('Cancel'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.cancel))),
+
+                          // ListTile(
+                          //   leading: (userDetail!.profileImage?.isNetworkUrl ??
+                          //           false) //this place the value that can have a value false if it is null
+                          //       ? CircleAvatar(
+                          //           backgroundImage: NetworkImage(
+                          //               userDetail!.profileImage!.imagePath!),
+                          //         )
+                          //       : CircleAvatar(
+                          //           backgroundImage: FileImage(File(
+                          //               userDetail!.profileImage?.imagePath ??
+                          //                   '')),
+                          //         ),
+                          //   title: Text(userDetail!.basicInfo!.name!),
+                          //   // subtitle: Text(userlist[index].email!),
+                          // ),
                           // const SizedBox(
                           //   height: 8,
                           // ),
                           Text(userpost[index].title!),
-                          Text(userpost[index].description!),
+                          // Text(userpost[index].description!),
                           Card(
                             elevation: 5,
                             child: _builderimage(
@@ -628,7 +743,16 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
     //if only one image
     if (image.length == 1) {
       if (userpost.postId! > 10) {
-        return Image.file(File(image[0].url!));
+        return GestureDetector(
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ImageFull(
+                    imagefile: File(image[0].url!),
+                    text: 'Pictures',
+                  ),
+                )),
+            child: Image.file(File(image[0].url!)));
       } else {
         return Image.network(image[0].url!);
       }
@@ -649,12 +773,12 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
         children: [
           //this is if there is 3 photo
           GestureDetector(
-            // onTap: () => Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //       builder: (context) => FullImageScreen(
-            //           images: image, detail: detail, user: user),
-            //     )),
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FullImageScreen(
+                      images: image, detail: detail, user: user!),
+                )),
             child: GridView.count(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),

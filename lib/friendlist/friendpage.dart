@@ -1,10 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:socialapp/authenthication/login_auth.dart';
 import 'package:socialapp/dataloader.dart';
+import 'package:socialapp/friendlist/other_profile.dart';
 import 'package:socialapp/models/user_detail.dart';
 import 'package:socialapp/models/user_friendlist.dart';
+import 'package:socialapp/models/user_post.dart';
 
 class FriendRequest extends StatelessWidget {
   const FriendRequest({super.key});
@@ -30,6 +32,7 @@ class FriendRequest extends StatelessWidget {
             return FriendRequestScreen(
               friendlist: snapshot.data['friendlist'],
               userDetail: snapshot.data['userDetail'],
+              userpost: snapshot.data['userpost'],
             );
           }
         },
@@ -41,23 +44,52 @@ class FriendRequest extends StatelessWidget {
     Dataloader dataloader = Dataloader();
     List<UserFriendlist> friendlist = await dataloader.getfriendlist();
     List<UserDetail> userDetail = await dataloader.getuserdetail();
-    return {'friendlist': friendlist, 'userDetail': userDetail};
+    List<UserPost> userpost = await dataloader.getuserpost();
+    return {
+      'friendlist': friendlist,
+      'userDetail': userDetail,
+      'userpost': userpost // for loading the post on the other profile screen
+    };
   }
 }
 
 class FriendRequestScreen extends StatefulWidget {
   List<UserFriendlist> friendlist;
   List<UserDetail> userDetail;
+  List<UserPost> userpost;
   FriendRequestScreen(
-      {super.key, required this.friendlist, required this.userDetail});
+      {super.key,
+      required this.friendlist,
+      required this.userDetail,
+      required this.userpost});
 
   @override
   State<FriendRequestScreen> createState() => _FriendRequestScreenState();
 }
 
 Dataloader dataloader = Dataloader();
+late Auth auth;
+UserDetail? userDetail;
 
 class _FriendRequestScreenState extends State<FriendRequestScreen> {
+  @override
+  void initState() {
+    super.initState();
+    auth = Auth(dataloader);
+    _loaduserDetail();
+  }
+
+  void _loaduserDetail() async {
+    UserDetail? detail = await auth.getloggedinuser();
+    setState(() {
+      userDetail = detail;
+    });
+  }
+
+  void _loaduserpost() async {
+    List<UserPost> post = await dataloader.getloggeduserpost(userDetail!.id!);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,9 +102,15 @@ class _FriendRequestScreenState extends State<FriendRequestScreen> {
       ),
     );
   }
+//used for getting the user details
 
   UserDetail getid(int userid) {
     return widget.userDetail.firstWhere((element) => element.id == userid);
+  }
+//used for getting the userpost
+
+  List<UserPost> getUserPosts(int userId) {
+    return widget.userpost.where((post) => post.userId == userId).toList();
   }
 
   Widget _buildfriednList(UserFriendlist model) {
@@ -90,7 +128,15 @@ class _FriendRequestScreenState extends State<FriendRequestScreen> {
       subtitle: Text('Friend ID: ${model.friendId}'),
       trailing: _buildStatusBadge(model),
       onTap: () {
-        // Handle tap action
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OtherProfiles(
+              userDetail: detail,
+              userpost: getUserPosts(detail.id!),
+            ), //don't understand why use detail instead of userDetail
+          ),
+        );
       },
     );
   }

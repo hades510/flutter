@@ -2,11 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:socialapp/dataloader.dart';
+import 'package:socialapp/feeds/Albumscreen.dart';
 import 'package:socialapp/models/user.dart';
 import 'package:socialapp/models/user_detail.dart';
 import 'package:socialapp/models/user_post.dart';
-import 'package:socialapp/feeds/Albumscreen.dart';
-import 'package:socialapp/profiles/addpost.dart';
 
 class Newsfeed extends StatefulWidget {
   // final UserPost post;
@@ -181,7 +180,7 @@ class _NewscreenState extends State<Newscreen> {
                   backgroundImage:
                       FileImage(File(userDetail.profileImage?.imagePath ?? '')),
                 ),
-          title: Text(userDetail!.basicInfo!.name!),
+          title: Text(userDetail.basicInfo!.name!),
           subtitle: Text(users.email!),
         ),
         // const SizedBox(
@@ -504,12 +503,12 @@ class _NewscreenState extends State<Newscreen> {
         children: [
           //this is if there is 3 photo
           GestureDetector(
-            // onTap: () => Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //       builder: (context) => FullImageScreen(
-            //           images: image, detail: detail, user: user),
-            //     )),
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FullImageScreen(
+                      images: image, detail: detail, user: user),
+                )),
             child: GridView.count(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -563,12 +562,12 @@ class _NewscreenState extends State<Newscreen> {
     }
 //if there are more than 3 photos
     return GestureDetector(
-      // onTap: () => Navigator.push(
-      //     context,
-      //     MaterialPageRoute(
-      //       builder: (context) =>
-      //           FullImageScreen(images: image, detail: detail, user: user),
-      //     )),
+      onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                FullImageScreen(images: image, detail: detail, user: user),
+          )),
       child: GridView.builder(
         shrinkWrap: true, //allows widget to adjust it's size with content
         physics: const NeverScrollableScrollPhysics(),
