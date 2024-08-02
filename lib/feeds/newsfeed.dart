@@ -3,9 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:socialapp/dataloader.dart';
 import 'package:socialapp/feeds/Albumscreen.dart';
+import 'package:socialapp/friendlist/other_profile.dart';
 import 'package:socialapp/models/user.dart';
 import 'package:socialapp/models/user_detail.dart';
+import 'package:socialapp/models/user_friendlist.dart';
 import 'package:socialapp/models/user_post.dart';
+
+import '../authenthication/login_auth.dart';
 
 class Newsfeed extends StatefulWidget {
   // final UserPost post;
@@ -23,11 +27,14 @@ class Newsfeed extends StatefulWidget {
 
 class _HomeState extends State<Newsfeed> {
   List<UserPost> post = [];
+  late Auth auth;
+  // UserDetail? userDetail;
 
   @override
   void initState() {
     super.initState();
     _loaduserpost();
+    // _loaduserdetail();
   }
 
   void _loaduserpost() async {
@@ -37,6 +44,13 @@ class _HomeState extends State<Newsfeed> {
       post = posts;
     });
   }
+
+  // void _loaduserdetail() async {
+  //   UserDetail? detail = await auth.getloggedinuser();
+  //   setState(() {
+  //     userDetail = detail;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +76,7 @@ class _HomeState extends State<Newsfeed> {
               user: snapshot.data!['users'],
               userdetail: snapshot.data!['userdetails'],
               // category: snapshot.data!['categories'],
-              // friend: snapshot.data!['friends'],
+              friend: snapshot.data!['friends'],
               // courses: snapshot.data!['courses'],
               // instructor: snapshot.data!['instructors'],
             );
@@ -78,11 +92,13 @@ class _HomeState extends State<Newsfeed> {
     List<UserPost> posts = await dataloader.getuserpost(); //loaded the data
     List<UserDetail> userdetail = await dataloader.getuserdetail();
     List<User> user = await dataloader.getuser();
+    List<UserFriendlist> friend = await dataloader.getfriendlist();
 
     return {
       'users': user, //(passed the data to this keys)
       'userdetails': userdetail,
       'posts': posts,
+      'friends': friend,
       // 'friends': friendlist,
       // 'instructors': instructor,
       // 'courses': courses,
@@ -95,7 +111,7 @@ class Newscreen extends StatefulWidget {
   List<UserPost> post;
   List<User> user;
   List<UserDetail> userdetail;
-  // List<UserFriendlist> friend;
+  List<UserFriendlist> friend;
   // List<Instructor> instructor;
   // List<Courses> courses;
   // List<CourseBy> category;
@@ -106,7 +122,7 @@ class Newscreen extends StatefulWidget {
     required this.post,
     required this.user,
     required this.userdetail,
-    // required this.friend,
+    required this.friend,
     // required this.category,
     // required this.courses,
     // required this.instructor
@@ -117,10 +133,14 @@ class Newscreen extends StatefulWidget {
 }
 
 class _NewscreenState extends State<Newscreen> {
+  UserDetail? userDetail;
+  late Auth auth;
   @override
   void initState() {
     super.initState();
+    auth = Auth(Dataloader());
     _loaduserpost();
+    loaduserdetail(); //need to load on both the classes
   }
 
   void _loaduserpost() async {
@@ -128,6 +148,13 @@ class _NewscreenState extends State<Newscreen> {
     List<UserPost> posts = await dataloader.getuserpost();
     setState(() {
       widget.post = posts;
+    });
+  }
+
+  void loaduserdetail() async {
+    UserDetail? detail = await auth.getloggedinuser();
+    setState(() {
+      userDetail = detail;
     });
   }
   // bool model.isDisliked = false;
@@ -143,7 +170,8 @@ class _NewscreenState extends State<Newscreen> {
           shrinkWrap: true,
           itemCount: widget.post.length,
           itemBuilder: (context, index) {
-            return _builderpostscreen(widget.post[index]);
+            final post = widget.post[index];
+            return _builderpostscreen(post);
           },
           separatorBuilder: (context, index) {
             return const Divider();
@@ -162,26 +190,41 @@ class _NewscreenState extends State<Newscreen> {
     return widget.userdetail.firstWhere((element) => element.id == id);
   }
 
+  List<UserPost> getuserpostid(int userid) {
+    return widget.post.where((element) => element.userId == userid).toList();
+  }
+
   Widget _builderpostscreen(UserPost model) {
     User users = getuserid(model.userId!);
-    UserDetail userDetail = getid(model.userId!);
+    UserDetail userdetail = getid(model.userId!);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ListTile(
-          leading: (userDetail.profileImage?.isNetworkUrl ??
+          leading: (userdetail.profileImage?.isNetworkUrl ??
                   false) //this place the value that can have a value false if it is null
               ? CircleAvatar(
                   backgroundImage:
-                      NetworkImage(userDetail.profileImage!.imagePath!),
+                      NetworkImage(userdetail.profileImage!.imagePath!),
                 )
               : CircleAvatar(
                   backgroundImage:
-                      FileImage(File(userDetail.profileImage?.imagePath ?? '')),
+                      FileImage(File(userdetail.profileImage?.imagePath ?? '')),
                 ),
-          title: Text(userDetail.basicInfo!.name!),
+          title: Text(userdetail.basicInfo!.name!),
           subtitle: Text(users.email!),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => OtherProfiles(
+                  userDetail: userdetail,
+                  userpost: getuserpostid(userdetail.id!),
+                ),
+              ),
+            );
+          },
         ),
         // const SizedBox(
         //   height: 8,
@@ -190,47 +233,84 @@ class _NewscreenState extends State<Newscreen> {
         Text(model.description!),
         Card(
           elevation: 5,
-          child: _builderimage(model.image!, userDetail, model, users),
+          child: _builderimage(model.image!, userdetail, model, users),
         ), //here with list<postedphot> i passed userdetail model also
         // Text('${model.image!.length}'),
         // for (var image in model.image!) _builderimage(image),
-
-        Container(
-          height: 50,
+        const SizedBox(
+          height: 10,
+        ),
+        Text('Likes ${model.postLikedBy?.length ?? 0}'),
+        const Divider(),
+        SizedBox(
+          height: 30,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               IconButton(
-                // enableFeedback: true,
-                tooltip: 'Like',
-                onPressed: () {
-                  setState(() {
-                    model.isliked = !model.isliked;
-                    if (model.isliked) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          duration: Duration(seconds: 1),
-                          content: Text('Liked the post')));
-                    }
-                  });
-                },
-                icon: model.isliked
-                    ? const Icon(Icons.thumb_up_alt)
-                    : const Icon(Icons.thumb_up_alt_outlined),
-              ),
+                  tooltip: 'Like',
+                  onPressed: () async {
+                    setState(() {
+                      if (model.isliked ?? false) {
+                        model.isliked = false;
+                        model.postLikedBy?.removeWhere(
+                            (like) => like.userId == userDetail!.id);
+                      } else {
+                        model.isliked = true;
+                        model.isDisliked = false; // Ensure dislike is false
+                        model.postLikedBy ??= [];
+                        if (!model.postLikedBy!.any(
+                            (element) => element.userId == userDetail!.id)) {
+                          model.postLikedBy!.add(PostLikedBy(
+                              userId: userDetail!.id,
+                              dateTime: DateTime.now().toIso8601String()));
+                        }
+                      }
+                    });
+                    await auth.updateReactforPost(
+                        model.postId!,
+                        model.isliked ?? false,
+                        model.isDisliked ?? false,
+                        userDetail!.id!);
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      duration: Duration(seconds: 1),
+                      content:
+                          Text(model.isliked ?? false ? 'Liked the post' : ''),
+                    ));
+                  },
+                  icon: model.isliked ?? false
+                      ? const Icon(Icons.thumb_up_alt)
+                      : const Icon(Icons.thumb_up_alt_outlined)),
               IconButton(
                 tooltip: 'Dislike',
-                onPressed: () {
+                onPressed: () async {
                   setState(() {
-                    model.isDisliked = !model.isDisliked;
-                    if (model.isDisliked) {
+                    if (model.isDisliked ?? false) {
+                      model.isDisliked = false;
+                      model.postLikedBy?.removeWhere(
+                          (like) => like.userId == userDetail!.id);
+                    } else {
+                      model.isDisliked = true;
                       model.isliked = false;
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          duration: Duration(seconds: 1),
-                          content: Text('Disliked the post')));
+                      model.postLikedBy?.removeWhere(
+                          (like) => like.userId == userDetail!.id);
                     }
                   });
+                  await auth.updateReactforPost(
+                      model.postId!,
+                      model.isliked ?? false, //can also give false directly
+                      model.isDisliked ?? false,
+                      userDetail!.id!);
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      duration: const Duration(seconds: 1),
+                      content: Text(
+                          model.isDisliked ?? false ? 'Disliked the Post' : ''),
+                    ),
+                  );
                 },
-                icon: model.isDisliked
+                icon: model.isDisliked ?? false
                     ? const Icon(Icons.thumb_down_alt)
                     : const Icon(Icons.thumb_down_alt_outlined),
               ),
@@ -507,7 +587,11 @@ class _NewscreenState extends State<Newscreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => FullImageScreen(
-                      images: image, detail: detail, user: user),
+                    images: image,
+                    detail: detail,
+                    user: user,
+                    post: userpost,
+                  ),
                 )),
             child: GridView.count(
               shrinkWrap: true,
@@ -565,8 +649,12 @@ class _NewscreenState extends State<Newscreen> {
       onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                FullImageScreen(images: image, detail: detail, user: user),
+            builder: (context) => FullImageScreen(
+              images: image,
+              detail: detail,
+              user: user,
+              post: userpost,
+            ),
           )),
       child: GridView.builder(
         shrinkWrap: true, //allows widget to adjust it's size with content
@@ -586,8 +674,14 @@ class _NewscreenState extends State<Newscreen> {
               fit: StackFit.expand,
               children: [
                 (userpost.postId! > 10)
-                    ? Image.file(File(image[index].url!))
-                    : Image.network(image[index].url!),
+                    ? Image.file(
+                        File(image[index].url!),
+                        fit: BoxFit.fill,
+                      )
+                    : Image.network(
+                        image[index].url!,
+                        fit: BoxFit.fill,
+                      ),
                 // Image.network(
                 //   image[index].url!,
                 //   fit: BoxFit.cover,
@@ -605,8 +699,14 @@ class _NewscreenState extends State<Newscreen> {
             );
           } else {
             return (userpost.postId! > 10)
-                ? Image.file(File(image[index].url!))
-                : Image.network(image[index].url!);
+                ? Image.file(
+                    File(image[index].url!),
+                    fit: BoxFit.fill,
+                  )
+                : Image.network(
+                    image[index].url!,
+                    fit: BoxFit.fill,
+                  );
           }
         },
       ),

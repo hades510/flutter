@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
@@ -36,6 +37,9 @@ class Dataloader {
   static String coursebykey = 'coursebycategories';
   static String coursescategorykey = 'coursescategory';
   static String instructorkey = 'instrucor';
+  static String sendrequestkey = 'sendrequest';
+  static String receiverequestkey = 'receiverequest';
+
   Future loadalluserdatas() async {
     SharedPreferences prefs = await SharedPreferences
         .getInstance(); //when chnaged it get's new password
@@ -97,8 +101,8 @@ class Dataloader {
   Future<List<User>> getloggeduser(int id) async {
     final prefs = await SharedPreferences.getInstance();
     String? user = prefs.getString(userkey); //gets json encode data
-    print('$prefs');
-    print('$user');
+    // print('$prefs');
+    // print('$user');
     if (user != null) {
       List userlist = json.decode(user);
       return userlist
@@ -128,7 +132,7 @@ class Dataloader {
   Future<List<UserPost>> getuserpost() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? post = prefs.getString(userpostkey);
-    print('$post');//working
+    // print('$post');//working
     if (post != null) {
       List postlist = json.decode(post);
       return postlist.map((e) => UserPost.fromJson(e)).toList();
@@ -160,6 +164,94 @@ class Dataloader {
     } else {
       return [];
     }
+  }
+
+  Future<List<UserFriendlist>> geloggedinrequest(int id) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? request = prefs.getString(userdfriendlistkey);
+    if (request != null) {
+      List requestlist = json.decode(request);
+      return requestlist
+          .map((e) => UserFriendlist.fromJson(e))
+          .where((element) => element.userId == id)
+          .toList();
+    } else {
+      return [];
+    }
+  }
+
+  //for storing request
+  Future<void> sendRequest(int senderid, int receiverid) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    //load request sent for sender
+    final senrequestJson = prefs.getString(sendrequestkey) ?? '[]';
+    List jsonlist = jsonDecode(senrequestJson);
+    List<UserFriendlist> list =
+        jsonlist.map((e) => UserFriendlist.fromJson(e)).toList();
+
+    list.add(UserFriendlist(
+      // userId: senderid,
+      requestedBy: senderid,
+      requestedTo: receiverid,
+      hasNewRequest: true,
+      hasRemoved: false,
+      hasNewRequestAccepted: false,
+      createdAt: DateTime.now().toIso8601String(),
+    ));
+    await prefs.setString(sendrequestkey, jsonEncode(list));
+
+    //load received request for receiver
+    final receiverequest = prefs.getString(receiverequestkey) ?? '[]';
+    List receiverjsonlist = jsonDecode(receiverequest);
+    List<UserFriendlist> receiverlist =
+        receiverjsonlist.map((e) => UserFriendlist.fromJson(e)).toList();
+
+    receiverlist.add(UserFriendlist(
+      requestedBy: senderid,
+      requestedTo: receiverid,
+      hasNewRequest: true,
+      hasNewRequestAccepted: false,
+      hasRemoved: false,
+    ));
+    await prefs.setString(receiverequestkey, jsonEncode(receiverlist));
+  }
+
+  Future<List<UserFriendlist>> getreceiverequest(int userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString(receiverequestkey) ?? '[]';
+    List jsonlist = jsonDecode(jsonString);
+    final List<UserFriendlist> list =
+        jsonlist.map((jsonItem) => UserFriendlist.fromJson(jsonItem)).toList();
+    // Filter requests where the user is the receiver
+    return list.where((request) => request.requestedTo == userId).toList();
+  }
+
+  Future<List<UserFriendlist>> getSentFriendRequests(int userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString(sendrequestkey) ?? '[]';
+    final List<dynamic> jsonList = json.decode(jsonString);
+    final List<UserFriendlist> requests =
+        jsonList.map((jsonItem) => UserFriendlist.fromJson(jsonItem)).toList();
+
+    // Filter for the sent requests
+    return requests.where((request) => request.requestedBy == userId).toList();
+  }
+
+  Future<void> saverequest(List<UserFriendlist> request) async {
+    final prefs = await SharedPreferences.getInstance();
+    final requestjson = jsonEncode(request.map((e) => e.toJson()).toList());
+    await prefs.setString('requests', requestjson);
+  }
+
+  Future<List<UserFriendlist>> loadrequest() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? requestjson = prefs.getString('requests');
+    if (requestjson != null) {
+      List requestlist = jsonDecode(requestjson);
+      return requestlist.map((e) => UserFriendlist.fromJson(e)).toList();
+    }
+    return [];
   }
 
   Future<List<Courses>> getCourse() async {
@@ -203,6 +295,115 @@ class Dataloader {
       return instructorlist.map((e) => Instructor.fromJson(e)).toList();
     } else {
       return [];
+    }
+  }
+
+  // Future<void> sendFriendRequest(UserFriendlist request) async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   List<UserFriendlist> requests = [];
+
+  //   // Load existing friend requests
+  //   String? requestJson = prefs.getString(userdfriendlistkey);
+  //   if (requestJson != null) {
+  //     List requestList = jsonDecode(requestJson);
+  //     requests = requestList.map((e) => UserFriendlist.fromJson(e)).toList();
+  //   }
+
+  //   // Add new request
+  //   requests.removeWhere(
+  //       (r) => r.userId == request.userId && r.friendId == request.friendId);
+  //   requests.add(request);
+
+  //   // Save updated friend requests
+  //   String updatedJson = jsonEncode(requests.map((e) => e.toJson()).toList());
+  //   await prefs.setString(userdfriendlistkey, updatedJson);
+  // }
+
+  Future<List<UserFriendlist>> getRequestsForUser(int userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? requestJson = prefs.getString(Dataloader.userdfriendlistkey);
+
+    if (requestJson != null) {
+      List requestList = jsonDecode(requestJson);
+      List<UserFriendlist> requests =
+          requestList.map((e) => UserFriendlist.fromJson(e)).toList();
+
+      // Filter requests to show only those where the user is the friend
+      return requests.where((request) => request.friendId == userId).toList();
+    }
+
+    return [];
+  }
+//   Future<void> updateFriendRequest(int userListId, UserFriendlist updatedRequest) async {
+//   final prefs = await SharedPreferences.getInstance();
+//   String? requestJson = prefs.getString('requests');
+
+//   if (requestJson != null) {
+//     try {
+//       // Decode the JSON string
+//       List<dynamic> requestList = jsonDecode(requestJson);
+
+//       // Convert the list of dynamic items to a list of UserFriendlist objects
+//       List<UserFriendlist> requests = requestList.map((e) => UserFriendlist.fromJson(e)).toList();
+
+//       // Find the index of the request to be updated by userListId
+//       int index = requests.indexWhere((r) => r.userListId == userListId);
+
+//       if (index != -1) {
+//         // Update the request at the found index
+//         requests[index] = updatedRequest;
+
+//         // Save the updated list back to SharedPreferences
+//         await prefs.setString('requests', jsonEncode(requests.map((r) => r.toJson()).toList()));
+//       } else {
+//         print('Request with ID $userListId not found for update');
+//       }
+//     } catch (e) {
+//       print('Error updating friend request: $e');
+//     }
+//   } else {
+//     if (kDebugMode) {
+//       print('No requests found in SharedPreferences');
+//     }
+//   }
+// }
+  Future<void> updateFriendRequests(
+      int userId, List<UserFriendlist> updatedRequests) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? requestJson = prefs.getString('requests');
+
+    if (requestJson != null) {
+      try {
+        // Decode the JSON string
+        List<dynamic> requestList = jsonDecode(requestJson);
+
+        // Convert the list of dynamic items to a list of UserFriendlist objects
+        List<UserFriendlist> requests =
+            requestList.map((e) => UserFriendlist.fromJson(e)).toList();
+
+        // Create a map for fast lookups
+        Map<int, UserFriendlist> requestMap = {
+          for (var r in requests) r.userListId!: r
+        };
+
+        // Update the requests in the map if they belong to the given userId
+        for (var updatedRequest in updatedRequests) {
+          if (updatedRequest.userId == userId) {
+            requestMap[updatedRequest.userListId!] = updatedRequest;
+          }
+        }
+
+        // Convert the map back to a list
+        List<UserFriendlist> updatedRequestList = requestMap.values.toList();
+
+        // Save the updated list back to SharedPreferences
+        await prefs.setString('requests',
+            jsonEncode(updatedRequestList.map((r) => r.toJson()).toList()));
+      } catch (e) {
+        print('Error updating friend requests: $e');
+      }
+    } else {
+      print('No requests found in SharedPreferences');
     }
   }
 }

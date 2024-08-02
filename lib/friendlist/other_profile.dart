@@ -39,7 +39,7 @@ class _OtherProfilesState extends State<OtherProfiles> {
                     width: double.infinity,
                     child: GestureDetector(
                       onTap: () {
-                        print('open pcitrue');
+                        // print('open pcitrue');
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -167,47 +167,47 @@ class _OtherProfilesState extends State<OtherProfiles> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                IconButton(
-                                  // enableFeedback: true,
-                                  tooltip: 'Like',
-                                  onPressed: () {
-                                    setState(() {
-                                      widget.userpost[index].isliked =
-                                          !widget.userpost[index].isliked;
-                                      if (widget.userpost[index].isliked) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(const SnackBar(
-                                                duration: Duration(seconds: 1),
-                                                content:
-                                                    Text('Liked the post')));
-                                      }
-                                    });
-                                  },
-                                  icon: widget.userpost[index].isliked
-                                      ? const Icon(Icons.thumb_up_alt)
-                                      : const Icon(Icons.thumb_up_alt_outlined),
-                                ),
-                                IconButton(
-                                  tooltip: 'Dislike',
-                                  onPressed: () {
-                                    setState(() {
-                                      widget.userpost[index].isDisliked =
-                                          !widget.userpost[index].isDisliked;
-                                      if (widget.userpost[index].isDisliked) {
-                                        widget.userpost[index].isliked = false;
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(const SnackBar(
-                                                duration: Duration(seconds: 1),
-                                                content:
-                                                    Text('Disliked the post')));
-                                      }
-                                    });
-                                  },
-                                  icon: widget.userpost[index].isDisliked
-                                      ? const Icon(Icons.thumb_down_alt)
-                                      : const Icon(
-                                          Icons.thumb_down_alt_outlined),
-                                ),
+                                // IconButton(
+                                //   // enableFeedback: true,
+                                //   tooltip: 'Like',
+                                //   onPressed: () {
+                                //     setState(() {
+                                //       widget.userpost[index].isliked =
+                                //           !widget.userpost[index].isliked;
+                                //       if (widget.userpost[index].isliked) {
+                                //         ScaffoldMessenger.of(context)
+                                //             .showSnackBar(const SnackBar(
+                                //                 duration: Duration(seconds: 1),
+                                //                 content:
+                                //                     Text('Liked the post')));
+                                //       }
+                                //     });
+                                //   },
+                                //   icon: widget.userpost[index].isliked
+                                //       ? const Icon(Icons.thumb_up_alt)
+                                //       : const Icon(Icons.thumb_up_alt_outlined),
+                                // ),
+                                // IconButton(
+                                //   tooltip: 'Dislike',
+                                //   onPressed: () {
+                                //     setState(() {
+                                //       widget.userpost[index].isDisliked =
+                                //           !widget.userpost[index].isDisliked;
+                                //       if (widget.userpost[index].isDisliked) {
+                                //         widget.userpost[index].isliked = false;
+                                //         ScaffoldMessenger.of(context)
+                                //             .showSnackBar(const SnackBar(
+                                //                 duration: Duration(seconds: 1),
+                                //                 content:
+                                //                     Text('Disliked the post')));
+                                //       }
+                                //     });
+                                //   },
+                                //   icon: widget.userpost[index].isDisliked
+                                //       ? const Icon(Icons.thumb_down_alt)
+                                //       : const Icon(
+                                //           Icons.thumb_down_alt_outlined),
+                                // ),
                               ],
                             ),
                           ),

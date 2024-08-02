@@ -2,12 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/authenthication/login_auth.dart';
 import 'package:socialapp/dataloader.dart';
 import 'package:socialapp/feeds/Albumscreen.dart';
+import 'package:socialapp/friendlist/friendpage.dart';
+import 'package:socialapp/friendlist/sendrequest.dart';
 import 'package:socialapp/home.dart';
 import 'package:socialapp/login.dart';
 import 'package:socialapp/models/user.dart';
@@ -29,6 +30,7 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
   late Auth auth;
   UserDetail? userDetail;
   User? user;
+  UserPost? post;
   final ImagePicker picker = ImagePicker();
   File? profile;
   File? cover;
@@ -44,6 +46,7 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
     _loadprofile();
     _loaduserPost();
     _loadusers();
+    // print(userDetail?.id);
   }
 
   Future<void> _loaduserPost() async {
@@ -87,6 +90,7 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
     setState(() {
       userDetail = detail;
     });
+    // print(userDetail!.id);
     //You need to call _loaduserPost() and _loadusers()
     // after fetching userDetail to ensure these methods have the necessary data
     //(i.e., the userDetail object) to fetch user-specific posts and users.
@@ -98,21 +102,76 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
     // you ensure that the data is fetched in the right order.
   }
 
-  // Future<void> _loaduserDetail() async {
-  //   // Fetch user detail and posts
-  //   final auth = Auth(Dataloader());
-  //   UserDetail? detail = await auth.getloggedinuser();
-  //   final prefs = await SharedPreferences.getInstance();
-  //   String? postJson = prefs.getString(Dataloader.userpostkey);
-  //   List<UserPost> posts = postJson != null
-  //       ? (json.decode(postJson) as List)
-  //           .map((e) => UserPost.fromJson(e))
-  //           .toList()
-  //       : [];
-  //   setState(() {
-  //     userDetail = detail;
-  //     userPost = posts.where((post) => post.userId == detail?.id).toList();
-  //   });
+  //  this updated the whole post removing all the other posts
+  // Future<void> _updateUserPosts(List<UserPost> updatedPosts) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   // Convert the list of UserPost objects to JSON string
+  //   String jsonPosts =
+  //       jsonEncode(updatedPosts.map((post) => post.toJson()).toList());
+  //   // Save the JSON string to SharedPreferences
+  //   await prefs.setString(userpostkey, jsonPosts);
+  // }
+
+//when you want
+  // Future<void> _updatelikeandDislike(
+  //     int postId, bool isLiked, bool isDisliked) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? postsJson = prefs.getString(
+  //       Dataloader.userpostkey); //retrieves the json string og the post
+
+  //   if (postsJson != null) {
+  //     // Decode the JSON string to get the list of posts
+  //     List<dynamic> postsList = jsonDecode(
+  //         postsJson); // converts tha above json string to the list of dynamic objects
+  //     // Convert the list to a list of UserPost objects
+  //     List<UserPost> updatedPosts =
+  //         postsList.map((postJson) => UserPost.fromJson(postJson)).toList();
+
+  //     // Find the post with the matching ID
+  //     UserPost? postToUpdate = updatedPosts.firstWhere(
+  //       (post) => post.postId == postId,
+  //     ); //ensures that only the wanted post is updated rather than affecting all the post
+  //     if (postToUpdate != null) {
+  //       // Update the like/dislike states
+  //       postToUpdate.isliked = isLiked;
+  //       postToUpdate.isDisliked = isDisliked;
+
+  //       // Update the like/dislike counts
+  //       if (isLiked) {
+  //         postToUpdate.postLikedBy ??= [];
+
+  //         if (!postToUpdate.postLikedBy!
+  //             .any((like) => like.userId == userDetail!.id)) {
+  //           postToUpdate.postLikedBy!.add(PostLikedBy(
+  //               userId: userDetail!.id,
+  //               dateTime: DateTime.now().toIso8601String()));
+  //         }
+  //         if (postToUpdate.isDisliked) {
+  //           postToUpdate.isDisliked = false;
+  //           postToUpdate.postLikedBy!.removeWhere(
+  //               (like) => like.userId == userDetail!.id); // Remove dislike
+  //         }
+  //       } else {
+  //         postToUpdate.postLikedBy?.removeWhere(
+  //             (like) => like.userId == userDetail!.id); // Remove like
+  //       }
+
+  //       if (isDisliked) {
+  //         if (postToUpdate.postLikedBy
+  //                 ?.any((like) => like.userId == userDetail!.id) ??
+  //             false) {
+  //           postToUpdate.postLikedBy!.removeWhere((like) =>
+  //               like.userId == userDetail!.id); // Remove like ifp disliked
+  //         }
+  //       }
+
+  //       // Convert the updated list back to JSON
+  //       String updatedPostsJson =
+  //           jsonEncode(updatedPosts.map((post) => post.toJson()).toList());
+  //       // Save the updated JSON string to SharedPreferences
+  //       await prefs.setString(Dataloader.userpostkey, updatedPostsJson);
+  //     }
+  //   }
   // }
 
   Future<void> _updatecover(File file) async {
@@ -156,7 +215,7 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
       //for all both the profile image there is same key
 
       final imagepath = prefs.getString(
-          'cover_$userid'); //retriving image path (from updateprofile)
+          'cover_$userid'); //retriving image path (from updateprofile)[
 
       if (imagepath != null) {
         setState(() {
@@ -245,12 +304,12 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                         borderRadius: BorderRadius.circular(10)),
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const LoginPage(),
-                            ),
-                            (route) => false);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPage(),
+                          ),
+                        );
                         // Navigator.push(
                         //     context,
                         //     MaterialPageRoute(
@@ -514,14 +573,17 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                           style:
                               TextStyle(fontSize: 16, color: Colors.grey[700]),
                         ),
+                        Text('User ID: ${userDetail?.id}'),
                         const SizedBox(
                           height: 15,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        Wrap(
+                          runSpacing: 5,
+                          spacing: 5,
+                          // mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Container(
-                              width: 162.9,
+                              width: 163,
                               decoration: BoxDecoration(
                                 color: Colors.black,
                                 borderRadius: BorderRadius.circular(10),
@@ -546,7 +608,7 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                             //   width: 5,
                             // ),
                             Container(
-                              width: 162.9,
+                              width: 163,
                               decoration: BoxDecoration(
                                   color: Colors.black,
                                   borderRadius: BorderRadius.circular(10)),
@@ -567,9 +629,55 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                                 ),
                               ),
                             ),
+                            Container(
+                              width: 163,
+                              decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: ListTile(
+                                onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ReceivedFriendRequestsScreen(userId: userDetail!.id!)
+                                      // FriendRequest(
+                                      //   loggedInUserId: userDetail!.id!,
+                                      // ),
+                                    )),
+                                leading: const Icon(
+                                  Icons.people_alt,
+                                  color: Colors.white,
+                                ),
+                                title: const Text('Friendlist',
+                                    style: TextStyle(color: Colors.white)),
+                              ),
+                            ),
+                            Container(
+                              width: 163,
+                              decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: ListTile(
+                                onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          // SendFriendRequestScreen(
+                                          //     loggedInUserId: userDetail!.id!)
+                                          UserListScreen(
+                                              loggedInUserId: userDetail!.id!),
+                                    )),
+                                leading: const Icon(
+                                  Icons.person_add,
+                                  color: Colors.white,
+                                ),
+                                title: const Text('Friend Req',
+                                    style: TextStyle(color: Colors.white)),
+                              ),
+                            ),
                           ],
                         ),
-                        //friendlist
                       ],
                     ),
                   ),
@@ -675,52 +783,180 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                           // Text('${userpost[index].image!.length}'),
                           // for (var image in userpost[index].image!) _builderimage(image),
                           Text(userpost[index].createdAt.toString()),
-                          Container(
+                          Text(
+                              'Likes ${userpost[index].postLikedBy?.length ?? 0}'),
+                          //
+
+                          SizedBox(
                             height: 50,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 IconButton(
-                                  // enableFeedback: true,
-                                  tooltip: 'Like',
-                                  onPressed: () {
-                                    setState(() {
-                                      userpost[index].isliked =
-                                          !userpost[index].isliked;
-                                      if (userpost[index].isliked) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(const SnackBar(
-                                                duration: Duration(seconds: 1),
-                                                content:
-                                                    Text('Liked the post')));
-                                      }
-                                    });
-                                  },
-                                  icon: userpost[index].isliked
-                                      ? const Icon(Icons.thumb_up_alt)
-                                      : const Icon(Icons.thumb_up_alt_outlined),
-                                ),
+                                    tooltip: 'Like',
+                                    onPressed: () async {
+                                      setState(() {
+                                        if (userpost[index].isliked ?? false) {
+                                          userpost[index].isliked = false;
+                                          userpost[index]
+                                              .postLikedBy
+                                              ?.removeWhere((like) =>
+                                                  like.userId ==
+                                                  userDetail!.id);
+                                        } else {
+                                          userpost[index].isliked = true;
+                                          userpost[index].isDisliked =
+                                              false; // Ensure dislike is false
+                                          userpost[index].postLikedBy ??= [];
+                                          if (!userpost[index].postLikedBy!.any(
+                                              (element) =>
+                                                  element.userId ==
+                                                  userDetail!.id)) {
+                                            userpost[index].postLikedBy!.add(
+                                                PostLikedBy(
+                                                    userId: userDetail!.id,
+                                                    dateTime: DateTime.now()
+                                                        .toIso8601String()));
+                                          }
+                                        }
+                                      });
+                                      await auth.updateReactforPost(
+                                          userpost[index].postId!,
+                                          userpost[index].isliked ?? false,
+                                          userpost[index].isDisliked ?? false,
+                                          userDetail!.id!);
+                                      // _loaduserPost();
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                        duration: Duration(seconds: 1),
+                                        content: Text(
+                                            userpost[index].isliked ?? false
+                                                ? 'Liked the post'
+                                                : ''),
+                                      ));
+                                    },
+                                    icon: userpost[index].isliked ?? false
+                                        ? const Icon(Icons.thumb_up_alt)
+                                        : const Icon(
+                                            Icons.thumb_up_alt_outlined)),
+
                                 IconButton(
                                   tooltip: 'Dislike',
-                                  onPressed: () {
+                                  onPressed: () async {
                                     setState(() {
-                                      userpost[index].isDisliked =
-                                          !userpost[index].isDisliked;
-                                      if (userpost[index].isDisliked) {
+                                      if (userpost[index].isDisliked ?? false) {
+                                        userpost[index].isDisliked = false;
+                                        userpost[index]
+                                            .postLikedBy
+                                            ?.removeWhere((like) =>
+                                                like.userId == userDetail!.id);
+                                      } else {
+                                        userpost[index].isDisliked = true;
                                         userpost[index].isliked = false;
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(const SnackBar(
-                                                duration: Duration(seconds: 1),
-                                                content:
-                                                    Text('Disliked the post')));
+                                        userpost[index]
+                                            .postLikedBy
+                                            ?.removeWhere((like) =>
+                                                like.userId == userDetail!.id);
                                       }
                                     });
+                                    await auth.updateReactforPost(
+                                        userpost[index].postId!,
+                                        userpost[index].isliked ??
+                                            false, //can also give false directly
+                                        userpost[index].isDisliked ?? false,
+                                        userDetail!.id!);
+                                    // _loaduserPost();
+
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        duration: const Duration(seconds: 1),
+                                        content: Text(
+                                            userpost[index].isDisliked ?? false
+                                                ? 'Disliked the Post'
+                                                : ''),
+                                      ),
+                                    );
                                   },
-                                  icon: userpost[index].isDisliked
+                                  icon: userpost[index].isDisliked ?? false
                                       ? const Icon(Icons.thumb_down_alt)
                                       : const Icon(
                                           Icons.thumb_down_alt_outlined),
                                 ),
+                                // Text(
+                                //     '${userpost[index].likeCount} Likes'), // Display like count
+
+                                //gives the number of likes
+                                // IconButton(
+                                //   tooltip: 'Like',
+                                //   onPressed: () async {
+                                //     setState(() {
+                                //       if (userpost[index].isliked) {
+                                //         userpost[index].isliked = false;
+                                //         userpost[index].likeCount--;
+                                //       } else {
+                                //         userpost[index].isliked = true;
+                                //         userpost[index].likeCount++;
+                                //         userpost[index].isDisliked =
+                                //             false; // Ensure dislike is false
+                                //       }
+                                //       if (userpost[index].isDisliked) {
+                                //         userpost[index]
+                                //             .likeCount++; // Adjust likeCount if necessary
+                                //       }
+                                //     });
+                                //     //updating the data
+                                //     await _updatePostLikeDislike(
+                                //       userpost[index].postId!,
+                                //       userpost[index].isliked,
+                                //       userpost[index].isDisliked,
+                                //     );
+                                //     // _updateuserpost(userpost); // Save updated posts
+                                //     ScaffoldMessenger.of(context)
+                                //         .showSnackBar(SnackBar(
+                                //       duration: Duration(seconds: 1),
+                                //       content: Text(userpost[index].isliked
+                                //           ? 'Liked the post'
+                                //           : 'Unliked the post'),
+                                //     ));
+                                //   },
+                                //   icon: userpost[index].isliked
+                                //       ? Icon(Icons.thumb_up_alt)
+                                //       : Icon(Icons.thumb_up_alt_outlined),
+                                // ),
+                                // IconButton(
+                                //   tooltip: 'Dislike',
+                                //   onPressed: () {
+                                //     setState(() {
+                                //       if (userpost[index].isDisliked) {
+                                //         userpost[index].isDisliked = false;
+                                //         userpost[index]
+                                //             .likeCount++; // Adjust likeCount if necessary
+                                //       } else {
+                                //         userpost[index].isDisliked = true;
+                                //         userpost[index].likeCount--;
+                                //         userpost[index].isliked =
+                                //             false; // Ensure like is false
+                                //         if (userpost[index].isliked) {
+                                //           userpost[index]
+                                //               .likeCount--; // Adjust likeCount if necessary
+                                //         }
+                                //       }
+                                //       // _updateuserpost(userpost); // Save updated posts
+                                //       ScaffoldMessenger.of(context)
+                                //           .showSnackBar(SnackBar(
+                                //         duration: Duration(seconds: 1),
+                                //         content: Text(userpost[index].isDisliked
+                                //             ? 'Disliked the post'
+                                //             : 'Undisliked the post'),
+                                //       ));
+                                //     });
+                                //   },
+                                //   icon: userpost[index].isDisliked
+                                //       ? Icon(Icons.thumb_down_alt)
+                                //       : Icon(Icons.thumb_down_alt_outlined),
+                                // ),
+                                // Text(
+                                //     '${userpost[index].likeCount} Likes'), // Display like count
                               ],
                             ),
                           ),
@@ -777,7 +1013,11 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => FullImageScreen(
-                      images: image, detail: detail, user: user!),
+                    images: image,
+                    detail: detail,
+                    user: user,
+                    post: userpost,
+                  ),
                 )),
             child: GridView.count(
               shrinkWrap: true,
@@ -832,12 +1072,16 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
     }
 //if there are more than 3 photos
     return GestureDetector(
-      // onTap: () => Navigator.push(
-      //     context,
-      //     MaterialPageRoute(
-      //       builder: (context) =>
-      //           FullImageScreen(images: image, detail: detail, user: user),
-      //     )),
+      onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FullImageScreen(
+              images: image,
+              detail: detail,
+              user: user,
+              post: userpost,
+            ),
+          )),
       child: GridView.builder(
         shrinkWrap: true, //allows widget to adjust it's size with content
         physics: const NeverScrollableScrollPhysics(),
@@ -856,8 +1100,8 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
               fit: StackFit.expand,
               children: [
                 (userpost.postId! > 10)
-                    ? Image.file(File(image[index].url!))
-                    : Image.network(image[index].url!),
+                    ? Image.file(File(image[index].url!), fit: BoxFit.fill)
+                    : Image.network(image[index].url!, fit: BoxFit.fill),
                 // Image.network(
                 //   image[index].url!,
                 //   fit: BoxFit.cover,
@@ -875,8 +1119,8 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
             );
           } else {
             return (userpost.postId! > 10)
-                ? Image.file(File(image[index].url!))
-                : Image.network(image[index].url!);
+                ? Image.file(File(image[index].url!), fit: BoxFit.fill)
+                : Image.network(image[index].url!, fit: BoxFit.fill);
           }
         },
       ),

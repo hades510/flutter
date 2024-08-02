@@ -98,13 +98,14 @@ class _AddPostState extends State<AddPost> {
                   url: file.path,
                   isDisliked: false,
                   isLiked: false,
+                  // likeCount: 0,
                 ))
             .toList(),
         postLikedBy: [], // Initial empty list
         isliked: false,
         isDisliked: false,
       );
-      print(newPost);
+      // print(newPost);
 
       await addNewPost(newPost);
       ScaffoldMessenger.of(context)
@@ -140,6 +141,8 @@ class _AddPostState extends State<AddPost> {
         postsList.map((post) => post.toJson()).toList();
     await prefs.setString(Dataloader.userpostkey, json.encode(jsonList));
   }
+
+//
 
   @override
   Widget build(BuildContext context) {

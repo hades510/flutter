@@ -6,20 +6,24 @@ class UserPost {
   String? description;
   List<Postedphoto>? image;
   List<PostLikedBy>? postLikedBy;
-  //to manage like and dislike of each post
-  bool isliked = false;
-  bool isDisliked = false;
+  // int? likeCount;
 
-  UserPost(
-      {this.postId,
-      this.userId,
-      this.createdAt,
-      this.title,
-      this.description,
-      this.image,
-      this.postLikedBy,
-      required this.isDisliked,
-      required this.isliked});
+  //to manage like and dislike of each post
+  bool? isliked;
+  bool? isDisliked;
+
+  UserPost({
+    this.postId,
+    this.userId,
+    this.createdAt,
+    this.title,
+    this.description,
+    this.image,
+    this.postLikedBy,
+    this.isDisliked,
+    this.isliked,
+    // this.likeCount
+  });
 
   UserPost.fromJson(Map<String, dynamic> json) {
     postId = json['post_id'];
@@ -39,6 +43,9 @@ class UserPost {
         postLikedBy!.add(PostLikedBy.fromJson(v));
       });
     }
+    isDisliked = json['isDisliked'];
+    isliked = json['isliked'];
+    // likeCount = json['likeCount'];
   }
 
   Map<String, dynamic> toJson() {
@@ -54,6 +61,10 @@ class UserPost {
     if (postLikedBy != null) {
       data['Post_liked_by'] = postLikedBy!.map((v) => v.toJson()).toList();
     }
+    data['isDisliked'] = isDisliked;
+    data['isliked'] = isliked;
+    // data['likeCount'] = likeCount;
+
     return data;
   }
 }
@@ -62,24 +73,33 @@ class Postedphoto {
   int? id;
   String? url;
   //to manage like and dislike state of each image
-  bool isLiked = false;
-  bool isDisliked = false;
+  bool? isLiked;
+  bool? isDisliked;
+  int? likeCount;
 
-  Postedphoto(
-      {this.id,
-      this.url,
-      required this.isDisliked,
-      required this.isLiked});
+  Postedphoto({
+    this.id,
+    this.url,
+    this.isDisliked,
+    this.isLiked,
+    this.likeCount,
+  });
 
   Postedphoto.fromJson(Map<String, dynamic> json) {
     id = json['Id'];
     url = json['Url'];
+    isDisliked = json['isDisliked'];
+    isLiked = json['isliked'];
+    likeCount = json['likeCount'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['Id'] = id;
     data['Url'] = url;
+    data['isDisliked'] = isDisliked;
+    data['isliked'] = isLiked;
+    data['likeCount'] = likeCount;
 
     return data;
   }

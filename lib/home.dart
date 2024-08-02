@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/courses/available%20courses.dart';
 import 'package:socialapp/dataloader.dart';
+import 'package:socialapp/dumbscreen.dart';
+import 'package:socialapp/friendlist/dumbpage.dart';
 import 'package:socialapp/friendlist/friendpage.dart';
 import 'package:socialapp/feeds/newsfeed.dart';
-import 'package:socialapp/login.dart';
+import 'package:socialapp/friendlist/onlyfriendlist.dart';
+// import 'package:socialapp/login.dart';
 import 'package:socialapp/models/user_detail.dart';
 import 'package:socialapp/profiles/surface_profile.dart';
 import 'package:socialapp/signup.dart';
@@ -89,80 +93,30 @@ class _HomeState extends State<Home> {
                         const SizedBox(
                           width: 15,
                         ),
-                        const CircleAvatar(
-                          backgroundColor: Colors.black,
-                          radius: 15,
-                          child: Icon(
-                            Icons.search,
-                            color: Colors.white,
-                            size: 20,
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      SentFriendRequestsScreen(
+                                          userId: userDetail!.id!),
+                                ));
+                          },
+                          child: const CircleAvatar(
+                            backgroundColor: Colors.black,
+                            radius: 15,
+                            child: Icon(
+                              Icons.search,
+                              color: Colors.white,
+                              size: 20,
+                            ),
                           ),
                         ),
                         const SizedBox(
                           width: 15,
                         ),
-                        // GestureDetector(
-                        //   onTap: () {
-                        //     showDialog(
-                        //       context: context,
-                        //       builder: (context) {
-                        //         return AlertDialog(
-                        //           title: const Text(
-                        //             'Logging Out',
-                        //             style: TextStyle(fontSize: 30),
-                        //           ),
-                        //           content: const Text('Are sure about it?'),
-                        //           actions: [
-                        //             Container(
-                        //               decoration: BoxDecoration(
-                        //                   borderRadius:
-                        //                       BorderRadius.circular(10),
-                        //                   color: Colors.black),
-                        //               child: TextButton(
-                        //                   onPressed: () =>
-                        //                       Navigator.pop(context),
-                        //                   child: const Text(
-                        //                     'Cancel',
-                        //                     style:
-                        //                         TextStyle(color: Colors.white),
-                        //                   )),
-                        //             ),
-                        //             Container(
-                        //               decoration: BoxDecoration(
-                        //                   borderRadius:
-                        //                       BorderRadius.circular(10),
-                        //                   color: Colors.black),
-                        //               child: TextButton(
-                        //                   onPressed: () async {
-                        //                     await auth.logout();
-                        //                     Navigator.pushReplacement(
-                        //                         context,
-                        //                         MaterialPageRoute(
-                        //                           builder: (context) =>
-                        //                               const Home(),
-                        //                         ));
-                        //                   },
-                        //                   child: const Text(
-                        //                     'Logout',
-                        //                     style:
-                        //                         TextStyle(color: Colors.white),
-                        //                   )),
-                        //             )
-                        //           ],
-                        //         );
-                        //       },
-                        //     );
-                        //   },
-                        //   child: const CircleAvatar(
-                        //     backgroundColor: Colors.black,
-                        //     radius: 15,
-                        //     child: Icon(
-                        //       Icons.logout,
-                        //       color: Colors.white,
-                        //       size: 20,
-                        //     ),
-                        //   ),
-                        // ),
+                        //
                       ],
                     ))
               ],
@@ -180,11 +134,6 @@ class _HomeState extends State<Home> {
                   cacheWidth: 30,
                   color: Colors.black,
                 ),
-                // Icon(Icons.book_outlined,
-                // const Icon(
-                //   Icons.login_outlined,
-                //   size: 30,
-                // ),
                 const Icon(
                   Icons.account_circle,
                   size: 30,
@@ -192,10 +141,15 @@ class _HomeState extends State<Home> {
               ],
             ),
           ),
-          body: const TabBarView(
+          body: TabBarView(
             children: [
               Newsfeed(),
-              FriendRequest(),
+              userDetail?.id == null
+                  ?
+                  // FriendRequestsScreen(userId: userDetail?.id ?? 1)
+                  Friendlist()
+                  : OnlyFriendlist(loggedInUserId: userDetail!.id!),
+              // FriendRequest(loggedInUserId: userDetail!.id!),
               AvailableCourses(),
               SurfaceProfile(),
             ],

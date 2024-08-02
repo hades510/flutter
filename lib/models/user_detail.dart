@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:socialapp/models/user.dart';
+import 'package:socialapp/models/user_friendlist.dart';
 
 class UserDetail {
   int? id;
@@ -16,20 +18,25 @@ class UserDetail {
   List<Education>? education;
   List<Accomplishments>? accomplishments;
   ContactInfo? contactInfo;
+  List<UserFriendlist>? friendList;
+  List<User>? user;
 
-  UserDetail(
-      {this.id,
-      this.basicInfo,
-      this.profileImage,
-      this.coverImage,
-      this.workExperience,
-      this.skills,
-      this.hobbies,
-      this.languages,
-      this.status,
-      this.education,
-      this.accomplishments,
-      this.contactInfo});
+  UserDetail({
+    this.id,
+    this.basicInfo,
+    this.profileImage,
+    this.coverImage,
+    this.workExperience,
+    this.skills,
+    this.hobbies,
+    this.languages,
+    this.status,
+    this.education,
+    this.accomplishments,
+    this.contactInfo,
+    this.friendList,
+    this.user,
+  });
 
   UserDetail.fromJson(Map<String, dynamic> json) {
     id = json['Id'];
@@ -82,6 +89,14 @@ class UserDetail {
     contactInfo = json['ContactInfo'] != null
         ? ContactInfo.fromJson(json['ContactInfo'])
         : null;
+    if (json['FriendList'] != null) {
+      friendList = (json['FriendList'] as List)
+          .map((e) => UserFriendlist.fromJson(e))
+          .toList();
+    }
+    if (json['User'] != null) {
+      user = (json['User'] as List).map((e) => User.fromJson(e)).toList();
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -118,6 +133,12 @@ class UserDetail {
     }
     if (contactInfo != null) {
       data['ContactInfo'] = contactInfo!.toJson();
+    }
+    if (friendList != null) {
+      data['FriendList'] = friendList!.map((e) => e.toJson()).toList();
+    }
+    if (user != null) {
+      data['User'] = user!.map((e) => e.toJson()).toList();
     }
     return data;
   }

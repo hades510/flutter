@@ -2,6 +2,7 @@ class UserFriendlist {
   int? userListId;
   int? userId;
   int? friendId;
+  int? requestedTo;
   int? requestedBy;
   String? createdAt;
   bool? hasNewRequest;
@@ -12,6 +13,7 @@ class UserFriendlist {
       {this.userListId,
       this.userId,
       this.friendId,
+      this.requestedTo,
       this.requestedBy,
       this.createdAt,
       this.hasNewRequest,
@@ -22,6 +24,7 @@ class UserFriendlist {
     userListId = json['user_list_id'];
     userId = json['user_id'];
     friendId = json['friend_id'];
+    requestedTo = json['requested_to'];
     requestedBy = json['requested_by'];
     createdAt = json['created_at'];
     hasNewRequest = json['has_new_request'];
@@ -34,6 +37,7 @@ class UserFriendlist {
     data['user_list_id'] = userListId;
     data['user_id'] = userId;
     data['friend_id'] = friendId;
+    data['requested_to'] = requestedTo;
     data['requested_by'] = requestedBy;
     data['created_at'] = createdAt;
     data['has_new_request'] = hasNewRequest;

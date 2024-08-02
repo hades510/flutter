@@ -5,7 +5,6 @@ import 'package:socialapp/home.dart';
 import 'package:socialapp/login.dart';
 import 'package:socialapp/models/user.dart';
 import 'package:socialapp/models/user_detail.dart';
-import 'package:socialapp/profiles/addpost.dart';
 
 class Signup extends StatefulWidget {
   // final Function()? onTap;
@@ -247,7 +246,7 @@ class _LoginPageState extends State<Signup> {
                                 final emailadd = email.text;
                                 final psw = password.text;
                                 final username = name.text;
-
+                                //assiging values to User model
                                 User user = User(
                                   id: DateTime.now()
                                       .millisecondsSinceEpoch, //gives unique value to the user id
@@ -255,6 +254,7 @@ class _LoginPageState extends State<Signup> {
                                   name: username,
                                   password: psw,
                                 );
+                                //assiging values to Userdetail model
                                 UserDetail detail = UserDetail(
                                   id: user.id,
                                   basicInfo: BasicInfo(name: user.name),
