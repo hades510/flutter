@@ -13,6 +13,7 @@ import 'package:socialapp/home.dart';
 import 'package:socialapp/login.dart';
 import 'package:socialapp/models/user.dart';
 import 'package:socialapp/models/user_detail.dart';
+import 'package:socialapp/models/user_friendlist.dart';
 import 'package:socialapp/models/user_post.dart';
 import 'package:socialapp/profiles/addpost.dart';
 
@@ -47,6 +48,62 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
     _loaduserPost();
     _loadusers();
     // print(userDetail?.id);
+  }
+
+  late Future<List<UserDetail>> _nonFriendUsersFuture;
+  void _updaterequestlist() {
+    setState(() {
+      _nonFriendUsersFuture = _getNonFriendUsers(userDetail!.id!);
+    });
+  }
+
+//current user friendlist for exclusion
+  Future<List<int>> _getUserFriends(int userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final friendsJson = prefs.getString('user_${userId}_friends') ?? '[]';
+    List<int> friendIds = List<int>.from(jsonDecode(friendsJson));
+    return friendIds;
+  }
+
+//current users request list for wxclusion
+  Future<List<int>> _getSentRequests(int userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final sentRequestsJson = prefs.getString(Dataloader.sendrequestkey) ?? '[]';
+    List<UserFriendlist> sentRequests = (jsonDecode(sentRequestsJson) as List)
+        .map((e) => UserFriendlist.fromJson(e))
+        .toList();
+    return sentRequests.map((request) => request.requestedTo!).toList();
+  }
+
+  Future<List<int>> _getReceivedrequest(int userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final receivejson = prefs.getString(Dataloader.receiverequestkey) ?? '[]';
+    List<UserFriendlist> receivelist = (jsonDecode(receivejson) as List)
+        .map((e) => UserFriendlist.fromJson(e))
+        .toList();
+    return receivelist.map((e) => e.requestedBy!).toList();
+  }
+
+//exclusion
+  Future<List<UserDetail>> _getNonFriendUsers(int userId) async {
+    // Fetch all users
+    Dataloader dataloader = Dataloader();
+    List<UserDetail> allUsers = await dataloader.getuserdetail();
+
+    // Fetch friends and sent requests
+    List<int> friends = await _getUserFriends(userId);
+    List<int> sentRequests = await _getSentRequests(userId);
+    List<int> receiveRequest = await _getReceivedrequest(userId);
+
+    // Exclude friends and those to whom a request has been sent
+    List<UserDetail> nonFriendUsers = allUsers.where((user) {
+      return user.id != userId &&
+          !friends.contains(user.id) &&
+          !sentRequests.contains(user.id) &&
+          !receiveRequest.contains(user.id);
+    }).toList();
+
+    return nonFriendUsers;
   }
 
   Future<void> _loaduserPost() async {
@@ -641,7 +698,10 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                                     MaterialPageRoute(
                                         builder: (context) =>
                                             ReceivedFriendRequestsScreen(
-                                                userId: userDetail!.id!)
+                                              userId: userDetail!.id!,
+                                              onRequestRejected:
+                                                  _updaterequestlist,
+                                            )
                                         // FriendRequest(
                                         //   loggedInUserId: userDetail!.id!,
                                         // ),

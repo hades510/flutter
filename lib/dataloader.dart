@@ -242,24 +242,72 @@ class Dataloader {
     return requests.where((request) => request.requestedBy == userId).toList();
   }
 
-  //for getting the logged in users friendlist
-  Future<List<UserFriendlist>> getLoggedFriendlist(int userid) async {
-    final prefs = await SharedPreferences.getInstance();
-    final friendjson = prefs.getString('user_${userid}_friends') ?? '[]';
 
-    List jsonList = jsonDecode(friendjson);
-    //converting list of maps into list of UserFriednlist obj
-    List<UserFriendlist> friendlist =
-        jsonList.map((e) => UserFriendlist.fromJson(e)).toList();
 
-    //filter the list for friends of the logged in user
-    List<UserFriendlist> list = friendlist
-        .where((element) =>
-            element.requestedTo == userid || element.requestedBy == userid)
-        .toList();
+  //specifically used for updating the list of send request
+  Future<void> updateSentRequest(int senderId, int receiverId, {bool isRejected = false}) async {
+  final prefs = await SharedPreferences.getInstance();
 
-    return list;
+  // Load and update the sent requests for the sender
+  final sentRequestsJson = prefs.getString(sendrequestkey) ?? '[]';
+  List<UserFriendlist> sentRequests = (jsonDecode(sentRequestsJson) as List)
+      .map((e) => UserFriendlist.fromJson(e))
+      .toList();
+  
+  sentRequests.removeWhere((request) => request.requestedTo == receiverId && request.requestedBy == senderId);
+
+  if (!isRejected) {
+    sentRequests.add(UserFriendlist(
+      requestedBy: senderId,
+      requestedTo: receiverId,
+      hasNewRequest: false,
+      hasRemoved: false,
+      hasNewRequestAccepted: true,
+      createdAt: DateTime.now().toIso8601String(),
+    ));
   }
+
+  await prefs.setString(sendrequestkey, jsonEncode(sentRequests));
+
+  // Load and update the received requests for the receiver
+  final receivedRequestsJson = prefs.getString(receiverequestkey) ?? '[]';
+  List<UserFriendlist> receivedRequests = (jsonDecode(receivedRequestsJson) as List)
+      .map((e) => UserFriendlist.fromJson(e))
+      .toList();
+
+  receivedRequests.removeWhere((request) => request.requestedBy == senderId && request.requestedTo == receiverId);
+
+  if (!isRejected) {
+    receivedRequests.add(UserFriendlist(
+      requestedBy: senderId,
+      requestedTo: receiverId,
+      hasNewRequest: false,
+      hasNewRequestAccepted: true,
+      hasRemoved: false,
+    ));
+  }
+
+  await prefs.setString(receiverequestkey, jsonEncode(receivedRequests));
+}
+
+  //for getting the logged in users friendlist
+  // Future<List<UserFriendlist>> getLoggedFriendlist(int userid) async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final friendjson = prefs.getString('user_${userid}_friends') ?? '[]';
+
+  //   List jsonList = jsonDecode(friendjson);
+  //   //converting list of maps into list of UserFriednlist obj
+  //   List<UserFriendlist> friendlist =
+  //       jsonList.map((e) => UserFriendlist.fromJson(e)).toList();
+
+  //   //filter the list for friends of the logged in user
+  //   List<UserFriendlist> list = friendlist
+  //       .where((element) =>
+  //           element.requestedTo == userid || element.requestedBy == userid)
+  //       .toList();
+
+  //   return list;
+  // }
 
 //for getting friendlist
 // Future<List<UserFriendlist>>

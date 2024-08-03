@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,6 +13,7 @@ import 'package:socialapp/feeds/newsfeed.dart';
 import 'package:socialapp/friendlist/onlyfriendlist.dart';
 // import 'package:socialapp/login.dart';
 import 'package:socialapp/models/user_detail.dart';
+import 'package:socialapp/models/user_friendlist.dart';
 import 'package:socialapp/profiles/surface_profile.dart';
 import 'package:socialapp/signup.dart';
 
@@ -53,6 +57,9 @@ class _HomeState extends State<Home> {
       userDetail = detail;
     });
   }
+  //creating a common parent screen for handling the callback of recevied request
+
+  
 
   @override
   Widget build(BuildContext context) {

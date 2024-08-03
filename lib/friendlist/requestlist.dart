@@ -12,8 +12,10 @@ import '../models/user_friendlist.dart';
 class ReceivedFriendRequestsScreen extends StatefulWidget {
   //received list
   final int userId; // logged user id
+  final VoidCallback onRequestRejected;
 
-  const ReceivedFriendRequestsScreen({super.key, required this.userId});
+  const ReceivedFriendRequestsScreen(
+      {super.key, required this.userId, required this.onRequestRejected});
 
   @override
   State<ReceivedFriendRequestsScreen> createState() =>
@@ -75,7 +77,8 @@ class _ReceivedFriendRequestsScreenState
 
     await prefs.setString(
         Dataloader.receiverequestkey, jsonEncode(requestreceived));
-    //update the friend list(i think sendkeylist)
+
+    //update the send request list
     final sentrequestjson = prefs.getString(Dataloader.sendrequestkey) ?? '[]';
     List jsonlist = jsonDecode(sentrequestjson);
     List<UserFriendlist> requestsend =
@@ -97,7 +100,8 @@ class _ReceivedFriendRequestsScreenState
       //refresh
     });
   }
-//update both the list 
+
+//update both the list used on accept only
   void _updateFriendLists(int user1Id, int user2Id) async {
     final prefs = await SharedPreferences.getInstance();
 
@@ -133,24 +137,28 @@ class _ReceivedFriendRequestsScreenState
 
     await prefs.setString(
         Dataloader.receiverequestkey, jsonEncode(requestreceived));
+    await Dataloader().updateSentRequest(
+        request.requestedBy!, request.requestedTo!,
+        isRejected: true);
+    widget.onRequestRejected();
 
     //added steps which worked
-    final sentRequestJson = prefs.getString(Dataloader.sendrequestkey) ?? '[]';
-    List jsonListSent = jsonDecode(sentRequestJson);
-    List<UserFriendlist> requestSent =
-        jsonListSent.map((e) => UserFriendlist.fromJson(e)).toList();
+    // final sentRequestJson = prefs.getString(Dataloader.sendrequestkey) ?? '[]';
+    // List jsonListSent = jsonDecode(sentRequestJson);
+    // List<UserFriendlist> requestSent =
+    //     jsonListSent.map((e) => UserFriendlist.fromJson(e)).toList();
 
-    final requestIndex = requestSent.indexWhere((element) =>
-        element.requestedTo == request.requestedTo &&
-        element.requestedBy == request.requestedBy);
+    // final requestIndex = requestSent.indexWhere((element) =>
+    //     element.requestedTo == request.requestedTo &&
+    //     element.requestedBy == request.requestedBy);
 
-    if (requestIndex != -1) {
-      // Update status of the sent request
-      requestSent[requestIndex] = requestSent[requestIndex].copyWith(
-        hasRemoved: true,
-      );
-      await prefs.setString(Dataloader.sendrequestkey, jsonEncode(requestSent));
-    }
+    // if (requestIndex != -1) {
+    //   // Update status of the sent request
+    //   requestSent[requestIndex] = requestSent[requestIndex].copyWith(
+    //     hasRemoved: true,
+    //   );
+    //   await prefs.setString(Dataloader.sendrequestkey, jsonEncode(requestSent));
+    // }
 
     setState(() {
       //refreshing

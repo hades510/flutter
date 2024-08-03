@@ -108,7 +108,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/dataloader.dart';
-import 'package:socialapp/friendlist/requestlist.dart';
 import 'package:socialapp/models/user_detail.dart';
 import 'package:socialapp/models/user_friendlist.dart';
 
@@ -124,7 +123,6 @@ class UserListScreen extends StatefulWidget {
 class _UserListScreenState extends State<UserListScreen> {
   late Future<List<UserDetail>> _nonFriendUsersFuture;
   Dataloader dataloader = Dataloader();
-
   @override
   void initState() {
     super.initState();
@@ -136,14 +134,22 @@ class _UserListScreenState extends State<UserListScreen> {
       _nonFriendUsersFuture = _getNonFriendUsers(widget.loggedInUserId);
     });
   }
-//current user friendlist
+
+  void _refresh() {
+    setState(() {
+      _nonFriendUsersFuture = _getNonFriendUsers(widget.loggedInUserId);
+    });
+  }
+
+//current user friendlist for exclusion
   Future<List<int>> _getUserFriends(int userId) async {
     final prefs = await SharedPreferences.getInstance();
     final friendsJson = prefs.getString('user_${userId}_friends') ?? '[]';
     List<int> friendIds = List<int>.from(jsonDecode(friendsJson));
     return friendIds;
   }
-//current users request list
+
+//current users request list for wxclusion
   Future<List<int>> _getSentRequests(int userId) async {
     final prefs = await SharedPreferences.getInstance();
     final sentRequestsJson = prefs.getString(Dataloader.sendrequestkey) ?? '[]';
@@ -153,20 +159,32 @@ class _UserListScreenState extends State<UserListScreen> {
     return sentRequests.map((request) => request.requestedTo!).toList();
   }
 
+  Future<List<int>> _getReceivedrequest(int userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final receivejson = prefs.getString(Dataloader.receiverequestkey) ?? '[]';
+    List<UserFriendlist> receivelist = (jsonDecode(receivejson) as List)
+        .map((e) => UserFriendlist.fromJson(e))
+        .toList();
+    return receivelist.map((e) => e.requestedBy!).toList();
+  }
+
+//exclusion
   Future<List<UserDetail>> _getNonFriendUsers(int userId) async {
     // Fetch all users
     Dataloader dataloader = Dataloader();
     List<UserDetail> allUsers = await dataloader.getuserdetail();
-    
+
     // Fetch friends and sent requests
     List<int> friends = await _getUserFriends(userId);
     List<int> sentRequests = await _getSentRequests(userId);
+    List<int> receiveRequest = await _getReceivedrequest(userId);
 
     // Exclude friends and those to whom a request has been sent
     List<UserDetail> nonFriendUsers = allUsers.where((user) {
       return user.id != userId &&
           !friends.contains(user.id) &&
-          !sentRequests.contains(user.id);
+          !sentRequests.contains(user.id) &&
+          !receiveRequest.contains(user.id);
     }).toList();
 
     return nonFriendUsers;
@@ -217,6 +235,7 @@ class _UserListScreenState extends State<UserListScreen> {
                           widget.loggedInUserId, nonFriendUsers[index].id!);
                       print(nonFriendUsers[index].id);
                       print(widget.loggedInUserId);
+                      _refresh();
                       //used in callback
                     },
                     child: Text('Send Request'),
