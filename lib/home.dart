@@ -4,8 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/courses/available%20courses.dart';
 import 'package:socialapp/dataloader.dart';
 import 'package:socialapp/dumbscreen.dart';
-import 'package:socialapp/friendlist/dumbpage.dart';
-import 'package:socialapp/friendlist/friendpage.dart';
+import 'package:socialapp/friendlist/sendlist.dart';
+import 'package:socialapp/friendlist/requestlist.dart';
 import 'package:socialapp/feeds/newsfeed.dart';
 import 'package:socialapp/friendlist/onlyfriendlist.dart';
 // import 'package:socialapp/login.dart';
@@ -32,7 +32,7 @@ class _HomeState extends State<Home> {
         dataloader); //after splash screen it is being called, it is again loaded when loffed in,again called when logged out
     super.initState();
     loadData();
-    _loaduserDetail();
+    _loaduserDetail(); //logged user
   }
 
   void loadData() async {
@@ -47,6 +47,7 @@ class _HomeState extends State<Home> {
   }
 
   void _loaduserDetail() async {
+    //gets logged user
     UserDetail? detail = await auth.getloggedinuser();
     setState(() {
       userDetail = detail;
@@ -148,7 +149,7 @@ class _HomeState extends State<Home> {
                   ?
                   // FriendRequestsScreen(userId: userDetail?.id ?? 1)
                   Friendlist()
-                  : OnlyFriendlist(loggedInUserId: userDetail!.id!),
+                  : FriendsListScreen(loggedInUserId: userDetail!.id!),
               // FriendRequest(loggedInUserId: userDetail!.id!),
               AvailableCourses(),
               SurfaceProfile(),

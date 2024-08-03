@@ -45,4 +45,27 @@ class UserFriendlist {
     data['has_removed'] = hasRemoved;
     return data;
   }
+  UserFriendlist copyWith({
+    int? userListId,
+    int? userId,
+    int? friendId,
+    int? requestedTo,
+    int? requestedBy,
+    String? createdAt,
+    bool? hasNewRequest,
+    bool? hasNewRequestAccepted,
+    bool? hasRemoved,
+  }) {
+    return UserFriendlist(
+      userListId: userListId ?? this.userListId,
+      userId: userId ?? this.userId,
+      friendId: friendId ?? this.friendId,
+      requestedTo: requestedTo ?? this.requestedTo,
+      requestedBy: requestedBy ?? this.requestedBy,
+      createdAt: createdAt ?? this.createdAt,
+      hasNewRequest: hasNewRequest ?? this.hasNewRequest,
+      hasNewRequestAccepted: hasNewRequestAccepted ?? this.hasNewRequestAccepted,
+      hasRemoved: hasRemoved ?? this.hasRemoved,
+    );
+  }
 }

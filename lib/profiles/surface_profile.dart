@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/authenthication/login_auth.dart';
 import 'package:socialapp/dataloader.dart';
 import 'package:socialapp/feeds/Albumscreen.dart';
-import 'package:socialapp/friendlist/friendpage.dart';
+import 'package:socialapp/friendlist/requestlist.dart';
 import 'package:socialapp/friendlist/sendrequest.dart';
 import 'package:socialapp/home.dart';
 import 'package:socialapp/login.dart';
@@ -639,16 +639,18 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                                 onTap: () => Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => ReceivedFriendRequestsScreen(userId: userDetail!.id!)
-                                      // FriendRequest(
-                                      //   loggedInUserId: userDetail!.id!,
-                                      // ),
-                                    )),
+                                        builder: (context) =>
+                                            ReceivedFriendRequestsScreen(
+                                                userId: userDetail!.id!)
+                                        // FriendRequest(
+                                        //   loggedInUserId: userDetail!.id!,
+                                        // ),
+                                        )),
                                 leading: const Icon(
                                   Icons.people_alt,
                                   color: Colors.white,
                                 ),
-                                title: const Text('Friendlist',
+                                title: const Text('Requests',
                                     style: TextStyle(color: Colors.white)),
                               ),
                             ),
@@ -672,7 +674,7 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                                   Icons.person_add,
                                   color: Colors.white,
                                 ),
-                                title: const Text('Friend Req',
+                                title: const Text('Send Req.',
                                     style: TextStyle(color: Colors.white)),
                               ),
                             ),

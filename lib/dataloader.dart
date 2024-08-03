@@ -33,6 +33,7 @@ class Dataloader {
   static String userdetailkey = 'userdetail';
   static String userpostkey = 'userpost';
   static String userdfriendlistkey = 'userfriend';
+  static String friendlistkey = 'friendlist';
   static String courseskey = 'courses';
   static String coursebykey = 'coursebycategories';
   static String coursescategorykey = 'coursescategory';
@@ -168,7 +169,7 @@ class Dataloader {
 
   Future<List<UserFriendlist>> geloggedinrequest(int id) async {
     final prefs = await SharedPreferences.getInstance();
-    String? request = prefs.getString(userdfriendlistkey);
+    String? request = prefs.getString(userdfriendlistkey); //loads the json file
     if (request != null) {
       List requestlist = json.decode(request);
       return requestlist
@@ -218,6 +219,7 @@ class Dataloader {
   }
 
   Future<List<UserFriendlist>> getreceiverequest(int userId) async {
+    //gives the request reeived from other user
     final prefs = await SharedPreferences.getInstance();
     final jsonString = prefs.getString(receiverequestkey) ?? '[]';
     List jsonlist = jsonDecode(jsonString);
@@ -228,8 +230,10 @@ class Dataloader {
   }
 
   Future<List<UserFriendlist>> getSentFriendRequests(int userId) async {
+    //gives the list of request send by the user
     final prefs = await SharedPreferences.getInstance();
     final jsonString = prefs.getString(sendrequestkey) ?? '[]';
+
     final List<dynamic> jsonList = json.decode(jsonString);
     final List<UserFriendlist> requests =
         jsonList.map((jsonItem) => UserFriendlist.fromJson(jsonItem)).toList();
@@ -238,22 +242,27 @@ class Dataloader {
     return requests.where((request) => request.requestedBy == userId).toList();
   }
 
-  Future<void> saverequest(List<UserFriendlist> request) async {
+  //for getting the logged in users friendlist
+  Future<List<UserFriendlist>> getLoggedFriendlist(int userid) async {
     final prefs = await SharedPreferences.getInstance();
-    final requestjson = jsonEncode(request.map((e) => e.toJson()).toList());
-    await prefs.setString('requests', requestjson);
+    final friendjson = prefs.getString('user_${userid}_friends') ?? '[]';
+
+    List jsonList = jsonDecode(friendjson);
+    //converting list of maps into list of UserFriednlist obj
+    List<UserFriendlist> friendlist =
+        jsonList.map((e) => UserFriendlist.fromJson(e)).toList();
+
+    //filter the list for friends of the logged in user
+    List<UserFriendlist> list = friendlist
+        .where((element) =>
+            element.requestedTo == userid || element.requestedBy == userid)
+        .toList();
+
+    return list;
   }
 
-  Future<List<UserFriendlist>> loadrequest() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? requestjson = prefs.getString('requests');
-    if (requestjson != null) {
-      List requestlist = jsonDecode(requestjson);
-      return requestlist.map((e) => UserFriendlist.fromJson(e)).toList();
-    }
-    return [];
-  }
-
+//for getting friendlist
+// Future<List<UserFriendlist>>
   Future<List<Courses>> getCourse() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? courses = prefs.getString(courseskey);

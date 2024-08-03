@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../authenthication/login_auth.dart';
 import '../dataloader.dart';
@@ -8,7 +10,8 @@ import '../models/user_detail.dart';
 import '../models/user_friendlist.dart';
 
 class ReceivedFriendRequestsScreen extends StatefulWidget {
-  final int userId;
+  //received list
+  final int userId; // logged user id
 
   const ReceivedFriendRequestsScreen({super.key, required this.userId});
 
@@ -21,6 +24,7 @@ class _ReceivedFriendRequestsScreenState
     extends State<ReceivedFriendRequestsScreen> {
   List<UserDetail> users = [];
   List<UserFriendlist> requestlist = [];
+  List<UserDetail> acceptedlist = [];
   late Auth auth;
   UserDetail? userDetail;
   @override
@@ -40,12 +44,116 @@ class _ReceivedFriendRequestsScreenState
 
   Future<void> _loaddata() async {
     Dataloader dataloader = Dataloader();
-    List<UserDetail> userDetail = await dataloader.getuserdetail();
+    List<UserDetail> userDetail = await dataloader
+        .getuserdetail(); //getting all the details of the user basically for displaying the user
     List<UserFriendlist> flist =
         await dataloader.getreceiverequest(widget.userId);
+    // List<UserDetail> accepted =
+    //     await dataloader.getAcceptedFriends(widget.userId);
     setState(() {
       users = userDetail;
       requestlist = flist;
+      // acceptedlist = accepted;
+    });
+  }
+
+  void _accept(UserFriendlist request) async {
+    Dataloader dataloader = Dataloader();
+    //handling if accepted
+    //update the shared preferences
+    final prefs = await SharedPreferences.getInstance();
+
+    //if accepted remove it from list of requst
+    final requestJson = prefs.getString(Dataloader.receiverequestkey) ?? '[]';
+    List jsonList = jsonDecode(requestJson);
+    List<UserFriendlist> requestreceived =
+        jsonList.map((e) => UserFriendlist.fromJson(e)).toList();
+
+    requestreceived.removeWhere((element) =>
+        element.requestedBy == request.requestedBy &&
+        element.requestedTo == request.requestedTo);
+
+    await prefs.setString(
+        Dataloader.receiverequestkey, jsonEncode(requestreceived));
+    //update the friend list(i think sendkeylist)
+    final sentrequestjson = prefs.getString(Dataloader.sendrequestkey) ?? '[]';
+    List jsonlist = jsonDecode(sentrequestjson);
+    List<UserFriendlist> requestsend =
+        jsonlist.map((e) => UserFriendlist.fromJson(e)).toList();
+
+    final requestindex = requestsend.indexWhere((element) =>
+        element.requestedTo == request.requestedTo &&
+        element.requestedBy == request.requestedBy);
+
+    if (requestindex != -1) {
+      //empty
+      requestsend[requestindex] =
+          requestsend[requestindex].copyWith(hasNewRequestAccepted: true);
+      await prefs.setString(Dataloader.sendrequestkey, jsonEncode(requestsend));
+    }
+    _updateFriendLists(request.requestedBy!, request.requestedTo!);
+
+    setState(() {
+      //refresh
+    });
+  }
+//update both the list 
+  void _updateFriendLists(int user1Id, int user2Id) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Retrieve existing friend lists
+    final user1FriendsJson = prefs.getString('user_${user1Id}_friends') ?? '[]';
+    List jsonListUser1 = jsonDecode(user1FriendsJson);
+    List<int> user1Friends = List<int>.from(jsonListUser1);
+
+    final user2FriendsJson = prefs.getString('user_${user2Id}_friends') ?? '[]';
+    List jsonListUser2 = jsonDecode(user2FriendsJson);
+    List<int> user2Friends = List<int>.from(jsonListUser2);
+
+    // Add each other to friend lists
+    user1Friends.add(user2Id);
+    user2Friends.add(user1Id);
+
+    // Save updated friend lists
+    await prefs.setString('user_${user1Id}_friends', jsonEncode(user1Friends));
+    await prefs.setString('user_${user2Id}_friends', jsonEncode(user2Friends));
+  }
+
+  void _reject(UserFriendlist request) async {
+    final prefs = await SharedPreferences.getInstance();
+    //remove from list of request
+    final requestjson = prefs.getString(Dataloader.receiverequestkey) ?? '[]';
+    List jsonList = jsonDecode(requestjson);
+    List<UserFriendlist> requestreceived =
+        jsonList.map((e) => UserFriendlist.fromJson(e)).toList();
+
+    requestreceived.removeWhere((element) =>
+        element.requestedBy == request.requestedBy &&
+        element.requestedTo == request.requestedTo);
+
+    await prefs.setString(
+        Dataloader.receiverequestkey, jsonEncode(requestreceived));
+
+    //added steps which worked
+    final sentRequestJson = prefs.getString(Dataloader.sendrequestkey) ?? '[]';
+    List jsonListSent = jsonDecode(sentRequestJson);
+    List<UserFriendlist> requestSent =
+        jsonListSent.map((e) => UserFriendlist.fromJson(e)).toList();
+
+    final requestIndex = requestSent.indexWhere((element) =>
+        element.requestedTo == request.requestedTo &&
+        element.requestedBy == request.requestedBy);
+
+    if (requestIndex != -1) {
+      // Update status of the sent request
+      requestSent[requestIndex] = requestSent[requestIndex].copyWith(
+        hasRemoved: true,
+      );
+      await prefs.setString(Dataloader.sendrequestkey, jsonEncode(requestSent));
+    }
+
+    setState(() {
+      //refreshing
     });
   }
 
@@ -77,7 +185,7 @@ class _ReceivedFriendRequestsScreenState
               itemBuilder: (context, index) {
                 return friendRequests.isNotEmpty
                     ? _buildRequestItem(friendRequests[index])
-                    :const Text('No request');
+                    : const Text('No request');
               },
             );
           }
@@ -87,6 +195,7 @@ class _ReceivedFriendRequestsScreenState
   }
 
   Future _fetchFriendRequests() async {
+    //loads the list
     Dataloader dataloader = Dataloader();
     return dataloader.getreceiverequest(widget.userId);
   }
@@ -108,11 +217,37 @@ class _ReceivedFriendRequestsScreenState
                   FileImage(File(detail.profileImage?.imagePath ?? '')),
             ),
       title: Text(detail.basicInfo!.name!),
+      subtitle: Text('${detail.id}'),
+      trailing: Row(
+        /// The above code snippet is written in Dart and it is setting the `mainAxisSize` property to
+        /// `MainAxisSize.min`. This property is typically used in Flutter widgets to control the size of
+        /// the main axis of a widget, such as a Row or Column. Setting it to `MainAxisSize.min` means
+        /// that the widget should take up the minimum amount of space along the main axis.
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+              onPressed: () {
+                _accept(request);
+              },
+              icon: const Icon(
+                Icons.check,
+                color: Colors.green,
+              )),
+          IconButton(
+              onPressed: () {
+                _reject(request);
+              },
+              icon: const Icon(
+                Icons.cancel,
+                color: Colors.red,
+              )),
+        ],
+      ),
     );
   }
 }
 
-// import 'dart:convert'; 
+// import 'dart:convert';
 // import 'dart:io';
 
 // import 'package:flutter/material.dart';
@@ -365,4 +500,4 @@ class _ReceivedFriendRequestsScreenState
 //     }
 //   }
 // }
-// 
+//
