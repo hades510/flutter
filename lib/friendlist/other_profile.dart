@@ -38,54 +38,71 @@ class _OtherProfilesState extends State<OtherProfiles> {
                     height: 200,
                     width: double.infinity,
                     child: GestureDetector(
-                      onTap: () {
-                        // print('open pcitrue');
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ImageFull(
-                              imagefile: File(
-                                  widget.userDetail.coverImage!.imagepath!),
-                              text: 'Cover picture',
-                            ), //here i passed the userdetail used to display the current logged profile detail
-                          ),
-                        );
-                      },
-                      child: widget.userDetail.coverImage!.imagepath != null
-                          ? Image.file(
-                              File(widget.userDetail.coverImage!.imagepath!),
-                              fit: BoxFit.fill,
-                            )
-                          : widget.userDetail!.coverImage!.isNetworkUrl!
-                              ? Image.network(
-                                  widget.userDetail!.coverImage!.imagepath!,
-                                  fit: BoxFit.cover,
+                        onTap: () {
+                          (widget.userDetail.coverImage?.isNetworkUrl ?? false)
+                              ?
+                              // print('open pcitrue');
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ImageFull(
+                                      networkurl: widget
+                                          .userDetail.coverImage!.imagepath!,
+                                      text: 'Cover picture',
+                                    ), //here i passed the userdetail used to display the current logged profile detail
+                                  ),
                                 )
-                              : const SizedBox(),
-                    ),
+                              : Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ImageFull(
+                                      text: 'Cover Picture',
+                                      imagefile: File(widget
+                                          .userDetail.coverImage!.imagepath!),
+                                    ),
+                                  ));
+                        },
+                        child: (widget.userDetail.coverImage?.isNetworkUrl ??
+                                false)
+                            ? Image.network(
+                                widget.userDetail.coverImage!.imagepath!)
+                            : Image.file(File(
+                                widget.userDetail.coverImage!.imagepath!))),
                   ),
                   Positioned(
                     left: 5,
                     bottom: 0,
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ImageFull(
-                              imagefile: File(
-                                  widget.userDetail.profileImage!.imagePath!),
-                              text: 'Profile Picture',
-                            ),
-                          ),
-                        );
+                        (widget.userDetail.profileImage?.isNetworkUrl ?? false)
+                            ?
+                            // print('open pcitrue');
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ImageFull(
+                                    networkurl: widget
+                                        .userDetail.profileImage!.imagePath,
+                                    text: 'Profile picture',
+                                  ), //here i passed the userdetail used to display the current logged profile detail
+                                ),
+                              )
+                            : Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ImageFull(
+                                    text: 'Profile Picture',
+                                    imagefile: File(widget
+                                        .userDetail.profileImage!.imagePath!),
+                                  ),
+                                ));
                       },
                       child: (widget.userDetail.profileImage?.isNetworkUrl ??
                               false)
                           ? CircleAvatar(
                               radius: 80,
                               backgroundImage: NetworkImage(
-                                  widget.userDetail!.profileImage!.imagePath!),
+                                  widget.userDetail.profileImage!.imagePath!),
                             )
                           : CircleAvatar(
                               radius: 80,

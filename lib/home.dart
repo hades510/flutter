@@ -59,8 +59,6 @@ class _HomeState extends State<Home> {
   }
   //creating a common parent screen for handling the callback of recevied request
 
-  
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -101,26 +99,26 @@ class _HomeState extends State<Home> {
                         const SizedBox(
                           width: 15,
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      SentFriendRequestsScreen(
-                                          userId: userDetail!.id!),
-                                ));
-                          },
-                          child: const CircleAvatar(
-                            backgroundColor: Colors.black,
-                            radius: 15,
-                            child: Icon(
-                              Icons.search,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                          ),
-                        ),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     Navigator.push(
+                        //         context,
+                        //         MaterialPageRoute(
+                        //           builder: (context) =>
+                        //               SentFriendRequestsScreen(
+                        //                   userId: userDetail!.id!),
+                        //         ));
+                        //   },
+                        //   child: const CircleAvatar(
+                        //     backgroundColor: Colors.black,
+                        //     radius: 15,
+                        //     child: Icon(
+                        //       Icons.search,
+                        //       color: Colors.white,
+                        //       size: 20,
+                        //     ),
+                        //   ),
+                        // ),
                         const SizedBox(
                           width: 15,
                         ),

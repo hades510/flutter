@@ -145,90 +145,91 @@ class _FullImageScreenState extends State<FullImageScreen> {
                       (widget.post!.postId! > 10)
                           ? Image.file(File(widget.post!.image![index].url!))
                           : Image.network(widget.post!.image![index].url!),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          IconButton(
-                            tooltip: 'Like Image',
-                            onPressed: () async {
-                              setState(() {
-                                if (userpost[index].image![index].isLiked ??
-                                    false) {
-                                  userpost[index].image![index].isLiked = false;
-                                  userpost[index].image![index].likeCount =
-                                      (userpost[index]
-                                                  .image![index]
-                                                  .likeCount ??
-                                              0) -
-                                          1;
-                                } else {
-                                  userpost[index].image![index].isLiked = true;
-                                  userpost[index].image![index].isDisliked =
-                                      false;
-                                  userpost[index].image![index].likeCount =
-                                      (userpost[index]
-                                                  .image![index]
-                                                  .likeCount ??
-                                              0) +
-                                          1;
-                                }
-                              });
-                              await _updateImageLikeDislike(
-                                widget.post!.postId!,
-                                userpost[index].image![index].id!,
-                                !(userpost[index].image![index].isLiked ??
-                                    false),
-                                userpost[index].image![index].isDisliked ??
-                                    false,
-                              );
-                            },
-                            icon: userpost[index].image![index].isLiked == true
-                                ? const Icon(Icons.thumb_up_alt)
-                                : const Icon(Icons.thumb_up_alt_outlined),
-                          ),
-                          IconButton(
-                            tooltip: 'Dislike Image',
-                            onPressed: () async {
-                              setState(() {
-                                if (userpost[index].image![index].isDisliked ??
-                                    false) {
-                                  userpost[index].image![index].isDisliked =
-                                      false;
-                                  userpost[index].image![index].likeCount =
-                                      (userpost[index]
-                                                  .image![index]
-                                                  .likeCount ??
-                                              0) +
-                                          1;
-                                } else {
-                                  userpost[index].image![index].isDisliked =
-                                      true;
-                                  userpost[index].image![index].isLiked = false;
-                                  userpost[index].image![index].likeCount =
-                                      (userpost[index]
-                                                  .image![index]
-                                                  .likeCount ??
-                                              0) -
-                                          1;
-                                }
-                              });
-                              await _updateImageLikeDislike(
-                                widget.post!.postId!,
-                                userpost[index].image![index].id!,
-                                false,
-                                !(userpost[index].image![index].isDisliked ??
-                                    false),
-                              );
-                            },
-                            icon:
-                                userpost[index].image![index].isDisliked == true
-                                    ? const Icon(Icons.thumb_down_alt)
-                                    : const Icon(Icons.thumb_down_alt_outlined),
-                          ),
-                          Text(
-                              'Likes ${userpost[index].image![index].likeCount ?? 0}'),
-                        ],
-                      ),
+                      const Divider(),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      //   children: [
+                      //     IconButton(
+                      //       tooltip: 'Like Image',
+                      //       onPressed: () async {
+                      //         setState(() {
+                      //           if (userpost[index].image![index].isLiked ??
+                      //               false) {
+                      //             userpost[index].image![index].isLiked = false;
+                      //             userpost[index].image![index].likeCount =
+                      //                 (userpost[index]
+                      //                             .image![index]
+                      //                             .likeCount ??
+                      //                         0) -
+                      //                     1;
+                      //           } else {
+                      //             userpost[index].image![index].isLiked = true;
+                      //             userpost[index].image![index].isDisliked =
+                      //                 false;
+                      //             userpost[index].image![index].likeCount =
+                      //                 (userpost[index]
+                      //                             .image![index]
+                      //                             .likeCount ??
+                      //                         0) +
+                      //                     1;
+                      //           }
+                      //         });
+                      //         await _updateImageLikeDislike(
+                      //           widget.post!.postId!,
+                      //           userpost[index].image![index].id!,
+                      //           !(userpost[index].image![index].isLiked ??
+                      //               false),
+                      //           userpost[index].image![index].isDisliked ??
+                      //               false,
+                      //         );
+                      //       },
+                      //       icon: userpost[index].image![index].isLiked == true
+                      //           ? const Icon(Icons.thumb_up_alt)
+                      //           : const Icon(Icons.thumb_up_alt_outlined),
+                      //     ),
+                      //     IconButton(
+                      //       tooltip: 'Dislike Image',
+                      //       onPressed: () async {
+                      //         setState(() {
+                      //           if (userpost[index].image![index].isDisliked ??
+                      //               false) {
+                      //             userpost[index].image![index].isDisliked =
+                      //                 false;
+                      //             userpost[index].image![index].likeCount =
+                      //                 (userpost[index]
+                      //                             .image![index]
+                      //                             .likeCount ??
+                      //                         0) +
+                      //                     1;
+                      //           } else {
+                      //             userpost[index].image![index].isDisliked =
+                      //                 true;
+                      //             userpost[index].image![index].isLiked = false;
+                      //             userpost[index].image![index].likeCount =
+                      //                 (userpost[index]
+                      //                             .image![index]
+                      //                             .likeCount ??
+                      //                         0) -
+                      //                     1;
+                      //           }
+                      //         });
+                      //         await _updateImageLikeDislike(
+                      //           widget.post!.postId!,
+                      //           userpost[index].image![index].id!,
+                      //           false,
+                      //           !(userpost[index].image![index].isDisliked ??
+                      //               false),
+                      //         );
+                      //       },
+                      //       icon:
+                      //           userpost[index].image![index].isDisliked == true
+                      //               ? const Icon(Icons.thumb_down_alt)
+                      //               : const Icon(Icons.thumb_down_alt_outlined),
+                      //     ),
+                      //     Text(
+                      //         'Likes ${userpost[index].image![index].likeCount ?? 0}'),
+                      //   ],
+                      // ),
                     ],
                   );
                 },
@@ -240,67 +241,67 @@ class _FullImageScreenState extends State<FullImageScreen> {
     );
   }
 
-  Widget _buildImageTile(Postedphoto image) {
-    return Column(
-      children: [
-        (widget.post!.postId! > 10)
-            ? Image.file(File(image.url!))
-            : Image.network(image.url!),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-              tooltip: 'Like Image',
-              onPressed: () async {
-                setState(() {
-                  if (image.isLiked ?? false) {
-                    image.isLiked = false;
-                    image.likeCount = (image.likeCount ?? 0) - 1;
-                  } else {
-                    image.isLiked = true;
-                    image.isDisliked = false;
-                    image.likeCount = (image.likeCount ?? 0) + 1;
-                  }
-                });
-                await _updateImageLikeDislike(
-                  widget.post!.postId!,
-                  image.id!,
-                  !(image.isLiked ?? false),
-                  image.isDisliked ?? false,
-                );
-              },
-              icon: image.isLiked == true
-                  ? const Icon(Icons.thumb_up_alt)
-                  : const Icon(Icons.thumb_up_alt_outlined),
-            ),
-            IconButton(
-              tooltip: 'Dislike Image',
-              onPressed: () async {
-                setState(() {
-                  if (image.isDisliked ?? false) {
-                    image.isDisliked = false;
-                    image.likeCount = (image.likeCount ?? 0) + 1;
-                  } else {
-                    image.isDisliked = true;
-                    image.isLiked = false;
-                    image.likeCount = (image.likeCount ?? 0) - 1;
-                  }
-                });
-                await _updateImageLikeDislike(
-                  widget.post!.postId!,
-                  image.id!,
-                  false,
-                  !(image.isDisliked ?? false),
-                );
-              },
-              icon: image.isDisliked == true
-                  ? const Icon(Icons.thumb_down_alt)
-                  : const Icon(Icons.thumb_down_alt_outlined),
-            ),
-            Text('Likes ${image.likeCount ?? 0}'),
-          ],
-        ),
-      ],
-    );
-  }
+  // Widget _buildImageTile(Postedphoto image) {
+  //   return Column(
+  //     children: [
+  //       (widget.post!.postId! > 10)
+  //           ? Image.file(File(image.url!))
+  //           : Image.network(image.url!),
+  //       Row(
+  //         mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //         children: [
+  //           IconButton(
+  //             tooltip: 'Like Image',
+  //             onPressed: () async {
+  //               setState(() {
+  //                 if (image.isLiked ?? false) {
+  //                   image.isLiked = false;
+  //                   image.likeCount = (image.likeCount ?? 0) - 1;
+  //                 } else {
+  //                   image.isLiked = true;
+  //                   image.isDisliked = false;
+  //                   image.likeCount = (image.likeCount ?? 0) + 1;
+  //                 }
+  //               });
+  //               await _updateImageLikeDislike(
+  //                 widget.post!.postId!,
+  //                 image.id!,
+  //                 !(image.isLiked ?? false),
+  //                 image.isDisliked ?? false,
+  //               );
+  //             },
+  //             icon: image.isLiked == true
+  //                 ? const Icon(Icons.thumb_up_alt)
+  //                 : const Icon(Icons.thumb_up_alt_outlined),
+  //           ),
+  //           IconButton(
+  //             tooltip: 'Dislike Image',
+  //             onPressed: () async {
+  //               setState(() {
+  //                 if (image.isDisliked ?? false) {
+  //                   image.isDisliked = false;
+  //                   image.likeCount = (image.likeCount ?? 0) + 1;
+  //                 } else {
+  //                   image.isDisliked = true;
+  //                   image.isLiked = false;
+  //                   image.likeCount = (image.likeCount ?? 0) - 1;
+  //                 }
+  //               });
+  //               await _updateImageLikeDislike(
+  //                 widget.post!.postId!,
+  //                 image.id!,
+  //                 false,
+  //                 !(image.isDisliked ?? false),
+  //               );
+  //             },
+  //             icon: image.isDisliked == true
+  //                 ? const Icon(Icons.thumb_down_alt)
+  //                 : const Icon(Icons.thumb_down_alt_outlined),
+  //           ),
+  //           Text('Likes ${image.likeCount ?? 0}'),
+  //         ],
+  //       ),
+  //     ],
+  //   );
+  // }
 }

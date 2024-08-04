@@ -179,7 +179,7 @@ class _AddPostState extends State<AddPost> {
           child: Column(
             children: [
               ListTile(
-                leading: (userDetail!.profileImage?.isNetworkUrl ??
+                leading: (userDetail?.profileImage?.isNetworkUrl ??
                         false) //this place the value that can have a value false if it is null
                     ? CircleAvatar(
                         backgroundImage:

@@ -8,6 +8,7 @@ import 'package:socialapp/authenthication/login_auth.dart';
 import 'package:socialapp/dataloader.dart';
 import 'package:socialapp/feeds/Albumscreen.dart';
 import 'package:socialapp/friendlist/requestlist.dart';
+import 'package:socialapp/friendlist/sendlist.dart';
 import 'package:socialapp/friendlist/sendrequest.dart';
 import 'package:socialapp/home.dart';
 import 'package:socialapp/login.dart';
@@ -47,64 +48,65 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
     _loadprofile();
     _loaduserPost();
     _loadusers();
+    // _updaterequestlist();
     // print(userDetail?.id);
   }
 
-  late Future<List<UserDetail>> _nonFriendUsersFuture;
-  void _updaterequestlist() {
-    setState(() {
-      _nonFriendUsersFuture = _getNonFriendUsers(userDetail!.id!);
-    });
-  }
+//   late Future<List<UserDetail>> _nonFriendUsersFuture;
+//   void _updaterequestlist() {
+//     setState(() {
+//       _nonFriendUsersFuture = _getNonFriendUsers(userDetail!.id!);
+//     });
+//   }
 
-//current user friendlist for exclusion
-  Future<List<int>> _getUserFriends(int userId) async {
-    final prefs = await SharedPreferences.getInstance();
-    final friendsJson = prefs.getString('user_${userId}_friends') ?? '[]';
-    List<int> friendIds = List<int>.from(jsonDecode(friendsJson));
-    return friendIds;
-  }
+// //current user friendlist for exclusion
+//   Future<List<int>> _getUserFriends(int userId) async {
+//     final prefs = await SharedPreferences.getInstance();
+//     final friendsJson = prefs.getString('user_${userId}_friends') ?? '[]';
+//     List<int> friendIds = List<int>.from(jsonDecode(friendsJson));
+//     return friendIds;
+//   }
 
-//current users request list for wxclusion
-  Future<List<int>> _getSentRequests(int userId) async {
-    final prefs = await SharedPreferences.getInstance();
-    final sentRequestsJson = prefs.getString(Dataloader.sendrequestkey) ?? '[]';
-    List<UserFriendlist> sentRequests = (jsonDecode(sentRequestsJson) as List)
-        .map((e) => UserFriendlist.fromJson(e))
-        .toList();
-    return sentRequests.map((request) => request.requestedTo!).toList();
-  }
+// //current users request list for wxclusion
+//   Future<List<int>> _getSentRequests(int userId) async {
+//     final prefs = await SharedPreferences.getInstance();
+//     final sentRequestsJson = prefs.getString(Dataloader.sendrequestkey) ?? '[]';
+//     List<UserFriendlist> sentRequests = (jsonDecode(sentRequestsJson) as List)
+//         .map((e) => UserFriendlist.fromJson(e))
+//         .toList();
+//     return sentRequests.map((request) => request.requestedTo!).toList();
+//   }
 
-  Future<List<int>> _getReceivedrequest(int userId) async {
-    final prefs = await SharedPreferences.getInstance();
-    final receivejson = prefs.getString(Dataloader.receiverequestkey) ?? '[]';
-    List<UserFriendlist> receivelist = (jsonDecode(receivejson) as List)
-        .map((e) => UserFriendlist.fromJson(e))
-        .toList();
-    return receivelist.map((e) => e.requestedBy!).toList();
-  }
+//   Future<List<int>> _getReceivedrequest(int userId) async {
+//     final prefs = await SharedPreferences.getInstance();
+//     final receivejson = prefs.getString(Dataloader.receiverequestkey) ?? '[]';
+//     List<UserFriendlist> receivelist = (jsonDecode(receivejson) as List)
+//         .map((e) => UserFriendlist.fromJson(e))
+//         .toList();
+//     return receivelist.map((e) => e.requestedBy!).toList();
+//   }
 
-//exclusion
-  Future<List<UserDetail>> _getNonFriendUsers(int userId) async {
-    // Fetch all users
-    Dataloader dataloader = Dataloader();
-    List<UserDetail> allUsers = await dataloader.getuserdetail();
+// //exclusion
+//   Future<List<UserDetail>> _getNonFriendUsers(int userId) async {
+//     // Fetch all users
+//     Dataloader dataloader = Dataloader();
+//     List<UserDetail> allUsers = await dataloader.getuserdetail();
 
-    // Fetch friends and sent requests
-    List<int> friends = await _getUserFriends(userId);
-    List<int> sentRequests = await _getSentRequests(userId);
-    List<int> receiveRequest = await _getReceivedrequest(userId);
+//     // Fetch friends and sent requests
+//     List<int> friends = await _getUserFriends(userId);
+//     List<int> sentRequests = await _getSentRequests(userId);
+//     List<int> receiveRequest = await _getReceivedrequest(userId);
 
-    // Exclude friends and those to whom a request has been sent
-    List<UserDetail> nonFriendUsers = allUsers.where((user) {
-      return user.id != userId &&
-          !friends.contains(user.id) &&
-          !sentRequests.contains(user.id) &&
-          !receiveRequest.contains(user.id);
-    }).toList();
+//     // Exclude friends and those to whom a request has been sent
+//     List<UserDetail> nonFriendUsers = allUsers.where((user) {
+//       return user.id != userId &&
+//           !friends.contains(user.id) &&
+//           !sentRequests.contains(user.id) &&
+//           !receiveRequest.contains(user.id);
+//     }).toList();
 
-    return nonFriendUsers;
-  }
+//     return nonFriendUsers;
+//   }
 
   Future<void> _loaduserPost() async {
     if (userDetail != null) {
@@ -406,17 +408,38 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                           height: 200,
                           width: double.infinity,
                           child: GestureDetector(
+                            // onTap: () {
+                            //   print('open pcitrue');
+                            //   Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //       builder: (context) => ImageFull(
+                            //         imagefile: cover ?? File(''),
+                            //         text: 'Cover picture',
+                            //       ), //here i passed the userdetail used to display the current logged profile detail
+                            //     ),
+                            //   );
+                            // },
                             onTap: () {
-                              print('open pcitrue');
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ImageFull(
-                                    imagefile: cover ?? File(''),
-                                    text: 'Cover picture',
-                                  ), //here i passed the userdetail used to display the current logged profile detail
-                                ),
-                              );
+                              (userDetail?.coverImage?.isNetworkUrl ?? false)
+                                  ? Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ImageFull(
+                                          text: 'Cover Picture',
+                                          networkurl:
+                                              userDetail!.coverImage!.imagepath,
+                                        ),
+                                      ))
+                                  : Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ImageFull(
+                                          text: "Cover Picture",
+                                          imagefile: File(userDetail!
+                                              .coverImage!.imagepath!),
+                                        ),
+                                      ));
                             },
                             child: cover != null
                                 ? Image.file(
@@ -436,16 +459,38 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                           left: 5,
                           bottom: 0,
                           child: GestureDetector(
+                              // onTap: () {
+                              //   Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //       builder: (context) => ImageFull(
+                              //         imagefile: profile ?? File(''),
+                              //         text: 'Profile Picture',
+                              //       ),
+                              //     ),
+                              //   );
+                              // },
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ImageFull(
-                                      imagefile: profile ?? File(''),
-                                      text: 'Profile Picture',
-                                    ),
-                                  ),
-                                );
+                                (userDetail?.profileImage?.isNetworkUrl ??
+                                        false)
+                                    ? Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ImageFull(
+                                            text: 'Cover Picture',
+                                            networkurl: userDetail!
+                                                .profileImage!.imagePath,
+                                          ),
+                                        ))
+                                    : Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ImageFull(
+                                            text: "Cover Picture",
+                                            imagefile: File(userDetail!
+                                                .profileImage!.imagePath!),
+                                          ),
+                                        ));
                               },
                               child: profile != null
                                   ? CircleAvatar(
@@ -610,6 +655,20 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                               style: const TextStyle(
                                   fontSize: 28, fontWeight: FontWeight.bold),
                             ),
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            SentFriendRequestsScreen(
+                                                userId: userDetail!.id!),
+                                      ));
+                                },
+                                icon: const Icon(
+                                  Icons.view_agenda,
+                                  color: Colors.white,
+                                )),
                             GestureDetector(
                                 onTap: () async {
                                   await auth.logout();
@@ -699,8 +758,8 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                                         builder: (context) =>
                                             ReceivedFriendRequestsScreen(
                                               userId: userDetail!.id!,
-                                              onRequestRejected:
-                                                  _updaterequestlist,
+                                              // onRequestRejected:
+                                              //     _updaterequestlist,
                                             )
                                         // FriendRequest(
                                         //   loggedInUserId: userDetail!.id!,
@@ -890,60 +949,20 @@ class _SurfaceProfileState extends State<SurfaceProfile> {
                                       // _loaduserPost();
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(
-                                        duration: Duration(seconds: 1),
+                                        duration: const Duration(seconds: 1),
                                         content: Text(
                                             userpost[index].isliked ?? false
                                                 ? 'Liked the post'
-                                                : ''),
+                                                : 'Unlike the post'),
                                       ));
                                     },
-                                    icon: userpost[index].isliked ?? false
-                                        ? const Icon(Icons.thumb_up_alt)
-                                        : const Icon(
-                                            Icons.thumb_up_alt_outlined)),
+                                    icon: const Icon(
+                                        Icons.thumb_up_alt_outlined)),
+                                //  userpost[index].isliked ?? false
+                                //     ? const Icon(Icons.thumb_up_alt)
+                                //     : const Icon( Icons.thumb_up_alt_outlined)
+                                //     ),
 
-                                IconButton(
-                                  tooltip: 'Dislike',
-                                  onPressed: () async {
-                                    setState(() {
-                                      if (userpost[index].isDisliked ?? false) {
-                                        userpost[index].isDisliked = false;
-                                        userpost[index]
-                                            .postLikedBy
-                                            ?.removeWhere((like) =>
-                                                like.userId == userDetail!.id);
-                                      } else {
-                                        userpost[index].isDisliked = true;
-                                        userpost[index].isliked = false;
-                                        userpost[index]
-                                            .postLikedBy
-                                            ?.removeWhere((like) =>
-                                                like.userId == userDetail!.id);
-                                      }
-                                    });
-                                    await auth.updateReactforPost(
-                                        userpost[index].postId!,
-                                        userpost[index].isliked ??
-                                            false, //can also give false directly
-                                        userpost[index].isDisliked ?? false,
-                                        userDetail!.id!);
-                                    // _loaduserPost();
-
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        duration: const Duration(seconds: 1),
-                                        content: Text(
-                                            userpost[index].isDisliked ?? false
-                                                ? 'Disliked the Post'
-                                                : ''),
-                                      ),
-                                    );
-                                  },
-                                  icon: userpost[index].isDisliked ?? false
-                                      ? const Icon(Icons.thumb_down_alt)
-                                      : const Icon(
-                                          Icons.thumb_down_alt_outlined),
-                                ),
                                 // Text(
                                 //     '${userpost[index].likeCount} Likes'), // Display like count
 

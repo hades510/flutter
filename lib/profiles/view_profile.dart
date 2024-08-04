@@ -477,6 +477,9 @@ class _ViewProfileState extends State<ViewProfile> {
                             },
                           ),
                         ),
+                        const SizedBox(
+                          height: 15,
+                        ),
                         Container(
                           height: 60,
                           decoration: BoxDecoration(
@@ -623,6 +626,9 @@ class _ViewProfileState extends State<ViewProfile> {
                           eduorganization,
                           'Please Provide institution name',
                           'College/School name'),
+                      const SizedBox(
+                        height: 15,
+                      ),
                       Container(
                         height: 60,
                         decoration: BoxDecoration(
@@ -652,6 +658,9 @@ class _ViewProfileState extends State<ViewProfile> {
                             }
                           },
                         ),
+                      ),
+                      const SizedBox(
+                        height: 15,
                       ),
                       Container(
                         height: 60,
@@ -1125,17 +1134,38 @@ class _ViewProfileState extends State<ViewProfile> {
                           height: 200,
                           width: double.infinity,
                           child: GestureDetector(
+                            // onTap: () {
+                            //   print('open pcitrue');
+                            //   Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //       builder: (context) => ImageFull(
+                            //         imagefile: cover ?? File(''),
+                            //         text: 'Cover Picture',
+                            //       ), //here i passed the userdetail used to display the current logged profile detail
+                            //     ),
+                            //   );
+                            // },
                             onTap: () {
-                              print('open pcitrue');
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ImageFull(
-                                    imagefile: cover ?? File(''),
-                                    text: 'Cover Picture',
-                                  ), //here i passed the userdetail used to display the current logged profile detail
-                                ),
-                              );
+                              (userDetail?.coverImage?.isNetworkUrl ?? false)
+                                  ? Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ImageFull(
+                                          text: 'Cover Picture',
+                                          networkurl:
+                                              userDetail!.coverImage!.imagepath,
+                                        ),
+                                      ))
+                                  : Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ImageFull(
+                                          text: "Cover Picture",
+                                          imagefile: File(userDetail!
+                                              .coverImage!.imagepath!),
+                                        ),
+                                      ));
                             },
                             child:
                                 //here i have used Image.file instead fo FileImage because it can directly display the image without imageprovider
@@ -1158,15 +1188,37 @@ class _ViewProfileState extends State<ViewProfile> {
                           left: 5,
                           bottom: 0,
                           child: GestureDetector(
+                              // onTap: () {
+                              //   Navigator.push(
+                              //       context,
+                              //       MaterialPageRoute(
+                              //         builder: (context) => ImageFull(
+                              //           imagefile: profile ?? File(''),
+                              //           text: 'Profile',
+                              //         ),
+                              //       ));
+                              // },
                               onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ImageFull(
-                                        imagefile: profile ?? File(''),
-                                        text: 'Profile',
-                                      ),
-                                    ));
+                                (userDetail?.profileImage?.isNetworkUrl ??
+                                        false)
+                                    ? Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ImageFull(
+                                            text: 'Cover Picture',
+                                            networkurl: userDetail!
+                                                .profileImage!.imagePath,
+                                          ),
+                                        ))
+                                    : Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ImageFull(
+                                            text: "Cover Picture",
+                                            imagefile: File(userDetail!
+                                                .profileImage!.imagePath!),
+                                          ),
+                                        ));
                               },
                               child: profile != null
                                   ? CircleAvatar(

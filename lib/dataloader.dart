@@ -167,19 +167,19 @@ class Dataloader {
     }
   }
 
-  Future<List<UserFriendlist>> geloggedinrequest(int id) async {
-    final prefs = await SharedPreferences.getInstance();
-    String? request = prefs.getString(userdfriendlistkey); //loads the json file
-    if (request != null) {
-      List requestlist = json.decode(request);
-      return requestlist
-          .map((e) => UserFriendlist.fromJson(e))
-          .where((element) => element.userId == id)
-          .toList();
-    } else {
-      return [];
-    }
-  }
+  // Future<List<UserFriendlist>> geloggedinrequest(int id) async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   String? request = prefs.getString(userdfriendlistkey); //loads the json file
+  //   if (request != null) {
+  //     List requestlist = json.decode(request);
+  //     return requestlist
+  //         .map((e) => UserFriendlist.fromJson(e))
+  //         .where((element) => element.userId == id)
+  //         .toList();
+  //   } else {
+  //     return [];
+  //   }
+  // }
 
   //for storing request
   Future<void> sendRequest(int senderid, int receiverid) async {
@@ -187,20 +187,30 @@ class Dataloader {
 
     //load request sent for sender
     final senrequestJson = prefs.getString(sendrequestkey) ?? '[]';
+    print('cureent sent request: $senrequestJson');
     List jsonlist = jsonDecode(senrequestJson);
     List<UserFriendlist> list =
         jsonlist.map((e) => UserFriendlist.fromJson(e)).toList();
 
-    list.add(UserFriendlist(
-      // userId: senderid,
-      requestedBy: senderid,
-      requestedTo: receiverid,
-      hasNewRequest: true,
-      hasRemoved: false,
-      hasNewRequestAccepted: false,
-      createdAt: DateTime.now().toIso8601String(),
-    ));
-    await prefs.setString(sendrequestkey, jsonEncode(list));
+//remove any existing request from sender to receiver
+    list.removeWhere((element) =>
+        element.requestedTo == receiverid && element.requestedBy == senderid);
+
+    ///
+    ///
+    if (!list.any((element) =>
+        element.requestedBy == senderid && element.requestedTo == receiverid)) {
+      list.add(UserFriendlist(
+        // userId: senderid,
+        requestedBy: senderid,
+        requestedTo: receiverid,
+        hasNewRequest: true,
+        hasRemoved: false,
+        hasNewRequestAccepted: false,
+        createdAt: DateTime.now().toIso8601String(),
+      ));
+      await prefs.setString(sendrequestkey, jsonEncode(list));
+    }
 
     //load received request for receiver
     final receiverequest = prefs.getString(receiverequestkey) ?? '[]';
@@ -208,14 +218,23 @@ class Dataloader {
     List<UserFriendlist> receiverlist =
         receiverjsonlist.map((e) => UserFriendlist.fromJson(e)).toList();
 
-    receiverlist.add(UserFriendlist(
-      requestedBy: senderid,
-      requestedTo: receiverid,
-      hasNewRequest: true,
-      hasNewRequestAccepted: false,
-      hasRemoved: false,
-    ));
-    await prefs.setString(receiverequestkey, jsonEncode(receiverlist));
+//remove any existing request from sender to receiver
+    receiverlist.removeWhere((element) =>
+        element.requestedBy == senderid && element.requestedTo == receiverid);
+
+    ///
+    ///
+    if (!receiverlist.any((element) =>
+        element.requestedBy == senderid && element.requestedTo == receiverid)) {
+      receiverlist.add(UserFriendlist(
+        requestedBy: senderid,
+        requestedTo: receiverid,
+        hasNewRequest: true,
+        hasNewRequestAccepted: false,
+        hasRemoved: false,
+      ));
+      await prefs.setString(receiverequestkey, jsonEncode(receiverlist));
+    }
   }
 
   Future<List<UserFriendlist>> getreceiverequest(int userId) async {
@@ -242,53 +261,55 @@ class Dataloader {
     return requests.where((request) => request.requestedBy == userId).toList();
   }
 
-
-
   //specifically used for updating the list of send request
-  Future<void> updateSentRequest(int senderId, int receiverId, {bool isRejected = false}) async {
-  final prefs = await SharedPreferences.getInstance();
+  Future<void> updateSentRequest(int senderId, int receiverId,
+      {bool isRejected = false}) async {
+    final prefs = await SharedPreferences.getInstance();
 
-  // Load and update the sent requests for the sender
-  final sentRequestsJson = prefs.getString(sendrequestkey) ?? '[]';
-  List<UserFriendlist> sentRequests = (jsonDecode(sentRequestsJson) as List)
-      .map((e) => UserFriendlist.fromJson(e))
-      .toList();
-  
-  sentRequests.removeWhere((request) => request.requestedTo == receiverId && request.requestedBy == senderId);
+    // Load and update the sent requests for the sender
+    final sentRequestsJson = prefs.getString(sendrequestkey) ?? '[]';
+    List<UserFriendlist> sentRequests = (jsonDecode(sentRequestsJson) as List)
+        .map((e) => UserFriendlist.fromJson(e))
+        .toList();
 
-  if (!isRejected) {
-    sentRequests.add(UserFriendlist(
-      requestedBy: senderId,
-      requestedTo: receiverId,
-      hasNewRequest: false,
-      hasRemoved: false,
-      hasNewRequestAccepted: true,
-      createdAt: DateTime.now().toIso8601String(),
-    ));
+    sentRequests.removeWhere((request) =>
+        request.requestedTo == receiverId && request.requestedBy == senderId);
+
+    if (!isRejected) {
+      sentRequests.add(UserFriendlist(
+        requestedBy: senderId,
+        requestedTo: receiverId,
+        hasNewRequest: false,
+        hasRemoved: false,
+        hasNewRequestAccepted: true,
+        createdAt: DateTime.now().toIso8601String(),
+      ));
+    }
+
+    await prefs.setString(sendrequestkey, jsonEncode(sentRequests));
+
+    // Load and update the received requests for the receiver
+    final receivedRequestsJson = prefs.getString(receiverequestkey) ?? '[]';
+    List<UserFriendlist> receivedRequests =
+        (jsonDecode(receivedRequestsJson) as List)
+            .map((e) => UserFriendlist.fromJson(e))
+            .toList();
+
+    receivedRequests.removeWhere((request) =>
+        request.requestedBy == senderId && request.requestedTo == receiverId);
+
+    if (!isRejected) {
+      receivedRequests.add(UserFriendlist(
+        requestedBy: senderId,
+        requestedTo: receiverId,
+        hasNewRequest: false,
+        hasNewRequestAccepted: true,
+        hasRemoved: false,
+      ));
+    }
+
+    await prefs.setString(receiverequestkey, jsonEncode(receivedRequests));
   }
-
-  await prefs.setString(sendrequestkey, jsonEncode(sentRequests));
-
-  // Load and update the received requests for the receiver
-  final receivedRequestsJson = prefs.getString(receiverequestkey) ?? '[]';
-  List<UserFriendlist> receivedRequests = (jsonDecode(receivedRequestsJson) as List)
-      .map((e) => UserFriendlist.fromJson(e))
-      .toList();
-
-  receivedRequests.removeWhere((request) => request.requestedBy == senderId && request.requestedTo == receiverId);
-
-  if (!isRejected) {
-    receivedRequests.add(UserFriendlist(
-      requestedBy: senderId,
-      requestedTo: receiverId,
-      hasNewRequest: false,
-      hasNewRequestAccepted: true,
-      hasRemoved: false,
-    ));
-  }
-
-  await prefs.setString(receiverequestkey, jsonEncode(receivedRequests));
-}
 
   //for getting the logged in users friendlist
   // Future<List<UserFriendlist>> getLoggedFriendlist(int userid) async {

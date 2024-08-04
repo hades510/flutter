@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/dataloader.dart';
 import 'package:socialapp/models/user_detail.dart';
-import 'package:socialapp/models/user_friendlist.dart';
 import 'package:socialapp/models/user_post.dart';
 
 import '../models/user.dart';

@@ -12,10 +12,13 @@ import '../models/user_friendlist.dart';
 class ReceivedFriendRequestsScreen extends StatefulWidget {
   //received list
   final int userId; // logged user id
-  final VoidCallback onRequestRejected;
+  // final VoidCallback onRequestRejected;
 
-  const ReceivedFriendRequestsScreen(
-      {super.key, required this.userId, required this.onRequestRejected});
+  const ReceivedFriendRequestsScreen({
+    super.key,
+    required this.userId,
+    //  required this.onRequestRejected
+  });
 
   @override
   State<ReceivedFriendRequestsScreen> createState() =>
@@ -33,16 +36,16 @@ class _ReceivedFriendRequestsScreenState
   void initState() {
     super.initState();
     auth = Auth(Dataloader());
-    _loadedetail();
+    // _loadedetail();
     _loaddata();
   }
 
-  void _loadedetail() async {
-    UserDetail? detail = await auth.getloggedinuser();
-    setState(() {
-      userDetail = detail;
-    });
-  }
+  // void _loadedetail() async {
+  //   UserDetail? detail = await auth.getloggedinuser();
+  //   setState(() {
+  //     userDetail = detail;
+  //   });
+  // }
 
   Future<void> _loaddata() async {
     Dataloader dataloader = Dataloader();
@@ -96,14 +99,19 @@ class _ReceivedFriendRequestsScreenState
     }
     _updateFriendLists(request.requestedBy!, request.requestedTo!);
 
-    setState(() {
-      //refresh
-    });
+    await _loaddata();
+    // setState(() {
+    //   //refresh
+    // });
   }
 
 //update both the list used on accept only
   void _updateFriendLists(int user1Id, int user2Id) async {
     final prefs = await SharedPreferences.getInstance();
+    //prefs.getString('user_${user1Id}_friends'): Retrieves the friend list of user1.
+// jsonDecode(user1FriendsJson): Decodes the JSON string into a list of friend IDs.
+// user1Friends.add(user2Id): Adds user2Id to user1's friend list.
+// prefs.setString(...): Updates the SharedPreferences with the new friend lists.
 
     // Retrieve existing friend lists
     final user1FriendsJson = prefs.getString('user_${user1Id}_friends') ?? '[]';
@@ -125,6 +133,13 @@ class _ReceivedFriendRequestsScreenState
 
   void _reject(UserFriendlist request) async {
     final prefs = await SharedPreferences.getInstance();
+
+// prefs.getString(Dataloader.receiverequestkey): Retrieves the JSON string of received requests.
+// jsonDecode(requestjson): Decodes the JSON string into a list of UserFriendlist objects.
+// requestreceived.removeWhere(...): Removes the rejected request from the list.
+// prefs.setString(...): Updates SharedPreferences with the modified request list.
+// Dataloader().updateSentRequest(...): Updates the status of the sent request.
+// setState(() {}): Refreshes the UI.
     //remove from list of request
     final requestjson = prefs.getString(Dataloader.receiverequestkey) ?? '[]';
     List jsonList = jsonDecode(requestjson);
@@ -140,7 +155,7 @@ class _ReceivedFriendRequestsScreenState
     await Dataloader().updateSentRequest(
         request.requestedBy!, request.requestedTo!,
         isRejected: true);
-    widget.onRequestRejected();
+    // widget.onRequestRejected();
 
     //added steps which worked
     // final sentRequestJson = prefs.getString(Dataloader.sendrequestkey) ?? '[]';
@@ -159,10 +174,11 @@ class _ReceivedFriendRequestsScreenState
     //   );
     //   await prefs.setString(Dataloader.sendrequestkey, jsonEncode(requestSent));
     // }
+    await _loaddata();
 
-    setState(() {
-      //refreshing
-    });
+    // setState(() {
+    //   //refreshing
+    // });
   }
 
   @override

@@ -274,46 +274,46 @@ class _NewscreenState extends State<Newscreen> {
                         userDetail!.id!);
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       duration: Duration(seconds: 1),
-                      content:
-                          Text(model.isliked ?? false ? 'Liked the post' : ''),
+                      content: Text(model.isliked ?? false
+                          ? 'Liked the post'
+                          : 'Unlike the post'),
                     ));
                   },
-                  icon: model.isliked ?? false
-                      ? const Icon(Icons.thumb_up_alt)
-                      : const Icon(Icons.thumb_up_alt_outlined)),
-              IconButton(
-                tooltip: 'Dislike',
-                onPressed: () async {
-                  setState(() {
-                    if (model.isDisliked ?? false) {
-                      model.isDisliked = false;
-                      model.postLikedBy?.removeWhere(
-                          (like) => like.userId == userDetail!.id);
-                    } else {
-                      model.isDisliked = true;
-                      model.isliked = false;
-                      model.postLikedBy?.removeWhere(
-                          (like) => like.userId == userDetail!.id);
-                    }
-                  });
-                  await auth.updateReactforPost(
-                      model.postId!,
-                      model.isliked ?? false, //can also give false directly
-                      model.isDisliked ?? false,
-                      userDetail!.id!);
+                  icon: const Icon(Icons.thumb_up_alt_outlined))
 
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      duration: const Duration(seconds: 1),
-                      content: Text(
-                          model.isDisliked ?? false ? 'Disliked the Post' : ''),
-                    ),
-                  );
-                },
-                icon: model.isDisliked ?? false
-                    ? const Icon(Icons.thumb_down_alt)
-                    : const Icon(Icons.thumb_down_alt_outlined),
-              ),
+              // IconButton(
+              //   tooltip: 'Dislike',
+              //   onPressed: () async {
+              //     setState(() {
+              //       if (model.isDisliked ?? false) {
+              //         model.isDisliked = false;
+              //         model.postLikedBy?.removeWhere(
+              //             (like) => like.userId == userDetail!.id);
+              //       } else {
+              //         model.isDisliked = true;
+              //         model.isliked = false;
+              //         model.postLikedBy?.removeWhere(
+              //             (like) => like.userId == userDetail!.id);
+              //       }
+              //     });
+              //     await auth.updateReactforPost(
+              //         model.postId!,
+              //         model.isliked ?? false, //can also give false directly
+              //         model.isDisliked ?? false,
+              //         userDetail!.id!);
+
+              //     ScaffoldMessenger.of(context).showSnackBar(
+              //       SnackBar(
+              //         duration: const Duration(seconds: 1),
+              //         content: Text(
+              //             model.isDisliked ?? false ? 'Disliked the Post' : ''),
+              //       ),
+              //     );
+              //   },
+              //   icon: model.isDisliked ?? false
+              //       ? const Icon(Icons.thumb_down_alt)
+              //       : const Icon(Icons.thumb_down_alt_outlined),
+              // ),
             ],
           ),
         ),
